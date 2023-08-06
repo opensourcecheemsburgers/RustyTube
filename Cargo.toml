@@ -1,0 +1,48 @@
+[workspace]
+members = ["src-tauri", "frontend"]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Stephen Power"]
+description = "A cross-platform Youtube frontend built with Tauri, Yew. Designed with Tailwind."
+license = "GPL"
+edition = "2021"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "z"
+
+
+[workspace.dependencies]
+wasm-bindgen = "0.2.87"
+wasm-bindgen-cli = "0.2.87"
+wasm-bindgen-futures = "0.4.37"
+js-sys = "0.3.64"
+
+[workspace.dependencies.tauri]
+version = "1.4.1"
+features = []
+
+[workspace.dependencies.leptos]
+version = "0.4.8"
+features = ["csr"]
+
+[workspace.dependencies.serde]
+version = "1.0.183"
+features = ["derive"]
+
+[workspace.dependencies.serde_json]
+version = "1.0.105"
+
+[workspace.dependencies.web-sys]
+version = "0.3.64"
+features=[
+    "DataTransfer", "Element", "Navigator", "HtmlAnchorElement",
+    "HtmlButtonElement", "HtmlDialogElement", "Navigator", "Clipboard",
+    "HtmlDivElement", "HtmlDocument", "HtmlInputElement", "HtmlLabelElement",
+    "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlVideoElement", "Event", "EventTarget",
+    "MouseEvent", "InputEvent", "KeyEvent", "KeyboardEvent", "KeyboardEventInit",
+    "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance"
+]

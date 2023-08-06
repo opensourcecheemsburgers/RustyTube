@@ -1,0 +1,13 @@
+[package]
+name = "frontend"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+leptos = { workspace = true }
+
+web-sys = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-cli = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+js-sys = { workspace = true }

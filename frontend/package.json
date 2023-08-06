@@ -1,0 +1,11 @@
+{
+    "name": "rustytube",
+    "private": true,
+    "version": "0.0.0",
+    "description": "",
+    "devDependencies": {},
+    "dependencies": {
+        "@tauri-apps/api": "^2.0.0-alpha.4",
+        "@tauri-apps/cli": "^2.0.0-alpha.9"
+    }
+}
