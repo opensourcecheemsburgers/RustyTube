@@ -1,0 +1,51 @@
+[package]
+name = "invidious"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gloo = "0.9.0"
+reqwasm = "0.5.0"
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+csv = { workspace = true }
+
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+js-sys = { workspace = true }
+
+[dependencies.web-sys]
+workspace = true
+features = [
+    'Headers',
+    'Request',
+    'RequestInit',
+    'RequestMode',
+    'Response',
+    'Window',
+]
+
+[dev-dependencies]
+wasm-bindgen-test = { workspace = true }
+wasm-bindgen-cli = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+js-sys = { workspace = true }
+
+[dev-dependencies.web-sys]
+workspace = true
+features=[
+    "HtmlVideoElement", "HtmlMediaElement"
+#    "DataTransfer", "Element", "Navigator", "HtmlAnchorElement",
+#    "HtmlButtonElement", "HtmlDialogElement", "Navigator", "Clipboard",
+#    "HtmlDivElement", "HtmlDocument", "HtmlInputElement", "HtmlLabelElement",
+#    "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlVideoElement", "Event", "EventTarget",
+#    "MouseEvent", "InputEvent", "KeyEvent", "KeyboardEvent", "KeyboardEventInit",
+#    "TouchEvent", "TouchList", "Touch", "DomTokenList"
+]
