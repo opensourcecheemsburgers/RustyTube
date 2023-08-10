@@ -1,5 +1,6 @@
+use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use crate::fetch::{fetch, FetchError};
+use crate::fetch::fetch;
 use crate::{hidden::*, common::*};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -78,7 +79,7 @@ impl Video {
         format!("{server}/api/v1/videos/{id}")
     }
 
-    pub async fn fetch_video(server: &str, id: &str, args: Option<&str>) -> Result<Self, FetchError> {
+    pub async fn fetch_video(server: &str, id: &str, args: Option<&str>) -> Result<Self, RustyTubeError> {
         let video_url: String = Self::url(server, id);
         let video_json: String = fetch(&video_url).await?;
         let video: Self = serde_json::from_str(&video_json)?;

@@ -1,6 +1,7 @@
+use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use crate::common::CommonPlaylist;
-use crate::fetch::{fetch, FetchError};
+use crate::fetch::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ChannelPlaylists {
@@ -13,7 +14,7 @@ impl ChannelPlaylists {
         format!("{server}/api/v1/channels/playlists/{args}")
     }
 
-    async fn fetch_channel_playlists(server: &str, id: &str, args: Option<&str>) -> Result<Self, FetchError> {
+    async fn fetch_channel_playlists(server: &str, id: &str, args: Option<&str>) -> Result<Self, RustyTubeError> {
         let channel_playlists_url: String = Self::url(server, id);
         let channel_playlists_json: String = fetch(&channel_playlists_url).await?;
         let channel_playlists: Self = serde_json::from_str(&channel_playlists_json)?;

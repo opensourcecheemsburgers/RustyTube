@@ -1,0 +1,18 @@
+[package]
+name = "rustytube_error"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+csv = { workspace = true }
+ron = { workspace = true }
+tauri-sys = { workspace = true }
+gloo = { workspace = true }
+reqwasm = { workspace = true }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use crate::common::CommonVideo;
-use crate::error::RustyTubeError;
+use rustytube_error::RustyTubeError;
 use crate::fetch::fetch;
 use crate::hidden::CountryCode;
 

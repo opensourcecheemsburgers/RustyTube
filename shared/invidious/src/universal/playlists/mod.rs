@@ -1,6 +1,16 @@
+mod local;
+mod csv_playlist;
+mod freetube;
+mod libretube;
+
+pub use local::*;
+pub use csv_playlist::*;
+pub use libretube::*;
+pub use freetube::*;
+
 use serde::{Deserialize, Serialize};
 use crate::common::CommonImage;
-use crate::error::RustyTubeError;
+use rustytube_error::RustyTubeError;
 use crate::fetch::fetch;
 use crate::hidden::PlaylistItem;
 
@@ -43,28 +53,4 @@ impl Playlist {
         let playlist: Self = serde_json::from_str(&playlist_json)?;
         Ok(playlist)
     }
-
-    // pub fn create_playlist(title: &str, id: &str,) -> Self {
-    //
-    // }
-    //
-    // pub fn save() -> Result<(), RustyTubeError> {
-    //
-    // }
-}
-
-fn process_value(value: &mut serde_json::Value) -> Option<()> {
-    if value.get("playlistThumbnail")?.is_null() {
-        *value.get_mut("playlistThumbnail")? = value
-            .get("videos")?
-            .as_array()?
-            .first()?
-            .get("videoThumbnails")?
-            .as_array()?
-            .first()?
-            .get("url")?
-            .clone()
-    }
-
-    Some(())
 }

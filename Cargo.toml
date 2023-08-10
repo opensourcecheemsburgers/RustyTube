@@ -1,5 +1,5 @@
 [workspace]
-members = ["src-tauri", "frontend"]
+members = ["src-tauri", "frontend", "shared/*"]
 
 [workspace.package]
 version = "0.1.0"
@@ -14,12 +14,17 @@ codegen-units = 1
 lto = true
 opt-level = "z"
 
-
 [workspace.dependencies]
 wasm-bindgen = "0.2.87"
 wasm-bindgen-cli = "0.2.87"
 wasm-bindgen-futures = "0.4.37"
+wasm-bindgen-test = "0.3.37"
 js-sys = "0.3.64"
+reqwasm = "0.5.0"
+ron = "0.8.0"
+csv = "1.2.2"
+humantime = "2.1.0"
+chrono = "0.4.26"
 
 [workspace.dependencies.tauri]
 version = "1.4.1"
@@ -44,5 +49,21 @@ features=[
     "HtmlDivElement", "HtmlDocument", "HtmlInputElement", "HtmlLabelElement",
     "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlVideoElement", "Event", "EventTarget",
     "MouseEvent", "InputEvent", "KeyEvent", "KeyboardEvent", "KeyboardEventInit",
-    "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance"
+    "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance", "Window"
 ]
+
+[workspace.dependencies.gloo]
+version = "0.9.0"
+features = ["file", "futures"]
+
+[workspace.dependencies.tauri-sys]
+git = "https://github.com/opensourcecheemsburgers/tauri-sys"
+
+[workspace.dependencies.invidious]
+path = "shared/invidious"
+
+[workspace.dependencies.rustytube_error]
+path = "shared/error"
+
+[workspace.dependencies.utils]
+path = "shared/utils"

@@ -7,4 +7,3 @@ pub mod channel;
 pub mod universal;
 pub mod tests;
 pub mod subs;
-pub mod error;

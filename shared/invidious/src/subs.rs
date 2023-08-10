@@ -1,8 +1,8 @@
-use std::io::Bytes;
-use csv::{ByteRecord, Reader, ReaderBuilder, StringRecord};
+use csv::{Reader, StringRecord};
+use gloo::storage::{LocalStorage, Storage};
 use serde::{Deserialize, Serialize};
-use crate::channel::Channel;
-use crate::error::RustyTubeError;
+use rustytube_error::RustyTubeError;
+use utils::save_to_browser_storage;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Subscriptions {
@@ -13,6 +13,21 @@ pub struct Subscriptions {
 pub struct Subscription {
     pub id: String,
     pub name: String,
+}
+
+pub const SUBS_KEY: &'static str = "subscriptions"; 
+
+impl Subscriptions {
+    pub async fn save(&self) -> Result<(), RustyTubeError> {
+        let subs_json = serde_json::to_string(&self)?;
+        save_to_browser_storage(SUBS_KEY, &subs_json)?;
+        Ok(())
+    }
+
+    pub async fn load() -> Result<Self, RustyTubeError> {
+        let subs: Subscriptions = LocalStorage::get(SUBS_KEY)?;
+        Ok(subs)
+    }
 }
 
 impl Into<Subscription> for NewpipeSubscription {

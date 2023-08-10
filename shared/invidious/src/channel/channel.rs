@@ -1,6 +1,7 @@
 use crate::{common::*, hidden::*};
+use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use crate::fetch::{fetch, FetchError};
+use crate::fetch::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Channel {
@@ -43,7 +44,7 @@ impl Channel {
         format!("{server}/api/v1/channels/{args}")
     }
 
-    pub async fn fetch_channel(server: &str, id: &str, args: Option<&str>) -> Result<Self, FetchError> {
+    pub async fn fetch_channel(server: &str, id: &str, args: Option<&str>) -> Result<Self, RustyTubeError> {
         let channel_url: String = Self::url(server, id);
         let channel_json: String = fetch(&channel_url).await?;
         let channel: Self = serde_json::from_str(&channel_json)?;

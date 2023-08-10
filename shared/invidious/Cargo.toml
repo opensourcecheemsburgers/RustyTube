@@ -9,8 +9,8 @@ edition.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gloo = "0.9.0"
-reqwasm = "0.5.0"
+gloo = { workspace = true }
+reqwasm = { workspace = true }
 
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -19,6 +19,8 @@ csv = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
 js-sys = { workspace = true }
+rustytube_error = { workspace = true }
+utils = { workspace = true }
 
 [dependencies.web-sys]
 workspace = true
@@ -29,6 +31,7 @@ features = [
     'RequestMode',
     'Response',
     'Window',
+    'Performance'
 ]
 
 [dev-dependencies]

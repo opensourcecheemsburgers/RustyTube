@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use crate::hidden::{CountryCode, SearchItem};
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use crate::error::RustyTubeError;
+use rustytube_error::RustyTubeError;
 use crate::fetch::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

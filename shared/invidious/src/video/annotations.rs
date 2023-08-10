@@ -1,5 +1,6 @@
+use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use crate::fetch::{fetch, FetchError};
+use crate::fetch::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Annotations {
@@ -17,7 +18,7 @@ impl Annotations {
         format!("{server}/api/v1/annotations/{args}")
     }
 
-    async fn fetch(server: &str, args: &str) -> Result<Self, FetchError> {
+    async fn fetch(server: &str, args: &str) -> Result<Self, RustyTubeError> {
         let annotations_url: String = Self::url(server, args);
         let annotations_json: String = fetch(&annotations_url).await?;
         let annotations: Self = serde_json::from_str(&annotations_json)?;

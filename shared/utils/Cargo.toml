@@ -1,0 +1,33 @@
+[package]
+name = "utils"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+csv = { workspace = true }
+ron = { workspace = true }
+tauri-sys = { workspace = true }
+gloo = { workspace = true }
+reqwasm = { workspace = true }
+humantime = { workspace = true }
+chrono = { workspace = true }
+rustytube_error = { workspace = true }
+
+[dependencies.web-sys]
+workspace = true
+features = [
+    'Headers',
+    'Request',
+    'RequestInit',
+    'RequestMode',
+    'Response',
+    'Window',
+    'Performance'
+]
