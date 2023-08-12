@@ -1,0 +1,831 @@
+{
+  "app_version": "0.0.0",
+  "app_version_int": 0,
+  "subscriptions": [
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCtXuWXsd7TYXwX2ZNLXfojg",
+      "name": "pellekofficial"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCk8cNb10L5rmV9xB13ADCWA",
+      "name": "Drift0r"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCRcgy6GzDeccI7dkbbBna3Q",
+      "name": "LEMMiNO"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCTQTzVwNJRgjURDiwq-IlOg",
+      "name": "Kanavus"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCJ05pLKdBCcZpaQlixNlZAg",
+      "name": "Matthew kiichichaos Heafy"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC8mnXeOlR9hC2w8aYqY9WNQ",
+      "name": "Loudwire"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCz7iJPVTBGX6DNO1RNI2Fcg",
+      "name": "GradeAUnderA"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCu6G6HqvPTPXIrEiAaXWsTg",
+      "name": "LoStranieroItaliano"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCl3SuH2Ue044b7ACX1syk4A",
+      "name": "Dark Docs"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCDO__Z-tZD4bfG9m4AkK_uA",
+      "name": "not Otzdarva"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCpJ6ZzbWo_-CtWksYseB1ew",
+      "name": "JillviolinChannel"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCzM-_tDgHG8KCUGByYEcrZA",
+      "name": "GALNERYUS"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCXuqSBlHAE6Xw-yeJA0Tunw",
+      "name": "Linus Tech Tips"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCVJtDvrR27PQBcsVGZp3Law",
+      "name": "Joker Productions"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9-y-6csu5WGm29I7JiwpnA",
+      "name": "Computerphile"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCq6aw03lNILzV96UvEAASfQ",
+      "name": "bill wurtz"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCikP_ttW8TPfm-qMpQeUaZQ",
+      "name": "Alex Bent"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCqpTkcIQzrTl2Z8kSFzY2Bw",
+      "name": "DBL online"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCR1D15p_vdP3HkrH8wgjQRw",
+      "name": "Internet Historian"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCsKqsiDOtpJuuga_uujCHRQ",
+      "name": "pin"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCh_F0VRprS4yx3urdcl4FRQ",
+      "name": "ksherwoodops"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCRQebyNJm9YRyO5h0eWEVhw",
+      "name": "Dark5"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UChIs72whgZI9w6d6FhwGGHA",
+      "name": "Gamers Nexus"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC6Zx66ll_slL4SIA2X0YRuw",
+      "name": "Lightstorm23"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCyabCqc2M3J9HItEroLOTvA",
+      "name": "Kmac2021"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCciQ8wFcVoIIMi-lfu8-cjQ",
+      "name": "Anton Petrov"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCyrvxO7bonmPn1I48XyJOKQ",
+      "name": "João Pinto"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9TM3Lrth8MQjHrttZJZiEw",
+      "name": "Adam Liaw"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC4EPioSPvHdXSGD-y3--tXQ",
+      "name": "Memeify"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCOsM-xMGrGH0RHffLIznrUA",
+      "name": "Memenade Dark Mode"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UChHxJaKDqH4bOs0pX3hkKnA",
+      "name": "Basically Homeless"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCFQ9cEbpSh5nYZDhM-MxTzg",
+      "name": "Trey David"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC_SvYP0k05UKiJ_2ndB02IA",
+      "name": "blackpenredpen"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCkK4Tzb9ieuAhcyWUZnLBBQ",
+      "name": "Gamer Meld"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCkefXKtInZ9PLsoGRtml2FQ",
+      "name": "Professor Messer"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UClq42foiSgl7sSpLupnugGA",
+      "name": "D!NG"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCDON6gq1-PrnlnaYXBpUWqA",
+      "name": "MetalBreakdown"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCUMwY9iS8oMyWDYIe6_RmoA",
+      "name": "No Boilerplate"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC-j3S3cIXZSzzCkJhJW9_eg",
+      "name": "memes from my discord"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC7trU46U_9XPDtMnDbiDPUQ",
+      "name": "FaZe Jev"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCt0dB56BASWJoYWK-RQsEwQ",
+      "name": "Hiba Tawaji"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCmp5y07YIV6i2jPX4x82hVQ",
+      "name": "Hollow"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCGi_crMdUZnrcsvkCa8pt-g",
+      "name": "Alltime10s"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCvPW1W4WlpTgNezZzwIstLA",
+      "name": "Nogla"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCpmNVGCWiCXnAoiQLk376Bg",
+      "name": "Beau Cardwell"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9Fx02lWAslFIblOD3ARLHw",
+      "name": "gnrfan010"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCurP0ZuHc7VmvJtjyHQfdLQ",
+      "name": "Adoolit"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCCKJhoBHK4Xs5zneLo5qFXg",
+      "name": "Brooklyn Fragrance Lover"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCbq8_4_mFAx_rzDF5VT7MJw",
+      "name": "BluMaan"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCuVgoagmU3hmfMwtxG9s4Sw",
+      "name": "Optimus"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCgNg3vwj3xt7QOrcIDaHdFg",
+      "name": "PolyMatter"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCUHW94eEFW7hkUMVaZz4eDg",
+      "name": "minutephysics"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCBh8XcZST_JTHt-IZDxT_pQ",
+      "name": "FLuffeeTalks"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC2Egt30phfTNZO5Yxb-sbyw",
+      "name": "ManyKudos"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC1o6smXb21IK3HV0yUcOFNg",
+      "name": "Memeulous"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC_fZLqtcURWcUPeGJATPE5Q",
+      "name": "MarleyThirteen"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC33_tIj4m1_XaqfFcomShvw",
+      "name": "BABYMETAL"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCq6VFHwMzcMXbuKyG7SQYIg",
+      "name": "penguinz0"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCQ-xy4iDP_M7h9nXFTxGnEg",
+      "name": "Modern Man TV"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCjNxszyFPasDdRoD9J6X-sw",
+      "name": "Amazing Atheist"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCOusSt853sb07AwTlqLS8Mg",
+      "name": "Baldman"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCWiY6fYdxuEe78r-0uFCnhA",
+      "name": "LongBeachGriffy"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9x0AN7BWHpCDHSm9NiJFJQ",
+      "name": "NetworkChuck"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCIUA7-MNA9NyrpimQo7Dw8g",
+      "name": "DragonForce"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC1yNl2E66ZzKApQdRuTQ4tw",
+      "name": "Sabine Hossenfelder"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCroEhhw0FYTT-UfQKwV3Ipw",
+      "name": "coreross"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCHd0iiyyLlKZFDmc76nwLJA",
+      "name": "JACORnightmare"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCeJTUiYP64xtfzpL-AagZGA",
+      "name": "Stylosa"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCHsRtomD4twRf5WVHHk-cMw",
+      "name": "TierZoo"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCLhSJ9SUOsBm2hEbw9jWA_w",
+      "name": "PWA"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UClBvjVhOm5CnVm9rmPYnryA",
+      "name": "NightcoreHeaven"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCXcriK0lfrR_ACsDDzqrPpw",
+      "name": "Drunken Peasants"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCv9X4TbvB6Eo0s7H20abg5g",
+      "name": "Tipster"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "name": "Veritasium"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCaWd5_7JhbQBe4dknZhsHJg",
+      "name": "WatchMojo.com"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC7_gcs09iThXybpVgjHZ_7g",
+      "name": "PBS Space Time"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCIed2NK-oxoOn-PxpVPsY0g",
+      "name": "Galneryus World"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCO5QSoES5yn2Dw7YixDYT5Q",
+      "name": "Aperture"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCftcLVz-jtPXoH3cWUUDwYw",
+      "name": "Bitwit"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCgFvT6pUq9HLOvKBYERzXSQ",
+      "name": "Davie504"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC1nTmkMAnR844E0jd8wYgyg",
+      "name": "GeoManDan"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCSkaG4tqNTT-Ul7X0mmzgAQ",
+      "name": "갈네슈"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCmSp4bDxS9R0jpeZEvkut2g",
+      "name": "Beluga"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCBIObHID9vYsowPtbYKVdMw",
+      "name": "Become The Knight"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCBlk8LoObTj7psqX4F3SiDw",
+      "name": "skittle-chan"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCZYTClx2T1of7BRZ86-8fow",
+      "name": "SciShow"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCKm5BWM6v5OON7yKxuPS4aA",
+      "name": "Dark Theme Meme"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC5juQx5ud-1aDnuhA-eyY2A",
+      "name": "Mark Schriever"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCa5uMMs0cVg9opJt_Kw3HLA",
+      "name": "Futurology — An Optimistic Future"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC6D3aA-TcUuZ1RPaM1h38Zw",
+      "name": "Caio Sacra"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC6nSFpj9HTCZ5t-N3Rm3-HA",
+      "name": "Vsauce"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCvS-xc6Z1Txcz7tNz7P9KSQ",
+      "name": "Franciscso"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCJRRLxOGQ6AfgQhL3cB52Sw",
+      "name": "Text2Meme"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC6ufOmw8YP39wLo6GG9zVIQ",
+      "name": "Drop Z: Spilling the Tea"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCMtFAi84ehTSYSE9XoHefig",
+      "name": "The Late Show with Stephen Colbert"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9Mbj5qhSOeiWSPaYFEhYwA",
+      "name": "Greg Builds"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCi4OVJmz4kJ4uctGDrAipzg",
+      "name": "Kona & Suba Guinea Pigs"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCni7m-nrZMlVKOlnH6vf2sw",
+      "name": "The Maniac"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC-kbQRi1a4nybvCYoiCfZ7w",
+      "name": "hecker"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCJHObTFu75LOjJcmeAU5THA",
+      "name": "Casgains Academy"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCvzDCuS_U3GCsk2JtRjuYag",
+      "name": "David Escobar"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCHfVKoser1yIrQ2E8-ik66A",
+      "name": "Gohar Morikyan"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCvYGE2K3DzELR7sdsGNvKMw",
+      "name": "Griefdrums"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC7svFEvs-K4FoRJx8sLPgNg",
+      "name": "A.MON에이먼"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCldfgbzNILYZA4dmDt4Cd6A",
+      "name": "Secular Talk"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC7YOGHUfC1Tb6E4pudI9STA",
+      "name": "Mental Outlaw"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCpincDS4WiqrHHJDiV54ErQ",
+      "name": "Possessive"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCRtsZ5Iak9wSLsQLQ3XOAeA",
+      "name": "SciManDan"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCUhjF0k10WbNf-t1244XkxA",
+      "name": "Wolfie6020"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC1yBKRuGpC1tSM73A0ZjYjQ",
+      "name": "The Young Turks"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCjTCFFq605uuq4YN4VmhkBA",
+      "name": "NCIX Tech Tips"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC0xVzfGnV_dIEff9_CmWuEw",
+      "name": "superdead"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCSDvfLZpyqbxqhnbE42_4Yg",
+      "name": "Reaper_EN"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCKqH_9mk1waLgBiL2vT5b9g",
+      "name": "VanossGaming"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC3oos2jW6LmGaJefb8c7z2g",
+      "name": "VVill"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCUdettijNYvLAm4AixZv4RA",
+      "name": "SciShow Psych"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCNIuvl7V8zACPpTmmNIqP2A",
+      "name": "OverSimplified"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCdIA_2fYSzrVDlDJgssqoKA",
+      "name": "The Senator"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCULzpwL5TRDydBF_bWfJjrw",
+      "name": "Lord Wojak"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9PO3VWOcE2DiSHUHLZs18w",
+      "name": "VarsityGaming"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC-QDtawzHDZqiNRZW_KMByg",
+      "name": "Chinese Cooking"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCyDZai57BfE_N0SaBkKQyXg",
+      "name": "Rob Scallon"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCJy232tY_LUd1NuBgsSNUEA",
+      "name": "Sir Swag"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCuSy0Z5UwvkMQ7lXRbUdOnQ",
+      "name": "Redolessence"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCpCSAcbqs-sjEVfk_hMfY9w",
+      "name": "Zach Star"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCp6L9FBwINfs1Blw6whcrnQ",
+      "name": "Unlucky Morpheus official サブチャンネル"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCef2BaME_kWV2afRpgQBnYw",
+      "name": "xt73"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCjaB8f9DEpCbd1SEgTsDYlg",
+      "name": "Farmer John"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCe-Wii9mr8gxr-4hCk8h8Vw",
+      "name": "Trivium Memes"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCKQPvkXu59Ei4nHyl83dF2g",
+      "name": "Unlucky Morpheus official"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCKQN_yJTZ_HhveYQ4sjqZoA",
+      "name": "TSArtwork"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCifDpwVLU2V8nRQE9e-X_Sg",
+      "name": "The Classic Rock Show"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCAuUUnT6oDeKwE6v1NGQxug",
+      "name": "TED"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCwWhs_6x42TyRM4Wstoq8HA",
+      "name": "The Daily Show"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC52kszkc08-acFOuogFl5jw",
+      "name": "Tibees"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCfdNM3NAhaBOXCafH7krzrA",
+      "name": "The Infographics Show"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC0zYuwJf9-i3ROZ1F30gV4w",
+      "name": "Robin James"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC2ahIEGa-f96029veIkcHQg",
+      "name": "William Baron"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCrMePiHCWG4Vwqv3t7W9EFg",
+      "name": "SciShow Space"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCPZiqlNI3RLyF47QTdq93GQ",
+      "name": "Uncovered"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCP5tjEmvPItGyLhmjdwP7Ww",
+      "name": "RealLifeLore"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCnGSKi2OQYUlbB-MNNXOdLA",
+      "name": "The Chanka"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCPZUQqtVDmcjm4NY5FkzqLA",
+      "name": "Rousseau"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCtMVHI3AJD4Qk4hcbZnI9ZQ",
+      "name": "SomeOrdinaryGamers"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCKw8kdkYfmuNSVehGoDw8Mg",
+      "name": "TYT's The Conversation"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC7BhHN8NyMMru2RUygnDXSg",
+      "name": "Sciencephile the AI"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC4UQFLK99sYuG1b8oRd5BvQ",
+      "name": "Trivium"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCk20cSRhH_ms_Yk1AZItFqA",
+      "name": "starsetonline"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCDqiSjf-Zl12TcfOjQ-PQ5g",
+      "name": "Vampslaya4"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCSju5G2aFaWMqn-_0YBtq5A",
+      "name": "Stand-up Maths"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC3VD-9m72i3Oyl19cm-GgPQ",
+      "name": "Rogue-9"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC10lecpry6dGjTPb2AZpsxg",
+      "name": "Uncle Al"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCNVZDEp68oW6PoIWPl8HRiw",
+      "name": "Raphael choi"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC6UbiyGEGkF5iuqKRsShCOg",
+      "name": "Valentina Lisitsa QOR Records Official channel"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCgEnPi7HJFPpJ3VFvhUICqA",
+      "name": "Rodrigo Schang"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCpg5Bm7Gm9QRuPtZin9j3nA",
+      "name": "TEARS OF TRAGEDY Official"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9BlQvTB0S2bXWF-w5b7Bdw",
+      "name": "Zeynalka"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCIMep4G1s2XheF2B1XI38yQ",
+      "name": "reo rio"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC7KUwdT0IH3AdB1yad0eW4A",
+      "name": "Vhaltz"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCozZmz40Oc6NYD4JtZJgO8A",
+      "name": "Xbox On"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UC9Uq5d8jk3F_DN1EvtVcJSw",
+      "name": "TDM Style"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCzWQYUVCpZqtN93H8RR44Qw",
+      "name": "Seeker"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCV5ycozwURqEYVnM8UuHC-w",
+      "name": "shidbot420"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UCIDd5lVNKs7N0V3dvm1wj2w",
+      "name": "VAP OFFICIAL MUSIC CHANNEL"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/channel/UChzpM9G921e4jAh96dWC74A",
+      "name": "x666xIronMaiden"
+    }
+  ]
+}
