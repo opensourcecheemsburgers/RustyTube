@@ -1,0 +1,19 @@
+@font-face {
+    font-family: "Comfortaa";
+    src: local(Comfortaa), url("../fonts/comfortaa.woff2");
+}
+
+@font-face {
+    font-family: "Fira Mono";
+    src: local(Fira Mono), url("../fonts/fira.woff2");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: local(Poppins), url("../fonts/poppins.woff2");
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: local(Inter), url("../fonts/opensans.woff2");
+}

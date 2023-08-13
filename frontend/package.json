@@ -3,9 +3,18 @@
     "private": true,
     "version": "0.0.0",
     "description": "",
-    "devDependencies": {},
+    "devDependencies": {
+        "@tailwindcss/aspect-ratio": "^0.4.2",
+        "@tailwindcss/typography": "^0.5.9",
+        "daisyui": "^2.50.0",
+        "internal-ip": "^7.0.0",
+        "tailwindcss": "^3.2.4"
+    },
     "dependencies": {
         "@tauri-apps/api": "^2.0.0-alpha.4",
         "@tauri-apps/cli": "^2.0.0-alpha.9"
+    },
+    "scripts": {
+        "tw": "npx tailwind -i ./css/input.css -o ./css/output.css --watch"
     }
 }
