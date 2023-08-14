@@ -105,6 +105,22 @@ impl From<gloo::file::FileReadError> for RustyTubeError {
     }
 }
 
+impl From<toml::ser::Error> for RustyTubeError {
+    fn from(toml_ser_error: toml::ser::Error) -> Self {
+        let title = String::from("Toml Serialisation Error");
+        let description = toml_ser_error.to_string();
+        Self { title, description }
+    }
+}
+
+impl From<toml::de::Error> for RustyTubeError {
+    fn from(toml_de_error: toml::de::Error) -> Self {
+        let title = String::from("Toml Serialisation Error");
+        let description = toml_de_error.to_string();
+        Self { title, description }
+    }
+}
+
 impl RustyTubeError {
     pub fn from(title: String, description: String) -> Self {        
         Self { title, description }

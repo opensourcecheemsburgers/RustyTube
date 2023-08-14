@@ -25,6 +25,8 @@ ron = "0.8.0"
 csv = "1.2.2"
 humantime = "2.1.0"
 chrono = "0.4.26"
+toml = "0.7.6"
+sponsor-block = "0.6.1"
 
 [workspace.dependencies.tauri]
 version = "1.4.1"
@@ -62,8 +64,15 @@ git = "https://github.com/opensourcecheemsburgers/tauri-sys"
 [workspace.dependencies.invidious]
 path = "shared/invidious"
 
+[workspace.dependencies.figment]
+version = "0.10.10"
+features = ["toml"]
+
 [workspace.dependencies.rustytube_error]
 path = "shared/error"
 
 [workspace.dependencies.utils]
 path = "shared/utils"
+
+[workspace.dependencies.config]
+path = "shared/config"

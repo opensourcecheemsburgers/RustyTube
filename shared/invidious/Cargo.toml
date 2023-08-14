@@ -21,6 +21,7 @@ wasm-bindgen-futures = { workspace = true }
 js-sys = { workspace = true }
 rustytube_error = { workspace = true }
 utils = { workspace = true }
+sponsor-block = { workspace = true }
 
 [dependencies.web-sys]
 workspace = true

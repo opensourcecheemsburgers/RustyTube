@@ -1,0 +1,19 @@
+[network]
+server = "https://iv.nboeck.de"
+custom_servers = ["https://iv.test.test", "https://iv.testicles.testicles", "https://iv.bollocks.bollocks"]
+auto_fetch_subs = false
+fetch_rss = false
+
+[ui]
+theme = "dracula"
+font_scale = 100
+ui_scale = 100
+
+[player]
+auto_play = true
+fast_forward_interval = 10
+default_quality = "1080p"
+remember_position = "videosOnly"
+
+[privacy]
+keep_history = true
