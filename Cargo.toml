@@ -26,15 +26,14 @@ csv = "1.2.2"
 humantime = "2.1.0"
 chrono = "0.4.26"
 toml = "0.7.6"
-sponsor-block = "0.6.1"
 
 [workspace.dependencies.tauri]
 version = "1.4.1"
 features = []
 
 [workspace.dependencies.leptos]
-version = "0.4.8"
-features = ["csr"]
+version = "0.4.6"
+features = ["csr", "nightly"]
 
 [workspace.dependencies.serde]
 version = "1.0.183"
