@@ -26,6 +26,8 @@ csv = "1.2.2"
 humantime = "2.1.0"
 chrono = "0.4.26"
 toml = "0.7.6"
+num-format = "0.4.4"
+console_error_panic_hook = "0.1.7"
 
 [workspace.dependencies.tauri]
 version = "1.4.1"
@@ -50,7 +52,8 @@ features=[
     "HtmlDivElement", "HtmlDocument", "HtmlInputElement", "HtmlLabelElement",
     "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlVideoElement", "Event", "EventTarget",
     "MouseEvent", "InputEvent", "KeyEvent", "KeyboardEvent", "KeyboardEventInit",
-    "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance", "Window"
+    "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance", "Window",
+    "MediaSource"
 ]
 
 [workspace.dependencies.gloo]

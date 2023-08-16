@@ -4,6 +4,7 @@ mod tests {
     use gloo::file::{Blob, File};
     use crate::channel::Channel;
     use crate::comments::Comments;
+    use crate::fetch::fetch;
     use crate::hidden::CountryCode;
     use crate::subs::{NewpipeSubscriptions, Subscriptions, YoutubeSubscriptions};
     use crate::universal::{Duration, Feature, Playlist, Popular, ResponseType, Search, SearchArgs, Sort, TimeSpan, Trending, LocalPlaylist, CsvPlaylist, read_playlist_csv, read_libretube_playlists, read_freetube_playlists};
@@ -18,6 +19,11 @@ mod tests {
     const TEST_REGION: CountryCode = CountryCode::IE;
 
     wasm_bindgen_test_configure!(run_in_browser);
+
+    #[wasm_bindgen_test]
+    async fn can_fetch_api_data() {
+        fetch(&format!("{}/api/v1/videos/{}", TEST_SERVER, TEST_VIDEO)).await.unwrap();
+    }
 
     #[wasm_bindgen_test]
     async fn get_video() {

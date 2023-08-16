@@ -31,7 +31,8 @@ features = [
     'RequestMode',
     'Response',
     'Window',
-    'Performance'
+    'Performance',
+    "MediaSource"
 ]
 
 [dev-dependencies]

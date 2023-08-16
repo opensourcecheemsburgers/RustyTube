@@ -3,18 +3,25 @@ name = "frontend"
 version = "0.0.0"
 edition = "2021"
 
-[dependencies]
+#[dev-dependencies]
+#console_error_panic_hook = { workspace = true }
 
+[dependencies]
 web-sys = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-cli = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
 js-sys = { workspace = true }
 gloo = { workspace = true }
+reqwasm = { workspace = true }
 
 invidious = { workspace = true }
 rustytube_error = { workspace = true }
 config = { workspace = true }
+
+num-format = { workspace = true }
+
+console_error_panic_hook = { workspace = true }
 
 [dependencies.leptos]
 workspace = true
