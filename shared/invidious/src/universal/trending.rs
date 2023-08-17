@@ -9,7 +9,6 @@ pub enum TrendingCategory {
     Default,
     Music,
     Gaming,
-    News,
     Movies
 }
 
@@ -24,8 +23,7 @@ impl Trending {
             TrendingCategory::Default => format!("{server}/api/v1/trending/?region={region}"),
             TrendingCategory::Music => format!("{server}/api/v1/trending?type=music&region={region}"),
             TrendingCategory::Gaming => format!("{server}/api/v1/trending?type=gaming&region={region}"),
-            TrendingCategory::News => format!("{server}/api/v1/trending?type=news&region={region}"),
-            TrendingCategory::Movies => format!("{server}/api/v1/trending?type=movies&region={region}")
+            TrendingCategory::Movies => format!("{server}/api/v1/trending?type=movies")
         }
     }
 

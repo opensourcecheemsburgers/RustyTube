@@ -1,5 +1,6 @@
 mod components;
 mod icons;
+mod pages;
 
 use leptos::*;
 use components::*;

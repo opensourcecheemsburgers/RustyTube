@@ -8,7 +8,7 @@ mod tests {
     use crate::hidden::CountryCode;
     use crate::subs::{NewpipeSubscriptions, Subscriptions, YoutubeSubscriptions};
     use crate::universal::{Duration, Feature, Playlist, Popular, ResponseType, Search, SearchArgs, Sort, TimeSpan, Trending, LocalPlaylist, CsvPlaylist, read_playlist_csv, read_libretube_playlists, read_freetube_playlists};
-    use crate::universal::TrendingCategory::{Default, Gaming, Movies, Music, News};
+    use crate::universal::TrendingCategory::{Default, Gaming, Movies, Music};
     use crate::video::Video;
 
     const TEST_SERVER: &'static str = "https://iv.nboeck.de";
@@ -40,7 +40,6 @@ mod tests {
         Trending::fetch_trending(TEST_SERVER, Default, TEST_REGION).await.unwrap();
         Trending::fetch_trending(TEST_SERVER, Music, TEST_REGION).await.unwrap();
         Trending::fetch_trending(TEST_SERVER, Gaming, TEST_REGION).await.unwrap();
-        Trending::fetch_trending(TEST_SERVER, News, TEST_REGION).await.unwrap();
         Trending::fetch_trending(TEST_SERVER, Movies, TEST_REGION).await.unwrap();
     }
 
