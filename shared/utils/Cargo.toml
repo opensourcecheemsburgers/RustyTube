@@ -18,7 +18,7 @@ gloo = { workspace = true }
 reqwasm = { workspace = true }
 humantime = { workspace = true }
 chrono = { workspace = true }
-rustytube_error = { workspace = true }
+rustytube-error = { workspace = true }
 
 [dependencies.web-sys]
 workspace = true

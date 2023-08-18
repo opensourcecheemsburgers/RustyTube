@@ -19,7 +19,7 @@ csv = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
 js-sys = { workspace = true }
-rustytube_error = { workspace = true }
+rustytube-error = { workspace = true }
 utils = { workspace = true }
 
 [dependencies.web-sys]

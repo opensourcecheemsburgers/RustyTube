@@ -37,6 +37,10 @@ features = []
 version = "0.4.6"
 features = ["csr", "nightly"]
 
+[workspace.dependencies.leptos_router]
+version = "0.4.6"
+features = ["csr", "nightly"]
+
 [workspace.dependencies.serde]
 version = "1.0.183"
 features = ["derive"]
@@ -70,7 +74,7 @@ path = "shared/invidious"
 version = "0.10.10"
 features = ["toml"]
 
-[workspace.dependencies.rustytube_error]
+[workspace.dependencies.rustytube-error]
 path = "shared/error"
 
 [workspace.dependencies.utils]

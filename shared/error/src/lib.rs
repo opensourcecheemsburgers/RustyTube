@@ -5,8 +5,8 @@ use gloo::storage::errors::StorageError;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RustyTubeError {
-    title: String,
-    description: String,
+    pub title: String,
+    pub description: String,
 }
 
 impl Display for RustyTubeError {

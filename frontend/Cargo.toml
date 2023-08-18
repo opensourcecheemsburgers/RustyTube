@@ -16,7 +16,7 @@ gloo = { workspace = true }
 reqwasm = { workspace = true }
 
 invidious = { workspace = true }
-rustytube_error = { workspace = true }
+rustytube-error = { workspace = true }
 config = { workspace = true }
 
 num-format = { workspace = true }
@@ -24,5 +24,9 @@ num-format = { workspace = true }
 console_error_panic_hook = { workspace = true }
 
 [dependencies.leptos]
+workspace = true
+features = ["csr", "nightly"]
+
+[dependencies.leptos_router]
 workspace = true
 features = ["csr", "nightly"]

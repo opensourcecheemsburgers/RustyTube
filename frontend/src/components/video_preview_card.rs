@@ -26,7 +26,7 @@ pub fn VideoPreviewCardInfo(cx: Scope, video: CommonVideo) -> impl IntoView {
 		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
             <h1 class=" font-sans font-semibold text-base line-clamp-2">{&video.title}</h1>
             <div class="flex flex-row flex-wrap font-normal text-sm gap-1">
-                <h2 class="cursor-pointer text-info">{&video.author}</h2>
+                <h2 class="cursor-pointer text-primary">{&video.author}</h2>
                 <p>{"•"}</p>
                 <p>{view_count} {r#" views"#}</p>
                 <p>{"•"}</p>

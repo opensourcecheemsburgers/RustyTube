@@ -6,6 +6,7 @@ mod tests {
     use crate::comments::Comments;
     use crate::fetch::fetch;
     use crate::hidden::CountryCode;
+    use crate::instance::{fetch_instance_info, Instances};
     use crate::subs::{NewpipeSubscriptions, Subscriptions, YoutubeSubscriptions};
     use crate::universal::{Duration, Feature, Playlist, Popular, ResponseType, Search, SearchArgs, Sort, TimeSpan, Trending, LocalPlaylist, CsvPlaylist, read_playlist_csv, read_libretube_playlists, read_freetube_playlists};
     use crate::universal::TrendingCategory::{Default, Gaming, Movies, Music};
@@ -23,6 +24,12 @@ mod tests {
     #[wasm_bindgen_test]
     async fn can_fetch_api_data() {
         fetch(&format!("{}/api/v1/videos/{}", TEST_SERVER, TEST_VIDEO)).await.unwrap();
+    }
+
+
+    #[wasm_bindgen_test]
+    async fn can_fetch_instance_data() {
+        fetch_instance_info().await.unwrap();
     }
 
     #[wasm_bindgen_test]
