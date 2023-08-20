@@ -22,6 +22,7 @@ config = { workspace = true }
 num-format = { workspace = true }
 
 console_error_panic_hook = { workspace = true }
+stylist = { workspace = true }
 
 [dependencies.leptos]
 workspace = true

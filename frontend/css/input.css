@@ -1,3 +1,63 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+}
+
+@layer {
+  * {
+    scrollbar-width: auto !important;
+    scrollbar-color: hsl(var(--bc)) hsl(var(--b1)) !important;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px !important;
+    cursor: grab !important;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--b1) / var(--tw-bg-opacity)) !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--bc)) !important;
+    border-radius: 6px !important;
+    border: 4px hsl(var(--bc)) solid !important;
+    background-clip: padding-box !important;
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: "Comfortaa";
+    src: local(Comfortaa), url("../fonts/comfortaa.woff2");
+  }
+
+  @font-face {
+    font-family: "Fira Mono";
+    src: local(Fira Mono), url("../fonts/fira.woff2");
+  }
+
+  @font-face {
+    font-family: "Poppins";
+    src: local(Poppins), url("../fonts/poppins.woff2");
+  }
+
+  @font-face {
+    font-family: "Open Sans";
+    src: local(Inter), url("../fonts/opensans.woff2");
+  }
+}

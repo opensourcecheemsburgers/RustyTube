@@ -5,6 +5,11 @@ use invidious::hidden::CountryCode;
 use invidious::universal::{Trending, TrendingCategory, TrendingCategory::*};
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
+use rustytube_error::RustyTubeError;
+use web_sys::ErrorEvent;
+
+use crate::components::FerrisError;
+use crate::icons::FerrisWtfIcon;
 
 #[component]
 pub fn VideoPreviewCard(cx: Scope, video: CommonVideo) -> impl IntoView {
@@ -36,37 +41,75 @@ pub fn VideoPreviewCardInfo(cx: Scope, video: CommonVideo) -> impl IntoView {
 	}
 }
 
+#[derive(Clone)]
+pub enum ThumbnailState {
+    Loading,
+    Success,
+    Error(RustyTubeError)
+}
+
 #[component]
 pub fn VideoPreviewCardThumbnail(cx: Scope, url: String) -> impl IntoView {
-	let (img_classes, set_img_classes) = create_signal(cx, "hidden w-full rounded-xl");
-	let (placeholder_classes, set_placeholder_classes) = create_signal(cx, "animate-pulse w-full aspect-w-16 aspect-h-9 bg-base-content rounded-xl");
+    use ThumbnailState::*;
 
-	let show_image = move |_| {
-		// hover:border-2 hover:border-neutral
-		set_img_classes.set("w-full rounded-xl hover:scale-110 transition duration-500");
-		set_placeholder_classes.set("hidden animate-pulse w-full aspect-w-16 aspect-h-9 bg-base-content rounded-xl")
-	};
+    let (state, set_state) = create_signal(cx, Loading);
 
 	view! {cx,
         <div class="w-full max-w-full overflow-hidden rounded-xl">
-            <div class=placeholder_classes />
-            <img src=url on:load=show_image class=img_classes/>
+            {move ||
+                match state.get() {
+                    Loading => view! { cx, <VideoPreviewCardPlaceholder set_state=set_state url=url.clone() />}.into_view(cx),
+                    Success => view! { cx, <VideoPreviewCardImage url=url.clone() /> }.into_view(cx),
+                    Error(err) => view! { cx, <VideoPreviewCardThumbnailError error=err /> }.into_view(cx)
+                }
+            }
         </div>
 	}
 }
 
 #[component]
-pub fn VideoPreviewCardPlaceholder(cx: Scope) -> impl IntoView {
+pub fn VideoPreviewCardImage(cx: Scope, url: String) -> impl IntoView {
+	view! {cx,
+        <div class="aspect-w-16 aspect-h-9">
+            <img src=url class="w-full h-full object-center object-cover bg-base-content rounded-xl"/>
+        </div>
+	}
+}
+
+#[component]
+pub fn VideoPreviewCardPlaceholder(cx: Scope, set_state: WriteSignal<ThumbnailState>, url: String) -> impl IntoView {
+    use ThumbnailState::*;
+
+    let show_img = move |_| set_state.set(Success);
+    let show_err = move |_| set_state.set(Error(RustyTubeError::fetch_thumbnail_error()));
+
 	view! {cx,
 		<div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden">
 			<div class="animate-pulse w-full aspect-w-16 aspect-h-9 bg-base-content rounded-xl" />
-			<div class="flex flex-col w-full mt-3 space-y-3 px-2">
-				<div class="animate-pulse w-full h-2 rounded-xl bg-base-content"></div>
-				<div class="animate-pulse w-full h-2 rounded-xl bg-base-content"></div>
-				<div class="animate-pulse w-[35%] h-2 rounded-xl bg-base-content"></div>
-			</div>
 		</div>
+        <img 
+            on:error=show_err
+            on:load=show_img 
+            src=url 
+            class="hidden w-full h-full object-center object-cover bg-base-content rounded-xl"
+        />
 	}
+
+}
+
+#[component]
+pub fn VideoPreviewCardThumbnailError(cx: Scope, error: RustyTubeError) -> impl IntoView {
+	view! {cx,
+        <div class="w-full h-full aspect-w-16 aspect-h-9">
+            <div class="w-full h-full flex flex-col space-y-4 p-2 text-base-content">
+                <div class="justify-self-center">
+                    <FerrisWtfIcon width=32 />
+                </div>
+                <h1 class="w-fit font-semibold text-base">{error.title}</h1>
+                <p class="w-fit font-normal text-sm font-mono">{error.description}</p>
+            </div>
+        </div>
+    }
 }
 
 #[component]

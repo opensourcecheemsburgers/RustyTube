@@ -1,5 +1,6 @@
 use std::{fmt::{Formatter, Display, self, Debug}, io, string::FromUtf8Error, ops::Range};
 use gloo::file::FileReadError;
+
 use serde::{Serialize, Deserialize};
 use gloo::storage::errors::StorageError;
 
@@ -123,6 +124,12 @@ impl From<toml::de::Error> for RustyTubeError {
 
 impl RustyTubeError {
     pub fn from(title: String, description: String) -> Self {        
+        Self { title, description }
+    }
+
+    pub fn fetch_thumbnail_error() -> Self {
+        let title = String::from("Network Error");
+        let description = String::from("Could not fetch thumbnail.");
         Self { title, description }
     }
     

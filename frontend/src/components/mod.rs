@@ -1,9 +1,10 @@
-
+mod error;
 mod page;
 mod header;
 mod tooltip;
 mod video_preview_card;
 
+pub use error::*;
 pub use page::*;
 pub use header::*;
 pub use tooltip::*;

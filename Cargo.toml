@@ -28,6 +28,7 @@ chrono = "0.4.26"
 toml = "0.7.6"
 num-format = "0.4.4"
 console_error_panic_hook = "0.1.7"
+stylist = "0.11"
 
 [workspace.dependencies.tauri]
 version = "1.4.1"

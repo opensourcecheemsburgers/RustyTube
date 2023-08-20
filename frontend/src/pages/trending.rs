@@ -5,8 +5,10 @@ use invidious::hidden::CountryCode;
 use invidious::universal::{Trending, TrendingCategory, TrendingCategory::*};
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
-use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray};
+use rustytube_error::RustyTubeError;
+use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
 use crate::ServerCtx;
+use crate::icons::FerrisWtfIcon;
 
 #[component]
 pub fn Trending(cx: Scope) -> impl IntoView {
@@ -19,7 +21,7 @@ pub fn Trending(cx: Scope) -> impl IntoView {
                 {"Trending"}
                 </h1>
                 <TrendingHeader category=category.write_only() />
-                <TrendingVideos category=category.read_only()/>
+                <TrendingVideos category=category.read_only() />
             </div>
         </div>
     }
@@ -60,21 +62,30 @@ pub fn TrendingVideos(cx: Scope, category: ReadSignal<TrendingCategory>) -> impl
                     Some(result) => match result {
                         Ok(trending) => {
                             view! {cx,
-                            <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-1rem-128px)] pb-12 overflow-y-scroll">
-                                {
-                                    trending.videos.into_iter().map(|trending_video| view!
-                                        { cx,
-                                            <VideoPreviewCard video={trending_video} />
+                                    <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-1rem-128px)] pb-12 overflow-y-auto">
+                                        {
+                                            trending.videos.into_iter().map(|trending_video| view!
+                                                { cx,
+                                                    <VideoPreviewCard video={trending_video} />
+                                                }
+                                            ).collect_view(cx)
                                         }
-                                    ).collect_view(cx)
-                                }
-                            </div>
+                                    </div>
                             }.into_view(cx)
                         },
-                        Err(err) => view! {cx, <div class="text-2xl font-mono">{err.description}</div>}.into_view(cx)
+                        Err(err) => view! {cx, <TrendingError err=err/>}.into_view(cx)
                     },
                     None => view! {cx, <VideoPreviewCardPlaceholderArray />}
                 }
-        }
+            }
+    }
+}
+
+#[component]
+pub fn TrendingError(cx: Scope, err: RustyTubeError) -> impl IntoView {
+    view! {cx,
+        <div class="h-[calc(100vh-64px-1rem-128px)]">
+            <FerrisError error=err width=96 />
+        </div>
     }
 }

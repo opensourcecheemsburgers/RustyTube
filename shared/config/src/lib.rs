@@ -55,7 +55,7 @@ pub enum RememberPosition {
 
 impl Default for NetworkConfig {
     fn default() -> Self {
-        let server = String::from("https://iv.nboeck.de");
+        let server = String::from("https://adminforge.de");
         let custom_servers = None;
         let auto_fetch_subs = true;
         let fetch_rss = false;
