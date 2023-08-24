@@ -1,0 +1,39 @@
+[
+    {
+      "init": "0-738",
+      "index": "739-15746",
+      "bitrate": "111270",
+      "url": "https://rr4---sn-5go7yner.googlevideo.com/videoplayback?expire=1693541838&ei=bhHxZKjRIJW5v_IPh8iKsAI&ip=65.109.167.97&id=o-ACIi13fZqWOWamYctLpfQUZJdbh-DjG4eWKNZh5yP5Rz&itag=160&source=youtube&requiressl=yes&mh=2S&mm=31%2C26&mn=sn-5go7yner%2Csn-f5f7lne6&ms=au%2Conr&mv=u&mvi=4&pl=27&spc=UWF9fw2UNzrvXizKCuytXrt6urIogWY&vprv=1&svpuc=1&mime=video%2Fmp4&gir=yes&clen=21554461&dur=5890.466&lmt=1692478468525982&mt=1693519957&fvip=2&keepalive=yes&fexp=24007246%2C24363393&beids=24350017&c=ANDROID&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRAIhAOnchqxa4lcuHhy54vStfH9wZ1NHLSiH0jftN-Xtw0rjAh9n2531oiY1JYqHwsCk76IXQ4Kfyj1ehS_u9nhI1pon&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl&lsig=AG3C_xAwRQIhAKg6FNet4TCYmPLMOhET2pERMKPFo-UXTrVUrwyEl_nHAiBTXwO2GXKSpV12FzntaVQxoXMcOjF3LAGAs73J9uubGw%3D%3D&host=rr4---sn-5go7yner.googlevideo.com",
+      "itag": "160",
+      "type": "video/mp4; codecs=\"avc1.4d400c\"",
+      "clen": "21554461",
+      "lmt": "1692478468525982",
+      "projectionType": "RECTANGULAR",
+      "fps": 30,
+      "container": "mp4",
+      "encoding": "h264",
+      "resolution": "144p",
+      "qualityLabel": "144p"
+    },
+    {
+      "init": "0-218",
+      "index": "219-22218",
+      "bitrate": "114757",
+      "url": "https://rr4---sn-5go7yner.googlevideo.com/videoplayback?expire=1693541838&ei=bhHxZKjRIJW5v_IPh8iKsAI&ip=65.109.167.97&id=o-ACIi13fZqWOWamYctLpfQUZJdbh-DjG4eWKNZh5yP5Rz&itag=278&source=youtube&requiressl=yes&mh=2S&mm=31%2C26&mn=sn-5go7yner%2Csn-f5f7lne6&ms=au%2Conr&mv=u&mvi=4&pl=27&spc=UWF9fw2UNzrvXizKCuytXrt6urIogWY&vprv=1&svpuc=1&mime=video%2Fwebm&gir=yes&clen=46666551&dur=5890.467&lmt=1692507873480270&mt=1693519957&fvip=2&keepalive=yes&fexp=24007246%2C24363393&beids=24350017&c=ANDROID&txp=5537434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRgIhANFDS7jxagG3Hb8Jxi7lhUNrs3TCjFprLmOVX83OAXw6AiEA9r2zKdxDmpMwjnOMMupVpu6_aaCCKJbE-lVE35qSSwM%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl&lsig=AG3C_xAwRQIhAKg6FNet4TCYmPLMOhET2pERMKPFo-UXTrVUrwyEl_nHAiBTXwO2GXKSpV12FzntaVQxoXMcOjF3LAGAs73J9uubGw%3D%3D&host=rr4---sn-5go7yner.googlevideo.com",
+      "itag": "278",
+      "type": "video/webm; codecs=\"vp9\"",
+      "clen": "46666551",
+      "lmt": "1692507873480270",
+      "projectionType": "RECTANGULAR",
+      "fps": 30,
+      "container": "webm",
+      "encoding": "vp9",
+      "resolution": "144p",
+      "qualityLabel": "144p",
+      "colorInfo": {
+        "primaries": "COLOR_PRIMARIES_BT709",
+        "transferCharacteristics": "COLOR_TRANSFER_CHARACTERISTICS_BT709",
+        "matrixCoefficients": "COLOR_MATRIX_COEFFICIENTS_BT709"
+      }
+    }
+]

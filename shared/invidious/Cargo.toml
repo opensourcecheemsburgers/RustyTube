@@ -12,8 +12,6 @@ edition.workspace = true
 gloo = { workspace = true }
 reqwasm = { workspace = true }
 
-serde = { workspace = true }
-serde_json = { workspace = true }
 csv = { workspace = true }
 
 wasm-bindgen = { workspace = true }
@@ -35,6 +33,13 @@ features = [
     "MediaSource"
 ]
 
+[dependencies.serde]
+workspace = true
+features = ["derive"]
+
+[dependencies.serde_json]
+workspace = true
+
 [dev-dependencies]
 wasm-bindgen-test = { workspace = true }
 wasm-bindgen-cli = { workspace = true }
@@ -44,12 +49,3 @@ js-sys = { workspace = true }
 
 [dev-dependencies.web-sys]
 workspace = true
-features=[
-    "HtmlVideoElement", "HtmlMediaElement"
-#    "DataTransfer", "Element", "Navigator", "HtmlAnchorElement",
-#    "HtmlButtonElement", "HtmlDialogElement", "Navigator", "Clipboard",
-#    "HtmlDivElement", "HtmlDocument", "HtmlInputElement", "HtmlLabelElement",
-#    "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlVideoElement", "Event", "EventTarget",
-#    "MouseEvent", "InputEvent", "KeyEvent", "KeyboardEvent", "KeyboardEventInit",
-#    "TouchEvent", "TouchList", "Touch", "DomTokenList"
-]

@@ -2,6 +2,7 @@ use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use crate::fetch::fetch;
 use crate::{hidden::*, common::*};
+use crate::formats::{AdaptiveFormat, LegacyFormat, QualityLabel};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Video {
@@ -66,7 +67,7 @@ pub struct Video {
     #[serde(rename = "adaptiveFormats")]
     pub adaptive_formats: Vec<AdaptiveFormat>,
     #[serde(rename = "formatStreams")]
-    pub format_streams: Vec<FormatStream>,
+    pub format_streams: Vec<LegacyFormat>,
 
     pub captions: Vec<Caption>,
 
@@ -79,15 +80,11 @@ impl Video {
         format!("{server}/api/v1/videos/{id}")
     }
 
-    pub async fn fetch_video(server: &str, id: &str, args: Option<&str>) -> Result<Self, RustyTubeError> {
+    pub async fn fetch_video(server: &str, id: &str) -> Result<Self, RustyTubeError> {
         let video_url: String = Self::url(server, id);
         let video_json: String = fetch(&video_url).await?;
         let video: Self = serde_json::from_str(&video_json)?;
         Ok(video)
-    }
-
-    pub fn video_link(&self, server: &str) -> String {
-        format!("{}/latest_version?id={}", server, &self.id)
     }
 }
 

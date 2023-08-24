@@ -43,7 +43,7 @@ version = "0.4.6"
 features = ["csr", "nightly"]
 
 [workspace.dependencies.serde]
-version = "1.0.183"
+version = "1.0.188"
 features = ["derive"]
 
 [workspace.dependencies.serde_json]
@@ -52,12 +52,13 @@ version = "1.0.105"
 [workspace.dependencies.web-sys]
 version = "0.3.64"
 features=[
+    "AudioTrack", "AudioTrackList", "MediaSource", "MediaSourceReadyState", "SourceBufferList", "SourceBuffer",
     "DataTransfer", "Element", "Navigator", "HtmlAnchorElement",
     "HtmlButtonElement", "HtmlDialogElement", "Navigator", "Clipboard",
     "HtmlDivElement", "HtmlDocument", "HtmlInputElement", "HtmlLabelElement",
-    "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlVideoElement", "Event", "EventTarget",
+    "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlAudioElement", "HtmlMediaElement", "HtmlVideoElement", "Event", "EventTarget",
     "MouseEvent", "InputEvent", "KeyEvent", "KeyboardEvent", "KeyboardEventInit",
-    "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance", "Window",
+    "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance", "Window", "ProgressEvent",
     "MediaSource"
 ]
 

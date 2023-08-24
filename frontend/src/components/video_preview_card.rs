@@ -1,14 +1,8 @@
-use config::Config;
-use invidious::channel::Channel;
 use invidious::common::CommonVideo;
-use invidious::hidden::CountryCode;
-use invidious::universal::{Trending, TrendingCategory, TrendingCategory::*};
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
 use rustytube_error::RustyTubeError;
-use web_sys::ErrorEvent;
 
-use crate::components::FerrisError;
 use crate::icons::FerrisWtfIcon;
 
 #[component]
@@ -84,8 +78,8 @@ pub fn VideoPreviewCardPlaceholder(cx: Scope, set_state: WriteSignal<ThumbnailSt
     let show_err = move |_| set_state.set(Error(RustyTubeError::fetch_thumbnail_error()));
 
 	view! {cx,
-		<div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden">
-			<div class="animate-pulse w-full aspect-w-16 aspect-h-9 bg-base-content rounded-xl" />
+		<div class="basis-1/3 lg:basis-1/4 flex flex-col px-4 w-full h-full aspect-w-16 aspect-h-9 overflow-hidden">
+			<div class="animate-pulse w-full h-full bg-base-content rounded-xl" />
 		</div>
         <img 
             on:error=show_err

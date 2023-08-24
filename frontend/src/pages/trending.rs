@@ -1,14 +1,10 @@
-use config::Config;
-use invidious::channel::Channel;
-use invidious::common::CommonVideo;
 use invidious::hidden::CountryCode;
 use invidious::universal::{Trending, TrendingCategory, TrendingCategory::*};
 use leptos::*;
-use num_format::{Locale, ToFormattedString};
 use rustytube_error::RustyTubeError;
-use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
+
 use crate::ServerCtx;
-use crate::icons::FerrisWtfIcon;
+use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
 
 #[component]
 pub fn Trending(cx: Scope) -> impl IntoView {

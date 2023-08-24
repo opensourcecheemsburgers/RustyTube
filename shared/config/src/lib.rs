@@ -1,10 +1,9 @@
 mod tests;
 
+
 use serde::{Deserialize, Serialize};
-use figment::{Figment, providers::{Format, Serialized, Toml}};
 use gloo::storage::{LocalStorage, Storage};
-use invidious::hidden::Quality;
-use invidious::hidden::Quality::_1080p;
+use invidious::formats::QualityLabel;
 use rustytube_error::RustyTubeError;
 use utils::save_to_browser_storage;
 use crate::RememberPosition::VideosOnly;
@@ -28,7 +27,7 @@ pub struct UiConfig {
 pub struct PlayerConfig {
     pub auto_play: bool,
     pub fast_forward_interval: u8,
-    pub default_quality: Quality,
+    pub default_quality: QualityLabel,
     pub remember_position: RememberPosition,
 }
 
@@ -55,7 +54,7 @@ pub enum RememberPosition {
 
 impl Default for NetworkConfig {
     fn default() -> Self {
-        let server = String::from("https://adminforge.de");
+        let server = String::from("https://invidious.fdn.fr");
         let custom_servers = None;
         let auto_fetch_subs = true;
         let fetch_rss = false;
@@ -78,7 +77,7 @@ impl Default for PlayerConfig {
     fn default() -> Self {
         let auto_play = true;
         let fast_forward_interval = 10u8;
-        let default_quality = _1080p;
+        let default_quality = QualityLabel::_1080p;
         let remember_position = VideosOnly;
 
         Self { auto_play, fast_forward_interval, default_quality, remember_position }

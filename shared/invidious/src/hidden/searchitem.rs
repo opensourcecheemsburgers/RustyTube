@@ -5,7 +5,7 @@ use crate::common::{CommonChannel, CommonPlaylist, CommonVideo};
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum SearchItem {
-    #[serde(rename = "video")]
+    #[serde(rename = "player")]
     Video(CommonVideo),
     #[serde(rename = "playlist")]
     Playlist(CommonPlaylist),

@@ -1,9 +1,7 @@
-use crate::{ServerCtx, ThemeCtx};
-use config::Config;
-use invidious::instance::{Instance, Instances, InstanceInfo, fetch_instance_info};
+use invidious::instance::{Instance, InstanceInfo, fetch_instance_info};
 use leptos::*;
-use web_sys::MouseEvent;
-// use crate::ThemeCtx;
+
+use crate::{ServerCtx, ThemeCtx};
 use crate::components::{Tooltip, TooltipPosition};
 use crate::icons::{PaletteIcon, ServerIcon};
 use crate::icons::{FerrisIcon, HamburgerIcon};
@@ -19,8 +17,7 @@ pub fn Header(cx: Scope) -> impl IntoView {
                 <div class="lg:flex lg:flex-1 lg:ml-4 hidden">
                     <a class="btn btn-ghost normal-case text-2xl font-display font-bold tracking-wide">
                         <FerrisIcon />
-                        <p class="ml-2">Rusty</p>
-                        <p>Tube</p>
+                        <p class="ml-2">RustyTube</p>
                     </a>
                 </div>
             </div>

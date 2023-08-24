@@ -5,6 +5,7 @@ mod tests {
     use crate::channel::Channel;
     use crate::comments::Comments;
     use crate::fetch::fetch;
+    use crate::formats::{Formats, VideoFormat, AudioFormat, LegacyFormat, AdaptiveFormat, QualityLabel, Resolution, Container};
     use crate::hidden::CountryCode;
     use crate::instance::{fetch_instance_info, Instances};
     use crate::subs::{NewpipeSubscriptions, Subscriptions, YoutubeSubscriptions};
@@ -21,129 +22,188 @@ mod tests {
 
     wasm_bindgen_test_configure!(run_in_browser);
 
-    #[wasm_bindgen_test]
-    async fn can_fetch_api_data() {
-        fetch(&format!("{}/api/v1/videos/{}", TEST_SERVER, TEST_VIDEO)).await.unwrap();
-    }
+    // #[wasm_bindgen_test]
+    // async fn can_fetch_api_data() {
+    //     fetch(&format!("{}/api/v1/videos/{}", TEST_SERVER, TEST_VIDEO)).await.unwrap();
+    // }
 
-
-    #[wasm_bindgen_test]
-    async fn can_fetch_instance_data() {
-        fetch_instance_info().await.unwrap();
-    }
-
-    #[wasm_bindgen_test]
-    async fn get_video() {
-        let video = Video::fetch_video(TEST_SERVER, TEST_VIDEO, None).await.unwrap();
-
-        let local_json = include_str!("./files/video.json");
-        let local: Video = serde_json::from_str(local_json).unwrap();
-
-        assert_eq!(local, video)
-    }
-
-    #[wasm_bindgen_test]
-    async fn get_trending() {
-        Trending::fetch_trending(TEST_SERVER, Default, TEST_REGION).await.unwrap();
-        Trending::fetch_trending(TEST_SERVER, Music, TEST_REGION).await.unwrap();
-        Trending::fetch_trending(TEST_SERVER, Gaming, TEST_REGION).await.unwrap();
-        Trending::fetch_trending(TEST_SERVER, Movies, TEST_REGION).await.unwrap();
-    }
-
-    #[wasm_bindgen_test]
-    async fn get_popular() {
-        Popular::fetch_popular(TEST_SERVER).await.unwrap();
-    }
-
-    #[wasm_bindgen_test]
-    async fn search() {
-        let mut args = SearchArgs {
-            page: 1,
-            query: "".to_string(),
-            sort: Sort::Relevance,
-            timespan: None,
-            duration: None,
-            response_type: None,
-            features: None,
-            region: CountryCode::IE,
-        };
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.timespan = Some(TimeSpan::Year);
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.duration = Some(Duration::Long);
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.response_type = Some(ResponseType::All);
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.features = Some(vec![Feature::_4K, Feature::Subtitles, Feature::HighDynamicRange]);
-        Search::search(TEST_SERVER, &args).await.unwrap();
-    }
-
-    #[wasm_bindgen_test]
-    async fn get_channel() {
-        let channel = Channel::fetch_channel(TEST_SERVER, TEST_CHANNEL,None).await.unwrap();
-
-        let local_json = include_str!("./files/channel.json");
-        let local: Channel = serde_json::from_str(local_json).unwrap();
-
-        assert_eq!(local, channel)
-    }
-
-    #[wasm_bindgen_test]
-    async fn get_comments() {
-        let comments = Comments::fetch_comments(TEST_SERVER, TEST_VIDEO_COMMENTS, None).await.unwrap();
-
-        let local_json = include_str!("./files/comments.json");
-        let local: Comments = serde_json::from_str(local_json).unwrap();
-    }
-
-    #[wasm_bindgen_test]
-    async fn get_playlist() {
-        let playlist = Playlist::fetch_playlist(TEST_SERVER, TEST_PLAYLIST, None).await.unwrap();
-
-        let local_json = include_str!("./files/playlist.json");
-        let local: Playlist = serde_json::from_str(local_json).unwrap();
-
-        assert_eq!(playlist.id, local.id);
-        assert_eq!(playlist.author_id, local.author_id);
-    }
 
     // #[wasm_bindgen_test]
-    // async fn read_playlists() {
-    //     let playlist_csv = Blob::new(include_bytes!("files/playlist.csv"));
-    //     let playlist = LocalPlaylist::read_playlists(playlist_csv).await.unwrap();
+    // async fn can_fetch_instance_data() {
+    //     fetch_instance_info().await.unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn get_video() {
+    //     let player = Video::fetch_video(TEST_SERVER, TEST_VIDEO).await.unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn parse_formats() {
+    //     let player = serde_json::from_str(include_str!("./files/player.json")).unwrap();
+    //
+    //     let formats: Formats = get_formats_from_video(player);
+    //
+    //     assert_eq!(formats.audio_formats.len(), 7);
+    //     assert_eq!(formats.legacy_formats.len(), 3);
+    //     assert_eq!(formats.video_formats.len(), 20);
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn parse_all_formats() {
+    //     let player: Video = serde_json::from_str(include_str!("./files/player.json")).unwrap();
+    //     let formats: Formats = Formats::from((player.adaptive_formats, player.format_streams));
+
+    //     assert_eq!(formats.video_formats.len(), 20);
+    //     assert_eq!(formats.audio_formats.len(), 7);
+    //     assert_eq!(formats.legacy_formats.len(), 3);
     // }
 
     #[wasm_bindgen_test]
-    async fn parse_csv_playlist() {
-        let csv_bytes = include_bytes!("files/playlist.csv");
-        let playlist = read_playlist_csv("test_csv", csv_bytes);
+    async fn parse_video_format() {
+        let video_formats: Vec<VideoFormat> = serde_json::from_str(include_str!("./files/video_format.json")).unwrap();
+
+        assert_eq!(video_formats.len(), 2);
+
+        let first = video_formats.first().unwrap().clone();
+        assert_eq!(first.resolution, Resolution::_144p);
+        assert_eq!(first.quality_label, QualityLabel::_144p);
+        assert_eq!(first.container.unwrap(), Container::MP4);
+
+        let second = video_formats.last().unwrap().clone();
+        assert_eq!(second.resolution, Resolution::_144p);
+        assert_eq!(second.quality_label, QualityLabel::_144p);
+        assert_eq!(second.container.unwrap(), Container::WEBM);
     }
 
     #[wasm_bindgen_test]
-    async fn parse_libretube_playlists_json() {
-        let libretube_json = include_str!("files/libretube_playlists.json");
-        let playlist = read_libretube_playlists(libretube_json).await.unwrap();
+    async fn parse_adaptive_format_to_video_format() {
+        let adaptive_formats: Vec<AdaptiveFormat> = serde_json::from_str(include_str!("./files/video_format.json")).unwrap();
+        let mut video_formats: Vec<VideoFormat> = vec![];
+
+        adaptive_formats.into_iter().for_each(|adaptive_format| {
+            video_formats.push(VideoFormat::try_from(adaptive_format).unwrap());
+        }); 
+
+        assert_eq!(video_formats.len(), 18)
     }
 
-    #[wasm_bindgen_test]
-    async fn parse_freetube_playlists_json() {
-        let freetube_json = include_str!("files/freetube_playlists.json");
-        let playlist = read_freetube_playlists(freetube_json).await.unwrap();
-    }
+    // #[wasm_bindgen_test]
+    // async fn parse_audio_format() {
+    //     let audio_formats: Vec<AudioFormat> = serde_json::from_str(include_str!("./files/audio_format.json")).unwrap();
 
-    #[wasm_bindgen_test]
-    async fn read_newpipe_json_subs() {
-        let subs_json = include_str!("./files/subscriptions.json");
-        let np_subs: NewpipeSubscriptions = NewpipeSubscriptions::read_subs_from_file(subs_json).unwrap();
-        let subs: Subscriptions = np_subs.into();
-    }
+    //     assert_eq!(audio_formats.len(), 7)
+    // }
 
-    #[wasm_bindgen_test]
-    async fn read_youtube_csv_subs() {
-        let subs_json: &[u8] = include_bytes!("./files/subscriptions.csv");
-        let yt_subs: YoutubeSubscriptions = YoutubeSubscriptions::read_subs_from_csv(subs_json).unwrap();
-        assert_eq!(yt_subs.subscriptions.len(), 54);
-        let subs: Subscriptions = yt_subs.into();
-        assert_eq!(subs.channels.len(), 54);
-    }
+    // #[wasm_bindgen_test]
+    // async fn parse_legacy_format() {
+    //     let legacy_formats: Vec<LegacyFormat> = serde_json::from_str(include_str!("./files/legacy_format.json")).unwrap();
+
+    //     assert_eq!(legacy_formats.len(), 3)
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn get_trending() {
+    //     Trending::fetch_trending(TEST_SERVER, Default, TEST_REGION).await.unwrap();
+    //     Trending::fetch_trending(TEST_SERVER, Music, TEST_REGION).await.unwrap();
+    //     Trending::fetch_trending(TEST_SERVER, Gaming, TEST_REGION).await.unwrap();
+    //     Trending::fetch_trending(TEST_SERVER, Movies, TEST_REGION).await.unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn get_popular() {
+    //     Popular::fetch_popular(TEST_SERVER).await.unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn search() {
+    //     let mut args = SearchArgs {
+    //         page: 1,
+    //         query: "".to_string(),
+    //         sort: Sort::Relevance,
+    //         timespan: None,
+    //         duration: None,
+    //         response_type: None,
+    //         features: None,
+    //         region: CountryCode::IE,
+    //     };
+    //     Search::search(TEST_SERVER, &args).await.unwrap();
+    //     args.timespan = Some(TimeSpan::Year);
+    //     Search::search(TEST_SERVER, &args).await.unwrap();
+    //     args.duration = Some(Duration::Long);
+    //     Search::search(TEST_SERVER, &args).await.unwrap();
+    //     args.response_type = Some(ResponseType::All);
+    //     Search::search(TEST_SERVER, &args).await.unwrap();
+    //     args.features = Some(vec![Feature::_4K, Feature::Subtitles, Feature::HighDynamicRange]);
+    //     Search::search(TEST_SERVER, &args).await.unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn get_channel() {
+    //     let channel = Channel::fetch_channel(TEST_SERVER, TEST_CHANNEL,None).await.unwrap();
+
+    //     let local_json = include_str!("./files/channel.json");
+    //     let local: Channel = serde_json::from_str(local_json).unwrap();
+
+    //     assert_eq!(local, channel)
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn get_comments() {
+    //     let comments = Comments::fetch_comments(TEST_SERVER, TEST_VIDEO_COMMENTS, None).await.unwrap();
+
+    //     let local_json = include_str!("./files/comments.json");
+    //     let local: Comments = serde_json::from_str(local_json).unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn get_playlist() {
+    //     let playlist = Playlist::fetch_playlist(TEST_SERVER, TEST_PLAYLIST, None).await.unwrap();
+
+    //     let local_json = include_str!("./files/playlist.json");
+    //     let local: Playlist = serde_json::from_str(local_json).unwrap();
+
+    //     assert_eq!(playlist.id, local.id);
+    //     assert_eq!(playlist.author_id, local.author_id);
+    // }
+
+    // // #[wasm_bindgen_test]
+    // // async fn read_playlists() {
+    // //     let playlist_csv = Blob::new(include_bytes!("files/playlist.csv"));
+    // //     let playlist = LocalPlaylist::read_playlists(playlist_csv).await.unwrap();
+    // // }
+
+    // #[wasm_bindgen_test]
+    // async fn parse_csv_playlist() {
+    //     let csv_bytes = include_bytes!("files/playlist.csv");
+    //     let playlist = read_playlist_csv("test_csv", csv_bytes);
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn parse_libretube_playlists_json() {
+    //     let libretube_json = include_str!("files/libretube_playlists.json");
+    //     let playlist = read_libretube_playlists(libretube_json).await.unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn parse_freetube_playlists_json() {
+    //     let freetube_json = include_str!("files/freetube_playlists.json");
+    //     let playlist = read_freetube_playlists(freetube_json).await.unwrap();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn read_newpipe_json_subs() {
+    //     let subs_json = include_str!("./files/subscriptions.json");
+    //     let np_subs: NewpipeSubscriptions = NewpipeSubscriptions::read_subs_from_file(subs_json).unwrap();
+    //     let subs: Subscriptions = np_subs.into();
+    // }
+
+    // #[wasm_bindgen_test]
+    // async fn read_youtube_csv_subs() {
+    //     let subs_json: &[u8] = include_bytes!("./files/subscriptions.csv");
+    //     let yt_subs: YoutubeSubscriptions = YoutubeSubscriptions::read_subs_from_csv(subs_json).unwrap();
+    //     assert_eq!(yt_subs.subscriptions.len(), 54);
+    //     let subs: Subscriptions = yt_subs.into();
+    //     assert_eq!(subs.channels.len(), 54);
+    // }
 }

@@ -144,4 +144,22 @@ impl RustyTubeError {
         let description = String::from("Unable to parse playlist(s) from chosen file.");
         Self { title, description }
     }
+
+    pub fn format_parse() -> Self {
+        let title = String::from("Format Parse Error");
+        let description = String::from("Unable to parse format.");
+        Self { title, description }
+    }
+
+    pub fn no_dash_format_available() -> Self {
+        let title = String::from("Playlist Error");
+        let description = String::from("Unable to parse playlist(s) from chosen file.");
+        Self { title, description }
+    }
+
+    pub fn no_container_info(name: &str) -> Self {
+        let title = String::from("Container Info Error");
+        let description = format!("Unable to parse container info on format: {}", name);
+        Self { title, description }
+    }
 }

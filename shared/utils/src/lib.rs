@@ -1,6 +1,6 @@
 mod utils {
-    use std::{time::Duration, collections::HashMap};
-    use chrono::Utc;
+    use std::{collections::HashMap};
+    use chrono::{Utc, Duration};
     use gloo::storage::{LocalStorage, Storage};
     use humantime::format_duration;
     use serde_json::Value;
@@ -16,6 +16,18 @@ mod utils {
         Ok(storage)
     }
 
+    pub fn ms_to_hours_secs_mins(ms: f64) -> String {
+        let duration = std::time::Duration::from_secs_f64(ms);
+        let seconds = duration.as_secs() % 60;
+        let minutes = (duration.as_secs() / 60) % 60;
+        let hours = (duration.as_secs() / 60) / 60;
+
+        match hours > 0 {
+            true => format!("{:0>1}:{:0>1}:{:0>2}", hours, minutes, seconds),
+            false => format!("{:0>1}:{:0>2}", minutes, seconds),
+        }
+    }
+
     pub fn get_time_since(time: u64) -> String {
         let window = web_sys::window().expect("should have a window in this context");
         let performance = window.performance().expect("performance should be available");
@@ -24,7 +36,7 @@ mod utils {
         let current_time = (current_perf as u64) / 1_000;
         let diff = current_time - time;
         
-        let diff_duration = Duration::from_millis(diff);
+        let diff_duration = std::time::Duration::from_millis(diff);
         format_duration(diff_duration).to_string()
     }
 

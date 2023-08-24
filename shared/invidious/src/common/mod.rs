@@ -24,7 +24,7 @@ pub struct CommonThumbnail {
 // https://docs.invidious.io/api/common_types/#videoobject
 
 /// Shared image object as specified in https://docs.invidious.io/api/common_types/
-/// Shared video object as specified in https://docs.invidious.io/api/common_types/
+/// Shared player object as specified in https://docs.invidious.io/api/common_types/
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct CommonVideo {
     pub title: String,
@@ -118,7 +118,7 @@ pub struct CommonPlaylist {
     videos: Vec<CommonPlaylistVideo>,
 }
 
-/// Playlist video struct used in CommonPlaylist
+/// Playlist player struct used in CommonPlaylist
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CommonPlaylistVideo {
     title: String,
