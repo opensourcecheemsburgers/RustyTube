@@ -3,8 +3,8 @@ use invidious::universal::{Trending, TrendingCategory, TrendingCategory::*};
 use leptos::*;
 use rustytube_error::RustyTubeError;
 
-use crate::ServerCtx;
 use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
+use crate::contexts::ServerCtx;
 
 #[component]
 pub fn Trending(cx: Scope) -> impl IntoView {

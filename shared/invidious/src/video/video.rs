@@ -2,7 +2,7 @@ use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use crate::fetch::fetch;
 use crate::{hidden::*, common::*};
-use crate::formats::{AdaptiveFormat, LegacyFormat, QualityLabel};
+use crate::formats::{AdaptiveFormat, LegacyFormat};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Video {

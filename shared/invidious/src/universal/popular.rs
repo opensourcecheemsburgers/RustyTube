@@ -1,5 +1,4 @@
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use serde_json::Value;
+use serde::{Deserialize, Serialize};
 use rustytube_error::RustyTubeError;
 use crate::fetch::fetch;
 use crate::hidden::PopularItem;

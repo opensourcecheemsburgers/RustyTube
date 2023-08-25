@@ -1,7 +1,7 @@
 use crate::{common::*, hidden::*};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use web_sys::RequestCache;
+
 use crate::fetch::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

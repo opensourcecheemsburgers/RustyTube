@@ -1,8 +1,8 @@
 use invidious::instance::{Instance, InstanceInfo, fetch_instance_info};
 use leptos::*;
 
-use crate::{ServerCtx, ThemeCtx};
 use crate::components::{Tooltip, TooltipPosition};
+use crate::contexts::{ThemeCtx, ServerCtx};
 use crate::icons::{PaletteIcon, ServerIcon};
 use crate::icons::{FerrisIcon, HamburgerIcon};
 

@@ -35,14 +35,14 @@ mod tests {
 
     // #[wasm_bindgen_test]
     // async fn get_video() {
-    //     let player = Video::fetch_video(TEST_SERVER, TEST_VIDEO).await.unwrap();
+    //     let video = Video::fetch_video(TEST_SERVER, TEST_VIDEO).await.unwrap();
     // }
 
     // #[wasm_bindgen_test]
     // async fn parse_formats() {
-    //     let player = serde_json::from_str(include_str!("./files/player.json")).unwrap();
+    //     let video = serde_json::from_str(include_str!("./files/video.json")).unwrap();
     //
-    //     let formats: Formats = get_formats_from_video(player);
+    //     let formats: Formats = get_formats_from_video(video);
     //
     //     assert_eq!(formats.audio_formats.len(), 7);
     //     assert_eq!(formats.legacy_formats.len(), 3);
@@ -51,8 +51,8 @@ mod tests {
 
     // #[wasm_bindgen_test]
     // async fn parse_all_formats() {
-    //     let player: Video = serde_json::from_str(include_str!("./files/player.json")).unwrap();
-    //     let formats: Formats = Formats::from((player.adaptive_formats, player.format_streams));
+    //     let video: Video = serde_json::from_str(include_str!("./files/video.json")).unwrap();
+    //     let formats: Formats = Formats::from((video.adaptive_formats, video.format_streams));
 
     //     assert_eq!(formats.video_formats.len(), 20);
     //     assert_eq!(formats.audio_formats.len(), 7);

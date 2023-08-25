@@ -1,6 +1,6 @@
 use leptos::*;
 
-use crate::ThemeCtx;
+use crate::contexts::ThemeCtx;
 
 #[component]
 pub fn Page(cx: Scope, children: Children) -> impl IntoView {

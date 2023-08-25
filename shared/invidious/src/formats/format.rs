@@ -1,9 +1,9 @@
 use crate::formats::audio::AudioFormat;
 use crate::formats::legacy::LegacyFormat;
 use crate::formats::video::VideoFormat;
-use crate::video::Video;
 
-use super::{Container, AdaptiveFormat};
+
+use super::{AdaptiveFormat};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Formats {

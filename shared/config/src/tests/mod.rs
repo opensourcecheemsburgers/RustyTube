@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod tests {
     use std::fs;
-    use std::path::Path;
     use crate::{Config, NetworkConfig};
     use std::env::current_dir;
 

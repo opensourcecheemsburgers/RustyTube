@@ -1,10 +1,8 @@
-use std::io::Read;
-use csv::Reader;
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use gloo::file::Blob;
 use gloo::file::futures::{read_as_bytes, read_as_text};
-use serde_json::json;
+
 use utils::{save_to_browser_storage, load_all_from_browser_storage, get_current_time_rfc};
 use crate::universal::playlists::freetube::read_freetube_playlists;
 use crate::universal::playlists::libretube::read_libretube_playlists;

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use rustytube_error::RustyTubeError;
-use utils::{get_current_time, get_current_time_rfc};
+use utils::{get_current_time};
 use crate::universal::{LOCAL_PLAYLIST_PREFIX, LocalPlaylist, LocalPlaylistItem};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

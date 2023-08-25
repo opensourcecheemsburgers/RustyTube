@@ -1,5 +1,5 @@
 mod trending;
-mod player;
+mod video;
 
-pub use trending::*;
-pub use player::*;
+pub use trending::Trending;
+pub use video::VideoPage;
