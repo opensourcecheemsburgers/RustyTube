@@ -3,7 +3,7 @@ mod tests;
 
 use serde::{Deserialize, Serialize};
 use gloo::storage::{LocalStorage, Storage};
-use invidious::formats::QualityLabel;
+use invidious::QualityLabel;
 use rustytube_error::RustyTubeError;
 use utils::save_to_browser_storage;
 use crate::RememberPosition::VideosOnly;
@@ -21,6 +21,7 @@ pub struct UiConfig {
     pub theme: String,
     pub font_scale: u8,
     pub ui_scale: u8,
+    pub homepage: HomepageCategory
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
@@ -52,6 +53,14 @@ pub enum RememberPosition {
     Never
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub enum HomepageCategory {
+    Trending,
+    Popular,
+    Subscriptions,
+}
+
 impl Default for NetworkConfig {
     fn default() -> Self {
         let server = String::from("https://invidious.fdn.fr");
@@ -68,8 +77,9 @@ impl Default for UiConfig {
         let theme = String::from("dracula");
         let font_scale = 100u8;
         let ui_scale = 100u8;
+        let homepage = HomepageCategory::Subscriptions;
 
-        Self { theme, font_scale, ui_scale }
+        Self { theme, font_scale, ui_scale, homepage }
     }
 }
 

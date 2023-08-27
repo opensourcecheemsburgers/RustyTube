@@ -22,9 +22,11 @@ pub fn FerrisIcon(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn FerrisWaveIcon(cx: Scope) -> impl IntoView {
+pub fn FerrisWaveIcon(cx: Scope, width: u8) -> impl IntoView {
+    let width_style = format!(r#"width: {}rem"#, width.div(4));
+
 	view! {cx,
-            <img class="h-30 w-30" src="ferris/wave.svg" />
+            <img style=width_style src="ferris/wave.svg" />
         }
 }
 

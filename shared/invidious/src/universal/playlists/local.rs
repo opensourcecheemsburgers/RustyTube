@@ -65,7 +65,7 @@ impl LocalPlaylist {
 
     pub async fn save_playlists(playlists: &Vec<Self>) -> Result<(), RustyTubeError> {
         for playlist in playlists {
-            Self::save(&playlist).await?;
+            playlist.save().await?;
         }
         Ok(())
     }

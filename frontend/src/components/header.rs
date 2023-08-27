@@ -1,4 +1,4 @@
-use invidious::instance::{Instance, InstanceInfo, fetch_instance_info};
+use invidious::{Instance, InstanceInfo, fetch_instance_info};
 use leptos::*;
 
 use crate::components::{Tooltip, TooltipPosition};

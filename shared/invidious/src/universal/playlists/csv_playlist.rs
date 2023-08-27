@@ -42,14 +42,32 @@ impl Into<LocalPlaylistItem> for CsvPlaylistItem {
 }
 
 pub async fn read_playlist_csv(title: &str, playlist_csv_bytes: &[u8]) -> Result<LocalPlaylist, RustyTubeError> {
-    let mut playlist_csv = Reader::from_reader(playlist_csv_bytes);
+    let mut playlist_csv =  csv::ReaderBuilder::new().flexible(true).from_reader(playlist_csv_bytes);
     let mut playlist_items: Vec<CsvPlaylistItem> = Vec::new();
 
-    let header = StringRecord::from(vec!["Video ID", "Time Added"]);
-    for result in playlist_csv.records() {
-        let item: CsvPlaylistItem = result?.deserialize(Some(&header))?;
-        playlist_items.push(item);
-    }
+    let playlist_header = StringRecord::from(
+        vec![
+            "Playlist ID",
+             "Channel ID",
+             "Time Created",
+             "Time Updated",
+             "Description",
+             "Visibility"
+        ]
+    );
+    let playlist_videos_header = StringRecord::from(vec!["Video ID", "Time Added"]);
+
+    let mut index = 0;
+    for record in playlist_csv.records() {
+        match index {
+            0 | 1 => {},
+            _ => {
+                let playlist_item: CsvPlaylistItem = record?.deserialize(Some(&playlist_videos_header))?;
+                playlist_items.push(playlist_item);
+            }
+        }
+        index = index + 1;
+    };
     
     Ok(CsvPlaylist { title: title.to_string(), videos: playlist_items }.into())
 }

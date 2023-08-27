@@ -1,11 +1,25 @@
-pub mod fetch;
-pub mod hidden;
-pub mod video;
-pub mod comments;
-pub mod common;
-pub mod channel;
-pub mod universal;
-pub mod tests;
-pub mod subs;
-pub mod instance;
-pub mod formats;
+#![feature(let_chains)]
+
+mod fetch;
+mod hidden;
+mod video;
+mod comments;
+mod common;
+mod channel;
+mod universal;
+mod tests;
+mod subs;
+mod instance;
+mod formats;
+
+pub use fetch::*;
+pub use hidden::*;
+pub use video::*;
+pub use comments::*;
+pub use common::*;
+pub use channel::*;
+pub use universal::*;
+pub use tests::*;
+pub use subs::*;
+pub use instance::*;
+pub use formats::*;

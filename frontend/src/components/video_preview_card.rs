@@ -1,4 +1,4 @@
-use invidious::common::CommonVideo;
+use invidious::CommonVideo;
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
 use rustytube_error::RustyTubeError;
@@ -6,30 +6,41 @@ use rustytube_error::RustyTubeError;
 use crate::icons::FerrisWtfIcon;
 
 #[component]
-pub fn VideoPreviewCard(cx: Scope, video: CommonVideo) -> impl IntoView {
-	let thumbnail_url = video.thumbnails.first().expect("No thumbnail").url.clone();
-
+pub fn VideoPreviewCard(
+	cx: Scope,
+	thumbnail_url: String,
+	title: String,
+	author: String,
+	views: u64,
+	published: String
+) -> impl IntoView {
 	view! {cx,
         <div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden cursor-pointer">
             <VideoPreviewCardThumbnail url=thumbnail_url />
-			<VideoPreviewCardInfo video=video />
+			<VideoPreviewCardInfo title=title author=author views=views published=published />
         </div>
     }
 }
 
 #[component]
-pub fn VideoPreviewCardInfo(cx: Scope, video: CommonVideo) -> impl IntoView {
-	let view_count = video.views.to_formatted_string(&Locale::en);
+pub fn VideoPreviewCardInfo(
+	cx: Scope,
+	title: String,
+	author: String,
+	views: u64,
+	published: String
+) -> impl IntoView {
+	let view_count = views.to_formatted_string(&Locale::en);
 
 	view! {cx,
 		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-            <h1 class=" font-sans font-semibold text-base line-clamp-2">{&video.title}</h1>
+            <h1 class=" font-sans font-semibold text-base line-clamp-2">{title}</h1>
             <div class="flex flex-row flex-wrap font-normal text-sm gap-1">
-                <h2 class="cursor-pointer text-primary">{&video.author}</h2>
+                <h2 class="cursor-pointer text-primary">{author}</h2>
                 <p>{"•"}</p>
                 <p>{view_count} {r#" views"#}</p>
                 <p>{"•"}</p>
-                <p>{&video.published_text}</p>
+                <p>{published}</p>
             </div>
         </div>
 	}
@@ -37,16 +48,16 @@ pub fn VideoPreviewCardInfo(cx: Scope, video: CommonVideo) -> impl IntoView {
 
 #[derive(Clone)]
 pub enum ThumbnailState {
-    Loading,
-    Success,
-    Error(RustyTubeError)
+	Loading,
+	Success,
+	Error(RustyTubeError)
 }
 
 #[component]
 pub fn VideoPreviewCardThumbnail(cx: Scope, url: String) -> impl IntoView {
-    use ThumbnailState::*;
+	use ThumbnailState::*;
 
-    let (state, set_state) = create_signal(cx, Loading);
+	let (state, set_state) = create_signal(cx, Loading);
 
 	view! {cx,
         <div class="w-full max-w-full overflow-hidden rounded-xl">
@@ -72,10 +83,10 @@ pub fn VideoPreviewCardImage(cx: Scope, url: String) -> impl IntoView {
 
 #[component]
 pub fn VideoPreviewCardPlaceholder(cx: Scope, set_state: WriteSignal<ThumbnailState>, url: String) -> impl IntoView {
-    use ThumbnailState::*;
+	use ThumbnailState::*;
 
-    let show_img = move |_| set_state.set(Success);
-    let show_err = move |_| set_state.set(Error(RustyTubeError::fetch_thumbnail_error()));
+	let show_img = move |_| set_state.set(Success);
+	let show_err = move |_| set_state.set(Error(RustyTubeError::fetch_thumbnail_error()));
 
 	view! {cx,
 		<div class="basis-1/3 lg:basis-1/4 flex flex-col px-4 w-full h-full aspect-w-16 aspect-h-9 overflow-hidden">

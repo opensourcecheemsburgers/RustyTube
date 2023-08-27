@@ -11,16 +11,16 @@ use leptos::*;
 use leptos_router::*;
 
 use config::Config;
-use crate::contexts::provide_config_context_slices;
+use crate::contexts::{provide_config_context_slices, provide_user_contexts};
 
 
 #[component]
 fn App(cx: Scope) -> impl IntoView {
     console_error_panic_hook::set_once();
     provide_config_context_slices(cx, Config::load().unwrap_or_default());
+    provide_user_contexts(cx);
 
-    view! {cx,
-    }
+    view! {cx, }
 }
 
 fn main() {

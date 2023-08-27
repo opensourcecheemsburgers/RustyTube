@@ -1,5 +1,3 @@
-mod trending;
-mod video;
+mod home;
 
-pub use trending::Trending;
-pub use video::VideoPage;
+pub use home::Homepage;
