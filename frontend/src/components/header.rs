@@ -54,13 +54,13 @@ pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
                 match instances.read(cx) {
                     None => view! {cx, <div></div>},
                     Some(instances) => view! {cx,
-                        <div class="dropdown dropdown-end">
+                        <div class="dropdown dropdown-end ">
                             <Tooltip tip={"Instances"} position={TooltipPosition::Bottom}>
                                 <label tabindex="0" class="btn btn-ghost rounded-btn">
                                     <ServerIcon />
                                 </label>
                             </Tooltip>
-                            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-auto h-80">
+                            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-auto h-80 z-10">
                                 <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
                                     {
                                         instances.into_iter().map(|instance: (String, InstanceInfo)| {
@@ -151,7 +151,7 @@ pub fn ThemeSelectDropdown(cx: Scope) -> impl IntoView {
                     <PaletteIcon />
                 </label>
             </Tooltip>
-            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80">
+            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10">
                 <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
                     {
                         THEMES.into_iter().map(|theme| view!
