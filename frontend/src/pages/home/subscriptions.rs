@@ -37,7 +37,7 @@ pub fn SubscriptionsContent(cx: Scope, subs: ReadSignal<Subscriptions>) -> impl 
 		cx,
 		move || (server.get(), subs.get()),
 		|(server, subs)| async move {
-			subs.fetch_subs(&server).await
+			subs.fetch_subs(&server, false).await
 		},
 	);
 

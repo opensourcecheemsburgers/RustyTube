@@ -1,5 +1,4 @@
-use crate::channel::ChannelVideos;
-use crate::common::CommonVideo;
+use crate::{CommonVideo, ChannelVideos, Feed};
 use gloo::storage::{LocalStorage, Storage};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
@@ -39,13 +38,16 @@ impl Subscriptions {
         Ok(subs)
     }
 
-    pub async fn fetch_subs(&self, server: &str) -> SubscriptionsFetch {
+    pub async fn fetch_subs(&self, server: &str, rss: bool) -> SubscriptionsFetch {
         let mut futures = Vec::new();
 
         for channel in self.channels.clone() {
             let id = channel.id.clone();
             let future = async move {
-                ChannelVideos::fetch_channel_videos(server, &id).await
+                match rss {
+                    true => Feed::fetch_videos_from_feed(server, &id).await,
+                    false => ChannelVideos::fetch_channel_videos(server, &id).await,
+                }
             };
             futures.push(future)
         }

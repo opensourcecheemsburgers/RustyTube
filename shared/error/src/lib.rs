@@ -1,8 +1,8 @@
 use std::{fmt::{Formatter, Display, self, Debug}, io, string::FromUtf8Error, ops::Range};
 use gloo::file::FileReadError;
-
 use serde::{Serialize, Deserialize};
 use gloo::storage::errors::StorageError;
+use chrono::ParseError;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RustyTubeError {
@@ -83,7 +83,7 @@ impl From<ron::error::SpannedError> for RustyTubeError {
 }
 
 impl From<StorageError> for RustyTubeError {
-    fn from(storage_error: gloo::storage::errors::StorageError) -> Self {
+    fn from(storage_error: StorageError) -> Self {
         let title = String::from("Browser Storage Error");
         let description = storage_error.to_string();
         Self { title, description }
@@ -98,7 +98,7 @@ impl From<reqwasm::Error> for RustyTubeError {
     }
 }
 
-impl From<gloo::file::FileReadError> for RustyTubeError {
+impl From<FileReadError> for RustyTubeError {
     fn from(file_read_error: FileReadError) -> Self {
         let title = String::from("File Read Error");
         let description = file_read_error.to_string();
@@ -118,6 +118,22 @@ impl From<toml::de::Error> for RustyTubeError {
     fn from(toml_de_error: toml::de::Error) -> Self {
         let title = String::from("Toml Serialisation Error");
         let description = toml_de_error.to_string();
+        Self { title, description }
+    }
+}
+
+impl From<ParseError> for RustyTubeError {
+    fn from(parse_error: ParseError) -> Self {
+        let title = String::from("Chrono RFC3339 parse error");
+        let description = parse_error.to_string();
+        Self { title, description }
+    }
+}
+
+impl From<serde_xml_rs::Error> for RustyTubeError {
+    fn from(xml_error: serde_xml_rs::Error) -> Self {
+        let title = String::from("XML parse error");
+        let description = xml_error.to_string();
         Self { title, description }
     }
 }

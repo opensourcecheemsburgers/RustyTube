@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use wasm_bindgen_test::{wasm_bindgen_test, wasm_bindgen_test_configure};
+    use wasm_bindgen_test::{console_log, wasm_bindgen_test, wasm_bindgen_test_configure};
     use gloo::file::{Blob};
     use crate::channel::Channel;
     use crate::comments::Comments;
@@ -26,7 +26,6 @@ mod tests {
     async fn can_fetch_api_data() {
         fetch(&format!("{}/api/v1/videos/{}", TEST_SERVER, TEST_VIDEO)).await.unwrap();
     }
-
 
     #[wasm_bindgen_test]
     async fn can_fetch_instance_data() {
@@ -210,5 +209,49 @@ mod tests {
         assert_eq!(yt_subs.subscriptions.len(), 54);
         let subs: Subscriptions = yt_subs.into();
         assert_eq!(subs.channels.len(), 54);
+    }
+
+    #[wasm_bindgen_test]
+    async fn can_fetch_subs() {
+        let mut fail = 0;
+        let mut success = 0;
+
+        let subs_json: &[u8] = include_bytes!("./files/subscriptions.csv");
+        let yt_subs: YoutubeSubscriptions =
+            YoutubeSubscriptions::read_subs_from_csv(subs_json).unwrap();
+        let subs: Subscriptions = yt_subs.into();
+        let subs_videos = subs.fetch_subs(TEST_SERVER, false).await.unwrap();
+
+        subs_videos
+            .into_iter()
+            .for_each(|sub_videos| match sub_videos {
+                Ok(_) => success = success + 1,
+                Err(_) => fail = fail + 1,
+            });
+
+        console_log!("JSON Sub Fetch Fail: {}", fail);
+        console_log!("JSON Sub Fetch Success: {}", success);
+    }
+
+    #[wasm_bindgen_test]
+    async fn can_fetch_subs_with_rss() {
+        let mut fail = 0;
+        let mut success = 0;
+
+        let subs_json: &[u8] = include_bytes!("./files/subscriptions.csv");
+        let yt_subs: YoutubeSubscriptions =
+            YoutubeSubscriptions::read_subs_from_csv(subs_json).unwrap();
+        let subs: Subscriptions = yt_subs.into();
+
+        let subs_videos = subs.fetch_subs(TEST_SERVER, true).await.unwrap();
+        subs_videos
+            .into_iter()
+            .for_each(|sub_videos| match sub_videos {
+                Ok(videos) => success = success + 1,
+                Err(_) => fail = fail + 1,
+            });
+
+        console_log!("RSS Sub Fetch Fail: {}", fail);
+        console_log!("RSS Sub Fetch Success: {}", success);
     }
 }
