@@ -15,7 +15,7 @@ pub fn VideoPreviewCard(
 	published: String
 ) -> impl IntoView {
 	view! {cx,
-        <div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden cursor-pointer">
+        <div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden">
             <VideoPreviewCardThumbnail url=thumbnail_url />
 			<VideoPreviewCardInfo title=title author=author views=views published=published />
         </div>
@@ -75,8 +75,8 @@ pub fn VideoPreviewCardThumbnail(cx: Scope, url: String) -> impl IntoView {
 #[component]
 pub fn VideoPreviewCardImage(cx: Scope, url: String) -> impl IntoView {
 	view! {cx,
-        <div class="aspect-w-16 aspect-h-9">
-            <img src=url class="w-full h-full object-center object-cover bg-base-content rounded-xl"/>
+        <div class="aspect-w-16 aspect-h-9 cursor-pointer">
+            <img src=url loading="eager" class="w-full h-full object-center object-cover bg-base-content rounded-xl"/>
         </div>
 	}
 }

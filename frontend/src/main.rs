@@ -12,6 +12,7 @@ use leptos_router::*;
 
 use config::Config;
 use crate::contexts::{provide_config_context_slices, provide_user_contexts};
+use crate::pages::Homepage;
 
 
 #[component]
@@ -20,7 +21,7 @@ fn App(cx: Scope) -> impl IntoView {
     provide_config_context_slices(cx, Config::load().unwrap_or_default());
     provide_user_contexts(cx);
 
-    view! {cx, }
+    view! {cx, <Homepage />}
 }
 
 fn main() {

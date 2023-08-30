@@ -40,6 +40,6 @@ pub fn HomepageSection(cx: Scope, children: Children) -> impl IntoView {
 #[component]
 pub fn HomepageSectionTitle(cx: Scope, title: String) -> impl IntoView {
     view! {cx,
-        <h1 class="font-semibold text-2xl">{title}</h1>
+        <h1 class="pl-4 font-semibold text-2xl">{title}</h1>
     }
 }

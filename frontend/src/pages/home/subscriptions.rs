@@ -3,9 +3,7 @@ use invidious::{Subscriptions, CommonVideo, SubscriptionsVideos};
 use rustytube_error::RustyTubeError;
 use web_sys::{HtmlInputElement, Event};
 use gloo::file::Blob;
-use js_sys::Reflect::get;
 use wasm_bindgen::JsCast;
-use wasm_bindgen_futures::spawn_local;
 
 use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
 use crate::contexts::{ServerCtx, SubscriptionsCtx};
@@ -55,7 +53,6 @@ pub fn SubscriptionsContent(cx: Scope, subs: ReadSignal<Subscriptions>) -> impl 
 	view! {cx, {subscriptions_view} }
 }
 
-
 #[component]
 pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoView {
 	let mut videos: Vec<Vec<CommonVideo>> = Vec::new();
@@ -68,28 +65,45 @@ pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoVie
 		}
 	});
 
-	let videos: Vec<CommonVideo> = videos.into_iter().flatten().collect();
+	let mut total_videos: Vec<CommonVideo> = videos.into_iter().flatten().collect();
+	total_videos.sort_by(|a, b| b.published.cmp(&a.published));
+
+	let total_videos_len = total_videos.len();
+
+	let initial_videos= Vec::from(&total_videos[0..100]);
+	let visible_videos = create_rw_signal(cx, initial_videos);
 
 	let videos_view = move || {
-		videos.clone().into_iter().map(|video| view!
-			{ cx,
+		visible_videos.get().into_iter().map(|video| view!
+		{ cx,
                 <VideoPreviewCard
                     title=video.title
                     author=video.author
                     views=video.views
                     published=video.published_text
-                    thumbnail_url=video.thumbnails.last().unwrap().url.clone()
+                    thumbnail_url=video.thumbnails.get(3).unwrap().url.clone()
                 />
 			}
 		).collect_view(cx)
 	};
 
+	let load_more = move |_| { load_more_videos(visible_videos, total_videos.clone()) };
+
+	let view_more_btn = match visible_videos.get().len() == total_videos_len {
+		true => view! {cx, <div></div>}.into_view(cx),
+		false => view! {cx, <div class="flex justify-center"><button on:click=load_more class="btn btn-lg btn-primary btn-outline">{"Load More"}</button></div>}.into_view(cx)
+	};
+
 	view! {cx,
-        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-1rem-128px)] pb-12 overflow-y-auto scroll-smooth">
-			{ videos_view }
-        </div>
+		<div class="flex flex-col h-[calc(100vh-64px-4rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
+		    <div class="flex flex-row flex-wrap gap-y-8 justify-between">
+				{ videos_view }
+		    </div>
+			{view_more_btn}
+		</div>
     }
 }
+
 #[component]
 pub fn ImportSubscriptions(cx: Scope, subs: WriteSignal<Subscriptions>) -> impl IntoView {
 	view! {cx,
@@ -134,7 +148,7 @@ pub fn ImportSubscriptionsBtn(cx: Scope, subs: WriteSignal<Subscriptions>) -> im
             <input
 				id="subs_upload"
 				type="file"
-				accept="text/*"
+				accept=".ron,.json,.csv"
 				multiple={false}
 				on:change=on_file_upload
 				class="hidden" />
@@ -155,9 +169,16 @@ async fn get_subs_from_file(subs: WriteSignal<Subscriptions>, event: Event) -> R
 	let filelist = input.files().ok_or(RustyTubeError::no_file_selected())?;
 	let file = filelist.get(0).ok_or(RustyTubeError::no_file_selected())?;
 	let blob: Blob = file.into();
-	let bytes = gloo::file::futures::read_as_text(&blob).await?;
-	let subscriptions = Subscriptions::from_ron_str(&bytes).await?;
+	let subscriptions = Subscriptions::read_subs(blob).await?;
 	subscriptions.save().await?;
 	subs.set(subscriptions);
 	Ok(())
+}
+
+fn load_more_videos(visible_videos: RwSignal<Vec<CommonVideo>>, total_videos: Vec<CommonVideo>) {
+	visible_videos
+		.update(|visible| {
+			let next_slice = &total_videos[(visible.len())..(visible.len() + 100)];
+			visible.extend_from_slice(next_slice);
+		});
 }

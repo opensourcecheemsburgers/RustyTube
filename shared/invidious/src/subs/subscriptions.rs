@@ -1,8 +1,10 @@
-use crate::{CommonVideo, ChannelVideos, Feed};
+use crate::{CommonVideo, ChannelVideos, Feed, YoutubeSubscriptions, NewpipeSubscriptions};
 use gloo::storage::{LocalStorage, Storage};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use futures::future::{join_all};
+use gloo::file::Blob;
+use gloo::file::futures::{read_as_bytes, read_as_text};
 use utils::save_to_browser_storage;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
@@ -23,8 +25,23 @@ pub type SubscriptionsVideos = Vec<SubscriptionVideos>;
 pub type SubscriptionsFetch = Result<SubscriptionsVideos, RustyTubeError>;
 
 impl Subscriptions {
-    pub async fn from_ron_str(ron_str: &str) -> Result<Self, RustyTubeError> {
-        Ok(ron::from_str(&ron_str)?)
+    pub async fn read_subs(blob: Blob) -> Result<Self, RustyTubeError> {
+        match blob.raw_mime_type().eq("text/csv") {
+            true => match read_youtube(&blob).await {
+                Ok(subs) => Ok(subs),
+                Err(_) => match read_newpipe(&blob).await {
+                    Ok(subs) => Ok(subs),
+                    Err(err) => Err(err),
+                }
+            },
+            false => match read_newpipe(&blob).await {
+                Ok(subs) => Ok(subs),
+                Err(_) => match read_youtube(&blob).await {
+                    Ok(subs) => Ok(subs),
+                    Err(err) => Err(err),
+                }
+            }
+        }
     }
 
     pub async fn save(&self) -> Result<(), RustyTubeError> {
@@ -54,4 +71,17 @@ impl Subscriptions {
         let subs_videos = join_all(futures).await;
         Ok(subs_videos)
     }
+}
+
+async fn read_youtube(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
+    let bytes = read_as_bytes(&file).await?;
+    let slice = bytes.as_slice();
+    let yt_subs = YoutubeSubscriptions::read_subs_from_csv(&slice)?;
+    Ok(yt_subs.into())
+}
+
+async fn read_newpipe(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
+    let json_str = read_as_text(&file).await?;
+    let newpipe_subs = NewpipeSubscriptions::read_subs_from_file(&json_str)?;
+    Ok(newpipe_subs.into())
 }
