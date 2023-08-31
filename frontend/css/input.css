@@ -73,6 +73,11 @@
 
   @font-face {
     font-family: "Open Sans";
-    src: local(Inter), url("../fonts/opensans.woff2");
+    src: local(Open Sans), url("../fonts/opensans.woff2");
+  }
+
+  @font-face {
+    font-family: "Noto Color Emoji";
+    src: local(Noto Color Emoji), url("https://fonts.gstatic.com/s/notocoloremoji/v1/Yq6P-KqIXTD0t4D9z1ESnKM3-HpFabsE4tq3luCC7p-aXw.0.woff2");
   }
 }

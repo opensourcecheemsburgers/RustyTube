@@ -54,13 +54,13 @@ pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
                 match instances.read(cx) {
                     None => view! {cx, <div></div>},
                     Some(instances) => view! {cx,
-                        <div class="dropdown dropdown-end ">
+                        <div class="dropdown dropdown-end">
                             <Tooltip tip={"Instances"} position={TooltipPosition::Bottom}>
                                 <label tabindex="0" class="btn btn-ghost rounded-btn">
                                     <ServerIcon />
                                 </label>
                             </Tooltip>
-                            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-auto h-80 z-10">
+                            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10">
                                 <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
                                     {
                                         instances.into_iter().map(|instance: (String, InstanceInfo)| {
@@ -91,43 +91,58 @@ pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
 
 #[component]
 pub fn InstanceDropdownListItem(cx: Scope, instance: Instance) -> impl IntoView {
-    let server = expect_context::<ServerCtx>(cx).0.1;
+    let server = expect_context::<ServerCtx>(cx).0;
 
-    let instance_name = instance.0.clone();
-    let flag = instance.1.flag.clone();
-    let uri = instance.1.uri.clone();
+    let instance_name = instance.0;
+    let flag = instance.1.flag;
+    let uri = instance.1.uri;
 
-    view! {cx,
-        <div
-            class="p-3 rounded-lg bg-base-100"
-            on:click=move |_| server.set(uri.clone())>
-            <a class="text-base-content font-sans">
-                { flag }
-                { instance_name }
-                // <div class="flex flex-row justify-between w-full items-center rounded-lg">
-                //     {name}
-                //     <div class="flex flex-row gap-1">
-                //         <div data-theme={name} class="w-4 h-4 rounded-full bg-primary"></div>
-                //         <div data-theme={name} class="w-4 h-4 rounded-full bg-secondary"></div>
-                //         <div data-theme={name} class="w-4 h-4 rounded-full bg-accent"></div>
-                //         <div data-theme={name} class="w-4 h-4 rounded-full bg-neutral"></div>
-                //     </div>
-                // </div>
-            </a>
-        </div>
-    }
+    let instance_view = move || {
+        let instance_name = instance_name.clone();
+        let flag = flag.clone();
+        let uri = uri.clone();
+
+        match server.0.get().eq_ignore_ascii_case(&uri) {
+            false => {
+                let uri = uri.clone();
+
+                view! {cx,
+                <div
+                class="p-3 rounded-lg bg-base-100"
+                on:click=move |_| server.1.set(uri.clone())>
+                    <a class="text-base-content font-sans">
+                        {flag}{" "}{instance_name}
+                    </a>
+                </div>
+            }},
+            true => {
+                let uri = uri.clone();
+                view! {cx,
+                <div
+                class="p-3 rounded-lg bg-base-100 border-2 border-primary"
+                on:click=move |_| server.1.set(uri.clone())>
+                    <a class="text-base-content font-sans">
+                        {flag}{" "}{instance_name}
+                    </a>
+                </div>
+                }
+            },
+        }
+    };
+    instance_view
 }
 
 #[component]
 pub fn ThemeDropdownListItem(cx: Scope, name: &'static str) -> impl IntoView {
-    let theme = expect_context::<ThemeCtx>(cx).0.1;
+    let theme_ctx = expect_context::<ThemeCtx>(cx).0;
 
-    view! {cx,
-        <div
+    let theme_view = move || match theme_ctx.0.get().eq_ignore_ascii_case(name) {
+        true => view! {cx,
+            <div
             data-theme={name}
-            class="p-3 rounded-lg bg-base-100"
-            on:click=move |_| theme.set(name.to_string())>
-            <a class="capitalize text-base-content font-sans">
+            class="p-3 rounded-lg bg-base-100 border-2 border-primary"
+            on:click=move |_| theme_ctx.1.set(name.to_string())>
+                <a class="capitalize text-base-content font-sans">
                 <div class="flex flex-row justify-between w-full items-center rounded-lg">
                     {name}
                     <div class="flex flex-row gap-1">
@@ -137,9 +152,30 @@ pub fn ThemeDropdownListItem(cx: Scope, name: &'static str) -> impl IntoView {
                         <div data-theme={name} class="w-4 h-4 rounded-full bg-neutral"></div>
                     </div>
                 </div>
-            </a>
-        </div>
-    }
+                </a>
+            </div>
+        },
+        false => view! {cx,
+            <div
+            data-theme={name}
+            class="p-3 rounded-lg bg-base-100"
+            on:click=move |_| theme_ctx.1.set(name.to_string())>
+                <a class="capitalize text-base-content font-sans">
+                <div class="flex flex-row justify-between w-full items-center rounded-lg">
+                    {name}
+                    <div class="flex flex-row gap-1">
+                        <div data-theme={name} class="w-4 h-4 rounded-full bg-primary"></div>
+                        <div data-theme={name} class="w-4 h-4 rounded-full bg-secondary"></div>
+                        <div data-theme={name} class="w-4 h-4 rounded-full bg-accent"></div>
+                        <div data-theme={name} class="w-4 h-4 rounded-full bg-neutral"></div>
+                    </div>
+                </div>
+                </a>
+            </div>
+        }
+    };
+
+    theme_view
 }
 
 #[component]

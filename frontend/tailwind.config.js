@@ -16,7 +16,7 @@ module.exports = {
     ],
     theme: {
         fontFamily: {
-            'sans': ['Open Sans', 'sans-serif'],
+            'sans': ['Open Sans', 'Noto Color Emoji'],
             'display': ['Comfortaa', 'display'],
             'mono': ['Fira Mono', 'mono']
         },
