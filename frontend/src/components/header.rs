@@ -3,23 +3,13 @@ use leptos::*;
 
 use crate::components::{Tooltip, TooltipPosition};
 use crate::contexts::{ThemeCtx, ServerCtx};
-use crate::icons::{PaletteIcon, ServerIcon};
-use crate::icons::{FerrisIcon, HamburgerIcon};
+use crate::icons::{PaletteIcon, ServerIcon, FerrisIcon};
 
 #[component]
 pub fn Header(cx: Scope) -> impl IntoView {
     view! {cx,
         <div class="navbar bg-base-100">
             <div class="navbar-start">
-                <label class="btn btn-ghost">
-                    <HamburgerIcon />
-                </label>
-                <div class="lg:flex lg:flex-1 lg:ml-4 hidden">
-                    <a class="btn btn-ghost normal-case text-2xl font-display font-bold tracking-wide">
-                        <FerrisIcon />
-                        <p class="ml-2">RustyTube</p>
-                    </a>
-                </div>
             </div>
             <div class="navbar-center">
                 <div class="form-control">

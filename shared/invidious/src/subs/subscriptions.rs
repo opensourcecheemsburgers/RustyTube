@@ -1,4 +1,4 @@
-use crate::{CommonVideo, ChannelVideos, Feed, YoutubeSubscriptions, NewpipeSubscriptions};
+use crate::{CommonVideo, ChannelVideos, Feed, YoutubeSubscriptions, NewpipeSubscriptions, CommonChannel, Channel};
 use gloo::storage::{LocalStorage, Storage};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
@@ -45,17 +45,18 @@ impl Subscriptions {
     }
 
     pub async fn save(&self) -> Result<(), RustyTubeError> {
-        let subs_json = serde_json::to_string(&self)?;
-        save_to_browser_storage(SUBS_KEY, &subs_json)?;
+        let subs_ron_str = ron::to_string(&self)?;
+        save_to_browser_storage(SUBS_KEY, &subs_ron_str)?;
         Ok(())
     }
 
     pub fn load() -> Result<Self, RustyTubeError> {
-        let subs: Subscriptions = LocalStorage::get(SUBS_KEY)?;
+        let subs_ron_str: String = LocalStorage::get(SUBS_KEY)?;
+        let subs: Subscriptions = ron::from_str(&subs_ron_str)?;
         Ok(subs)
     }
 
-    pub async fn fetch_subs(&self, server: &str, rss: bool) -> SubscriptionsFetch {
+    pub async fn fetch_videos(&self, server: &str, rss: bool) -> SubscriptionsFetch {
         let mut futures = Vec::new();
 
         for channel in self.channels.clone() {
@@ -70,6 +71,18 @@ impl Subscriptions {
         }
         let subs_videos = join_all(futures).await;
         Ok(subs_videos)
+    }
+
+    pub async fn fetch_channels(&self, server: &str) -> Result<Vec<Result<Channel, RustyTubeError>>, RustyTubeError> {
+        let mut futures = Vec::new();
+
+        for channel in self.channels.clone() {
+            let id = channel.id.clone();
+            let future = async move { Channel::fetch_channel(server, &id).await};
+            futures.push(future)
+        }
+        let channels = join_all(futures).await;
+        Ok(channels)
     }
 }
 

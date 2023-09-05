@@ -21,7 +21,9 @@ fn App(cx: Scope) -> impl IntoView {
     provide_config_context_slices(cx, Config::load().unwrap_or_default());
     provide_user_contexts(cx);
 
-    view! {cx, <Homepage />}
+    view! {cx,
+        <Homepage />
+    }
 }
 
 fn main() {

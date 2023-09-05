@@ -9,9 +9,9 @@ use crate::pages::home::subscriptions::SubscriptionsSection;
 
 #[component]
 pub fn Homepage(cx: Scope) -> impl IntoView {
-    let category = expect_context::<UiConfigCtx>(cx).0.0.get().homepage;
+    let category = expect_context::<UiConfigCtx>(cx).0.0;
 
-    let current = move || match category {
+    let current = move || match category.get().homepage {
         Trending => view! {cx, <TrendingSection />},
         Subscriptions => view! {cx, <SubscriptionsSection />},
         Popular => view! {cx, <PopularSection />}
@@ -29,7 +29,7 @@ pub fn Homepage(cx: Scope) -> impl IntoView {
 #[component]
 pub fn HomepageSection(cx: Scope, children: Children) -> impl IntoView {
     view! {cx,
-        <div class="w-screen flex justify-center mt-4">
+        <div class="w-full flex justify-center mt-4">
             <div class="w-[90%] flex flex-col gap-y-8">
                 {children(cx)}
             </div>

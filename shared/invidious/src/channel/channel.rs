@@ -45,15 +45,11 @@ impl Channel {
         format!("{server}/api/v1/channels/{args}")
     }
 
-    pub async fn fetch_channel(server: &str, id: &str, args: Option<&str>) -> Result<Self, RustyTubeError> {
+    pub async fn fetch_channel(server: &str, id: &str) -> Result<Self, RustyTubeError> {
         let channel_url: String = Self::url(server, id);
         let channel_json: String = fetch(&channel_url).await?;
         let channel: Self = serde_json::from_str(&channel_json)?;
         Ok(channel)
-    }
-
-    fn channel_link(&self, server: &str) -> String {
-        format!("{}/channel/{}", server, &self.url)
     }
 }
 

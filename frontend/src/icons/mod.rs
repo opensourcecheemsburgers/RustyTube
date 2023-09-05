@@ -16,7 +16,12 @@ pub use icons::{
 	VolumeHighIcon,
 	VolumeMediumIcon,
 	ServerIcon,
-	PaletteIcon
+	PaletteIcon,
+	SubscriptionsIcon,
+	TrendingIcon,
+	PopularIcon,
+	HeartIcon,
+	SettingsIcon
 };
 
 pub use svg::Svg;
