@@ -81,7 +81,7 @@ pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoVie
                     author=video.author
                     views=video.views
                     published=video.published_text
-                    thumbnail_url=video.thumbnails.get(3).unwrap().url.clone()
+                    thumbnail_url=video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
                 />
 			}
 		).collect_view(cx)
@@ -95,7 +95,7 @@ pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoVie
 	};
 
 	view! {cx,
-		<div class="flex flex-col h-[calc(100vh-64px-4rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
+		<div class="flex flex-col h-[calc(100vh-64px-1rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
 		    <div class="flex flex-row flex-wrap gap-y-8 justify-between">
 				{ videos_view }
 		    </div>

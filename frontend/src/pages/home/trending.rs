@@ -63,7 +63,7 @@ pub fn TrendingVideos(cx: Scope, trending: Trending) -> impl IntoView {
                 author=trending_video.author
                 views=trending_video.views
                 published=trending_video.published_text
-                thumbnail_url=trending_video.thumbnails.first().unwrap().url.clone()
+                thumbnail_url=trending_video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
             />
         }).collect_view(cx);
 

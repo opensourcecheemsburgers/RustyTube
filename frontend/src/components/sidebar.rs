@@ -55,7 +55,7 @@ pub fn SidebarSubs(cx: Scope) -> impl IntoView {
 
 
 	view! {cx,
-		<div class="min-h-[calc(100vh-308px)] max-h-[calc(100vh-308px)] overflow-y-scroll">
+		<div class="min-h-[calc(100vh-308px)] max-h-[calc(100vh-308px)] overflow-y-scroll scroll-smooth">
 			{channels_view}
 		</div>
 	}

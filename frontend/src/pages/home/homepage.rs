@@ -3,15 +3,15 @@ use crate::pages::home::trending::TrendingSection;
 use leptos::*;
 use config::HomepageCategory::*;
 use rustytube_error::RustyTubeError;
-use crate::contexts::UiConfigCtx;
+use crate::contexts::HomepageCategoryCtx;
 use crate::pages::home::popular::PopularSection;
 use crate::pages::home::subscriptions::SubscriptionsSection;
 
 #[component]
 pub fn Homepage(cx: Scope) -> impl IntoView {
-    let category = expect_context::<UiConfigCtx>(cx).0.0;
+    let category = expect_context::<HomepageCategoryCtx>(cx).0.0;
 
-    let current = move || match category.get().homepage {
+    let current = move || match category.get() {
         Trending => view! {cx, <TrendingSection />},
         Subscriptions => view! {cx, <SubscriptionsSection />},
         Popular => view! {cx, <PopularSection />}

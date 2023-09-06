@@ -1,4 +1,4 @@
-use config::{Config, NetworkConfig, PlayerConfig, PrivacyConfig, UiConfig};
+use config::{Config, HomepageCategory, NetworkConfig, PlayerConfig, PrivacyConfig, UiConfig};
 use leptos::{create_rw_signal, create_slice, provide_context, Scope, Signal, SignalSetter};
 
 pub fn provide_config_context_slices(cx: Scope, config: Config) {
@@ -15,6 +15,13 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
         config,
         |config| config.ui.theme.clone(),
         |config, theme| config.ui.theme = theme,
+    );
+
+    let homepage_category_slice = create_slice(
+        cx,
+        config,
+        |config| config.ui.homepage.clone(),
+        |config, homepage| config.ui.homepage = homepage,
     );
 
     let network_slice = create_slice(
@@ -51,6 +58,7 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
     let ui_ctx = UiConfigCtx(ui_slice);
     let player_ctx = PlayerConfigCtx(player_slice);
     let privacy_ctx = PrivacyConfigCtx(privacy_slice);
+    let homepage_category_ctx = HomepageCategoryCtx(homepage_category_slice);
 
     provide_context(cx, server_ctx);
     provide_context(cx, theme_ctx);
@@ -58,6 +66,7 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
     provide_context(cx, ui_ctx);
     provide_context(cx, player_ctx);
     provide_context(cx, privacy_ctx);
+    provide_context(cx, homepage_category_ctx);
 }
 
 #[derive(Copy, Clone)]
@@ -76,6 +85,9 @@ pub struct ServerCtx(pub (Signal<String>, SignalSetter<String>));
 
 #[derive(Copy, Clone)]
 pub struct ThemeCtx(pub (Signal<String>, SignalSetter<String>));
+
+#[derive(Copy, Clone)]
+pub struct HomepageCategoryCtx(pub (Signal<HomepageCategory>, SignalSetter<HomepageCategory>));
 
 pub const THEMES: &'static [&'static str] = &[
     "dracula",

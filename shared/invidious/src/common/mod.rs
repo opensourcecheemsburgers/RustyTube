@@ -12,7 +12,7 @@ pub struct CommonImage {
 }
 
 /// Shared thumbnail object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct CommonThumbnail {
     #[serde(default)]
     pub quality: String,

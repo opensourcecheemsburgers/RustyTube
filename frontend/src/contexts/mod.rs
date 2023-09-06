@@ -7,6 +7,7 @@ pub use config::{
     UiConfigCtx,
     PlayerConfigCtx,
     PrivacyConfigCtx,
+    HomepageCategoryCtx,
     ServerCtx,
     ThemeCtx,
     THEMES,
