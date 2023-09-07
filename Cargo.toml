@@ -69,6 +69,7 @@ features = ["file", "futures"]
 
 [workspace.dependencies.tauri-sys]
 git = "https://github.com/opensourcecheemsburgers/tauri-sys"
+features = ["all"]
 
 [workspace.dependencies.invidious]
 path = "shared/invidious"
@@ -85,3 +86,6 @@ path = "shared/utils"
 
 [workspace.dependencies.config]
 path = "shared/config"
+
+[workspace.dependencies.tauri_utils]
+path = "shared/tauri"

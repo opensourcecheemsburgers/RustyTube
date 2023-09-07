@@ -3,6 +3,7 @@ use leptos::{create_rw_signal, create_slice, provide_context, Scope, Signal, Sig
 
 pub fn provide_config_context_slices(cx: Scope, config: Config) {
     let config = create_rw_signal(cx, config);
+
     let server_slice = create_slice(
         cx,
         config,

@@ -2,7 +2,7 @@ use invidious::{Instance, InstanceInfo, fetch_instance_info};
 use leptos::*;
 
 use crate::components::{Tooltip, TooltipPosition};
-use crate::contexts::{ThemeCtx, ServerCtx};
+use crate::contexts::{ThemeCtx, ServerCtx, InstancesCtx};
 use crate::icons::{PaletteIcon, ServerIcon, FerrisIcon};
 
 #[component]
@@ -29,14 +29,7 @@ pub fn Header(cx: Scope) -> impl IntoView {
 
 #[component]
 pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
-    let instances = create_resource(
-        cx,
-        move || (),
-        |_| async move {
-            fetch_instance_info().await.unwrap()
-        },
-    );
-
+    let instances = expect_context::<InstancesCtx>(cx).0;
 
     view! {cx,
         {
@@ -53,7 +46,7 @@ pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
                             <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10">
                                 <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
                                     {
-                                        instances.into_iter().map(|instance: (String, InstanceInfo)| {
+                                        instances.unwrap().into_iter().map(|instance: (String, InstanceInfo)| {
                                             let api = instance.1.api.unwrap_or_default();
                                             let cors = instance.1.cors.unwrap_or_default();
 

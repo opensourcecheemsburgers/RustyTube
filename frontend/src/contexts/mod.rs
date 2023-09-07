@@ -16,5 +16,8 @@ pub use config::{
 pub use user::{
     SubscriptionsCtx,
     SubsVideosCtx,
-    provide_user_contexts
+    InstancesCtx,
+    ChannelsCtx,
+    provide_user_contexts,
+    provide_user_resources
 };

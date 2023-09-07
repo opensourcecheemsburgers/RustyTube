@@ -6,7 +6,7 @@ use gloo::file::Blob;
 use wasm_bindgen::JsCast;
 
 use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
-use crate::contexts::{ServerCtx, SubscriptionsCtx};
+use crate::contexts::{ServerCtx, SubscriptionsCtx, SubsVideosCtx};
 use crate::pages::home::homepage::{HomepageSection, HomepageSectionTitle};
 use crate::icons::FerrisWaveIcon;
 
@@ -30,14 +30,7 @@ pub fn SubscriptionsSection(cx: Scope) -> impl IntoView {
 #[component]
 pub fn SubscriptionsContent(cx: Scope, subs: ReadSignal<Subscriptions>) -> impl IntoView {
 	let server = expect_context::<ServerCtx>(cx).0.0;
-
-	let subs = create_resource(
-		cx,
-		move || (server.get(), subs.get()),
-		|(server, subs)| async move {
-			subs.fetch_videos(&server, false).await
-		},
-	);
+	let subs = expect_context::<SubsVideosCtx>(cx).0;
 
 	let subscriptions_view = move || match subs.read(cx) {
 		Some(subs) => {

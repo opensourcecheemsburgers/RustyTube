@@ -3,7 +3,7 @@ use leptos::svg::view;
 use config::HomepageCategory;
 use invidious::{Channel, Subscription, Subscriptions};
 use rustytube_error::RustyTubeError;
-use crate::contexts::{ServerCtx, SubscriptionsCtx, ThemeCtx, UiConfigCtx};
+use crate::contexts::{ChannelsCtx, ServerCtx, SubscriptionsCtx, ThemeCtx, UiConfigCtx};
 use crate::icons::{SubscriptionsIcon, TrendingIcon, PopularIcon, HamburgerIcon, FerrisIcon, CogIcon, HeartIcon, SettingsIcon};
 
 #[component]
@@ -36,23 +36,11 @@ pub fn Sidebar(cx: Scope) -> impl IntoView {
 #[component]
 pub fn SidebarSubs(cx: Scope) -> impl IntoView {
 	let expanded = expect_context::<RwSignal<String>>(cx);
-
-	let subs_ctx = expect_context::<SubscriptionsCtx>(cx).0;
-	let server_ctx = expect_context::<ServerCtx>(cx).0.0;
-
-	let channels = create_resource(
-		cx,
-		move || (server_ctx.get(), subs_ctx.get()),
-		|(server, subs)| async move {
-			subs.fetch_channels(&server).await.unwrap()
-		},
-	);
-
+	let channels = expect_context::<ChannelsCtx>(cx).0;
 	let channels_view = move || match channels.read(cx) {
 		Some(mut results) => view! {cx, <SidebarSubsList results=results/>}.into_view(cx),
 		None => view! {cx, <SidebarSubsListPlaceholderArray />}.into_view(cx)
 	};
-
 
 	view! {cx,
 		<div class="min-h-[calc(100vh-308px)] max-h-[calc(100vh-308px)] overflow-y-scroll scroll-smooth">

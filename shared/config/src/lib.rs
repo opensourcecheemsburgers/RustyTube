@@ -122,7 +122,8 @@ impl Config {
     }
 
     pub fn load() -> Result<Self, RustyTubeError> {
-        Ok(LocalStorage::get(CONFIG_KEY)?)
+        let config_str = LocalStorage::get::<String>(CONFIG_KEY)?;
+        Self::from_toml_string(&config_str)
     } 
 
     pub fn to_toml_string(&self) -> Result<String, RustyTubeError> {
