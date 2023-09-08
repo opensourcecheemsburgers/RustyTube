@@ -1,8 +1,9 @@
 use config::{Config, HomepageCategory, NetworkConfig, PlayerConfig, PrivacyConfig, UiConfig};
-use leptos::{create_rw_signal, create_slice, provide_context, Scope, Signal, SignalSetter};
+use leptos::{create_effect, create_rw_signal, create_slice, provide_context, Scope, Signal, SignalGet, SignalSetter};
 
 pub fn provide_config_context_slices(cx: Scope, config: Config) {
     let config = create_rw_signal(cx, config);
+    create_effect(cx, move |_| config.get().save());
 
     let server_slice = create_slice(
         cx,
@@ -10,42 +11,36 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
         |config| config.network.server.clone(),
         |config, server| config.network.server = server,
     );
-
     let theme_slice = create_slice(
         cx,
         config,
         |config| config.ui.theme.clone(),
         |config, theme| config.ui.theme = theme,
     );
-
     let homepage_category_slice = create_slice(
         cx,
         config,
         |config| config.ui.homepage.clone(),
         |config, homepage| config.ui.homepage = homepage,
     );
-
     let network_slice = create_slice(
         cx,
         config,
         |config| config.network.clone(),
         |config, network| config.network = network,
     );
-
     let ui_slice = create_slice(
         cx,
         config,
         |config| config.ui.clone(),
         |config, ui| config.ui = ui,
     );
-
     let player_slice = create_slice(
         cx,
         config,
         |config| config.player.clone(),
         |config, player| config.player = player,
     );
-
     let privacy_slice = create_slice(
         cx,
         config,
@@ -61,6 +56,7 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
     let privacy_ctx = PrivacyConfigCtx(privacy_slice);
     let homepage_category_ctx = HomepageCategoryCtx(homepage_category_slice);
 
+    provide_context(cx, config);
     provide_context(cx, server_ctx);
     provide_context(cx, theme_ctx);
     provide_context(cx, network_ctx);
