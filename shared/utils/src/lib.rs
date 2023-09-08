@@ -6,6 +6,20 @@ mod utils {
     use serde_json::Value;
     use std::collections::HashMap;
     use std::time::Duration;
+    use gloo::utils::document;
+    use wasm_bindgen::JsCast;
+
+    pub fn get_element_by_id<T>(id: &str) -> Result<T, RustyTubeError>
+        where T: JsCast
+    {
+        let element = document()
+            .get_element_by_id(id)
+            .ok_or(RustyTubeError::element_not_found(id))?
+            .dyn_into::<T>()
+            .ok()
+            .ok_or(RustyTubeError::dyn_into_fail(id))?;
+        Ok(element)
+    }
 
     pub fn save_to_browser_storage(key: &str, value: &str) -> Result<(), RustyTubeError> {
         LocalStorage::set(key, value)?;

@@ -3,6 +3,7 @@ use gloo::file::FileReadError;
 use serde::{Serialize, Deserialize};
 use gloo::storage::errors::StorageError;
 use chrono::ParseError;
+use wasm_bindgen::JsValue;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RustyTubeError {
@@ -48,7 +49,7 @@ impl From<tauri_sys::error::Error> for RustyTubeError {
         tauri_error_object_string.replace_range(range, "");
         tauri_error_object_string.pop();
         tauri_error_object_string.pop();
-        
+
         // Example tauri-sys error.
         //
         // "JS Binding: JsValue(Object({"description":"There was no save path selected.","title":"Save Error","verbose_description":null}))"
@@ -138,8 +139,28 @@ impl From<serde_xml_rs::Error> for RustyTubeError {
     }
 }
 
+impl From<JsValue> for RustyTubeError {
+    fn from(js_value: JsValue) -> Self {
+        let title = String::from("Error");
+        let description = js_value.as_string().unwrap_or_default();
+        Self { title, description }
+    }
+}
+
 impl RustyTubeError {
-    pub fn from(title: String, description: String) -> Self {        
+    pub fn from(title: String, description: String) -> Self {
+        Self { title, description }
+    }
+
+    pub fn element_not_found(id: &str) -> Self {
+        let title = String::from("Element Error");
+        let description = format!("An element with id: '{}' could not be found in the window.", id);
+        Self { title, description }
+    }
+
+    pub fn dyn_into_fail(id: &str) -> Self {
+        let title = String::from("Element Error");
+        let description = format!("An element with id: '{}' could not be dynamically changed.", id);
         Self { title, description }
     }
 
@@ -148,7 +169,7 @@ impl RustyTubeError {
         let description = String::from("Could not fetch thumbnail.");
         Self { title, description }
     }
-    
+
     pub fn no_file_selected() -> Self {
         let title = String::from("I/O Error");
         let description = String::from("No file was chosen in the file dialog.");

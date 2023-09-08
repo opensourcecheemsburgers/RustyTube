@@ -22,5 +22,7 @@ chrono = { workspace = true }
 serde-xml-rs = { workspace = true }
 
 [dependencies.web-sys]
-version = "0.3.64"
-features=["ErrorEvent"]
+workspace = true
+
+[dependencies.wasm-bindgen]
+workspace = true

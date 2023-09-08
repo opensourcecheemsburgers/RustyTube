@@ -20,6 +20,9 @@ humantime = { workspace = true }
 chrono = { workspace = true }
 rustytube-error = { workspace = true }
 
+[dependencies.wasm-bindgen]
+workspace = true
+
 [dependencies.web-sys]
 workspace = true
 features = [
