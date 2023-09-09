@@ -2,12 +2,14 @@ use invidious::CommonVideo;
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
 use rustytube_error::RustyTubeError;
+use crate::contexts::VideoIdCtx;
 
 use crate::icons::FerrisWtfIcon;
 
 #[component]
 pub fn VideoPreviewCard(
 	cx: Scope,
+	video_id: String,
 	thumbnail_url: String,
 	title: String,
 	author: String,
@@ -16,7 +18,7 @@ pub fn VideoPreviewCard(
 ) -> impl IntoView {
 	view! {cx,
         <div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden">
-            <VideoPreviewCardThumbnail url=thumbnail_url />
+            <VideoPreviewCardThumbnail url=thumbnail_url video_id=video_id />
 			<VideoPreviewCardInfo title=title author=author views=views published=published />
         </div>
     }
@@ -54,13 +56,22 @@ pub enum ThumbnailState {
 }
 
 #[component]
-pub fn VideoPreviewCardThumbnail(cx: Scope, url: String) -> impl IntoView {
+pub fn VideoPreviewCardThumbnail(cx: Scope, url: String, video_id: String) -> impl IntoView {
 	use ThumbnailState::*;
 
 	let (state, set_state) = create_signal(cx, Loading);
 
+	let video = expect_context::<VideoIdCtx>(cx).0;
+	let open_video = move |_| {
+		video.set(video_id.clone());
+		let navigate = leptos_router::use_navigate(cx);
+		request_animation_frame(move || {
+			_ = navigate("/player", Default::default());
+		})
+	};
+
 	view! {cx,
-        <div class="w-full max-w-full overflow-hidden rounded-xl">
+        <div on:click=open_video class="w-full max-w-full overflow-hidden rounded-xl">
             {move ||
                 match state.get() {
                     Loading => view! { cx, <VideoPreviewCardPlaceholder set_state=set_state url=url.clone() />}.into_view(cx),

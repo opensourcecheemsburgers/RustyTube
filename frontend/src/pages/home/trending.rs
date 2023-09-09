@@ -59,6 +59,7 @@ pub fn TrendingVideos(cx: Scope, trending: Trending) -> impl IntoView {
     let trending_videos_view = trending.videos.into_iter().map(|trending_video| view!
         { cx,
             <VideoPreviewCard
+                video_id=trending_video.id
                 title=trending_video.title
                 author=trending_video.author
                 views=trending_video.views

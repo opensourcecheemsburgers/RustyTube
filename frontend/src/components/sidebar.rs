@@ -8,8 +8,7 @@ use crate::icons::{SubscriptionsIcon, TrendingIcon, PopularIcon, HamburgerIcon, 
 
 #[component]
 pub fn Sidebar(cx: Scope) -> impl IntoView {
-	let expanded = create_rw_signal(cx, false.to_string());
-	provide_context(cx, expanded);
+	let expanded = expect_context::<RwSignal<String>>(cx);
 
 	view! {cx,
         <div
@@ -186,7 +185,7 @@ fn change_homepage_category(cx: Scope, category: HomepageCategory) {
 }
 
 pub const SIDEBAR_CLASSES: &'static str = "
-flex flex-col min-h-screen max-h-screen bg-base-200 transition-all duration-300 overflow-x-visible overflow-y-hidden
+flex flex-col min-h-screen max-h-screen bg-base-200 transition-all duration-300
 
 data-[expanded=false]:w-16
 data-[expanded=true]:w-64

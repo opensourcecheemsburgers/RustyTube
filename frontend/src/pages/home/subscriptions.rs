@@ -70,6 +70,7 @@ pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoVie
 		visible_videos.get().into_iter().map(|video| view!
 		{ cx,
                 <VideoPreviewCard
+					video_id=video.id
                     title=video.title
                     author=video.author
                     views=video.views

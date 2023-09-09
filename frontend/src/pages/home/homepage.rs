@@ -19,7 +19,6 @@ pub fn Homepage(cx: Scope) -> impl IntoView {
 
     view! {cx,
         <Page>
-            <Header />
             { current }
         </Page>
 

@@ -39,6 +39,9 @@ features = []
 version = "0.4.6"
 features = ["csr", "nightly"]
 
+[workspace.dependencies.leptos-use]
+version = "0.6.0"
+
 [workspace.dependencies.leptos_router]
 version = "0.4.6"
 features = ["csr", "nightly"]
@@ -60,7 +63,7 @@ features=[
     "HtmlTextAreaElement", "HtmlParagraphElement", "HtmlAudioElement", "HtmlMediaElement", "HtmlVideoElement", "Event", "EventTarget",
     "MouseEvent", "InputEvent", "KeyEvent", "KeyboardEvent", "KeyboardEventInit",
     "TouchEvent", "TouchList", "Touch", "DomTokenList", "Performance", "Window", "ProgressEvent",
-    "MediaSource"
+    "MediaSource",  "TextTrack", "TextTrackMode", "TextTrackList"
 ]
 
 [workspace.dependencies.gloo]

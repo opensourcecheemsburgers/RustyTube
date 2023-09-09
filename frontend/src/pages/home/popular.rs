@@ -36,11 +36,12 @@ pub fn PopularVideos(cx: Scope) -> impl IntoView {
                                     popular.items.into_iter().map(|video| view!
                                         { cx,
                                             <VideoPreviewCard
+                                                video_id=video.id
                                                 title=video.title
                                                 author=video.author
                                                 views=video.views
                                                 published=video.published_text
-                                            thumbnail_url=video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
+                                                thumbnail_url=video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
                                             />
                                         }
                                     ).collect_view(cx)
