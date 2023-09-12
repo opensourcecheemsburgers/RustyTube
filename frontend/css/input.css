@@ -43,12 +43,10 @@
     cursor: grab !important;
   }
 
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--b1) / var(--tw-bg-opacity)) !important;
-  }
+  ::-webkit-scrollbar-track {}
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--bc)) !important;
+    background-color: hsl(var(--bc)) !important;
     border-radius: 6px !important;
     border: 4px hsl(var(--bc)) solid !important;
     background-clip: padding-box !important;
