@@ -23,6 +23,12 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
         |config| config.ui.homepage.clone(),
         |config, homepage| config.ui.homepage = homepage,
     );
+    let volume_slice = create_slice(
+        cx,
+        config,
+        |config| config.player.volume.clone(),
+        |config, volume| config.player.volume = volume,
+    );
     let network_slice = create_slice(
         cx,
         config,
@@ -55,6 +61,7 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
     let player_ctx = PlayerConfigCtx(player_slice);
     let privacy_ctx = PrivacyConfigCtx(privacy_slice);
     let homepage_category_ctx = HomepageCategoryCtx(homepage_category_slice);
+    let volume_ctx = VolumeCtx(volume_slice);
 
     provide_context(cx, config);
     provide_context(cx, server_ctx);
@@ -64,6 +71,7 @@ pub fn provide_config_context_slices(cx: Scope, config: Config) {
     provide_context(cx, player_ctx);
     provide_context(cx, privacy_ctx);
     provide_context(cx, homepage_category_ctx);
+    provide_context(cx, volume_ctx);
 }
 
 #[derive(Copy, Clone)]
@@ -85,6 +93,9 @@ pub struct ThemeCtx(pub (Signal<String>, SignalSetter<String>));
 
 #[derive(Copy, Clone)]
 pub struct HomepageCategoryCtx(pub (Signal<HomepageCategory>, SignalSetter<HomepageCategory>));
+
+#[derive(Copy, Clone)]
+pub struct VolumeCtx(pub (Signal<f64>, SignalSetter<f64>));
 
 pub const THEMES: &'static [&'static str] = &[
     "dracula",

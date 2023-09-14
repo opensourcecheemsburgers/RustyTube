@@ -11,6 +11,7 @@ pub use config::{
     HomepageCategoryCtx,
     ServerCtx,
     ThemeCtx,
+    VolumeCtx,
     THEMES,
 };
 

@@ -30,6 +30,7 @@ pub struct PlayerConfig {
     pub fast_forward_interval: u8,
     pub default_quality: QualityLabel,
     pub remember_position: RememberPosition,
+    pub volume: f64
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
@@ -89,8 +90,9 @@ impl Default for PlayerConfig {
         let fast_forward_interval = 10u8;
         let default_quality = QualityLabel::_1080p;
         let remember_position = VideosOnly;
+        let volume = 0.5f64;
 
-        Self { auto_play, fast_forward_interval, default_quality, remember_position }
+        Self { auto_play, volume, fast_forward_interval, default_quality, remember_position }
     }
 }
 
