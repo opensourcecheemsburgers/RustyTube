@@ -10,7 +10,7 @@ pub struct ChannelSearch {
 
 impl ChannelSearch {
     fn url(server: &str, args: &str) -> String {
-        format!("{}/api/v1/channels/search/{}", server, args)
+        format!("{}/api/v1/channels/search/{}/", server, args)
     }
 
     async fn search(server: &str, args: &str) -> Result<Self, RustyTubeError> {

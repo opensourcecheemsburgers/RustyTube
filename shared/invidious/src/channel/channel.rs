@@ -42,7 +42,7 @@ pub struct Channel {
 
 impl Channel {
     fn url(server: &str, args: &str) -> String {
-        format!("{server}/api/v1/channels/{args}")
+        format!("{server}/api/v1/channels/{args}/")
     }
 
     pub async fn fetch_channel(server: &str, id: &str) -> Result<Self, RustyTubeError> {

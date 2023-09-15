@@ -11,7 +11,7 @@ pub struct ChannelPlaylists {
 
 impl ChannelPlaylists {
     fn url(server: &str, args: &str) -> String {
-        format!("{server}/api/v1/channels/playlists/{args}")
+        format!("{server}/api/v1/channels/playlists/{args}/")
     }
 
     async fn fetch_channel_playlists(server: &str, id: &str, args: Option<&str>) -> Result<Self, RustyTubeError> {

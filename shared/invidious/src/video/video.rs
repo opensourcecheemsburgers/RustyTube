@@ -77,7 +77,7 @@ pub struct Video {
 
 impl Video {
     fn url(server: &str, id: &str) -> String {
-        format!("{server}/api/v1/videos/{id}")
+        format!("{server}/api/v1/videos/{id}/")
     }
 
     pub async fn fetch_video(server: &str, id: &str) -> Result<Self, RustyTubeError> {

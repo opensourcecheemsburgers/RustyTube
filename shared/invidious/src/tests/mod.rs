@@ -3,7 +3,7 @@ mod tests {
     use wasm_bindgen_test::{console_log, wasm_bindgen_test, wasm_bindgen_test_configure};
     use gloo::file::{Blob};
     use crate::channel::Channel;
-    use crate::comments::Comments;
+    use crate::{Comments, Replies};
     use crate::fetch::fetch;
     use crate::formats::{Formats, VideoFormat, AudioFormat, LegacyFormat, AdaptiveFormat, QualityLabel, Resolution, Container};
     use crate::hidden::CountryCode;
@@ -81,7 +81,7 @@ mod tests {
 
         adaptive_formats.into_iter().for_each(|adaptive_format| {
             video_formats.push(VideoFormat::try_from(adaptive_format).unwrap());
-        }); 
+        });
 
         assert_eq!(video_formats.len(), 2)
     }
@@ -138,7 +138,7 @@ mod tests {
 
     #[wasm_bindgen_test]
     async fn get_channel() {
-        let channel = Channel::fetch_channel(TEST_SERVER, TEST_CHANNEL,None).await.unwrap();
+        let channel = Channel::fetch_channel(TEST_SERVER, TEST_CHANNEL).await.unwrap();
 
         let local_json = include_str!("./files/channel.json");
         let local: Channel = serde_json::from_str(local_json).unwrap();
@@ -148,10 +148,21 @@ mod tests {
 
     #[wasm_bindgen_test]
     async fn get_comments() {
-        let comments = Comments::fetch_comments(TEST_SERVER, TEST_VIDEO_COMMENTS, None).await.unwrap();
+        let comments = Comments::fetch_comments(TEST_SERVER, TEST_VIDEO_COMMENTS).await.unwrap();
 
         let local_json = include_str!("./files/comments.json");
         let local: Comments = serde_json::from_str(local_json).unwrap();
+    }
+
+    #[wasm_bindgen_test]
+    async fn get_comment_replies() {
+        let comments = Comments::fetch_comments(TEST_SERVER, TEST_VIDEO_COMMENTS, None).await.unwrap();
+
+        let first_comment = comments.comments.first().unwrap();
+        let first_comment_replies_info = first_comment.replies_info.clone().unwrap();
+        let replies = Replies::fetch_replies(&first_comment_replies_info.continuation, TEST_SERVER, &first_comment.id).await.unwrap();
+
+        assert_eq!(replies.comments.len(), 10);
     }
 
     #[wasm_bindgen_test]
@@ -220,7 +231,7 @@ mod tests {
         let yt_subs: YoutubeSubscriptions =
             YoutubeSubscriptions::read_subs_from_csv(subs_json).unwrap();
         let subs: Subscriptions = yt_subs.into();
-        let subs_videos = subs.fetch_subs(TEST_SERVER, false).await.unwrap();
+        let subs_videos = subs.fetch_videos(TEST_SERVER, false).await.unwrap();
 
         subs_videos
             .into_iter()
@@ -243,7 +254,7 @@ mod tests {
             YoutubeSubscriptions::read_subs_from_csv(subs_json).unwrap();
         let subs: Subscriptions = yt_subs.into();
 
-        let subs_videos = subs.fetch_subs(TEST_SERVER, true).await.unwrap();
+        let subs_videos = subs.fetch_videos(TEST_SERVER, true).await.unwrap();
         subs_videos
             .into_iter()
             .for_each(|sub_videos| match sub_videos {

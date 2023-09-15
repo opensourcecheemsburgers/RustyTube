@@ -1,6 +1,8 @@
 
 use serde::{Deserialize, Serialize};
+use rustytube_error::RustyTubeError;
 use crate::common::CommonImage;
+use crate::{Comments, fetch};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Comment {
@@ -33,7 +35,14 @@ pub struct Comment {
     #[serde(rename = "creatorHeart")]
     pub heart: Option<CreatorHeart>,
     #[serde(default)]
-    pub replies: Option<Replies>,
+    #[serde(rename = "replies")]
+    pub replies_info: Option<RepliesInfo>,
+}
+
+impl PartialEq for Comment {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -45,15 +54,30 @@ pub struct CreatorHeart {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Replies {
+pub struct RepliesInfo {
     #[serde(rename = "replyCount")]
-    replies: u32,
-    continuation: String,
+    pub replies: u32,
+    pub continuation: String,
 }
 
-impl PartialEq for Comment {
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Replies {
+    #[serde(rename = "videoId")]
+    pub id: String,
+    pub comments: Vec<Comment>,
+    pub continuation: Option<String>,
+}
+impl Replies {
+    pub async fn fetch_replies(continuation: &str, server: &str, id: &str) -> Result<Replies, RustyTubeError> {
+        let comments_url = format!("{}/api/v1/comments/{}?continuation={}", server, id, continuation);
+        let comments_json = fetch(&comments_url).await?;
+        let replies: Replies = serde_json::from_str(&comments_json)?;
+        Ok(replies)
+    }
+}
+
+impl PartialEq for RepliesInfo {
     fn eq(&self, other: &Self) -> bool {
-        *&self.id.eq(&other.id)
-            && *&self.author_id.eq(&other.author_id)
+        self.continuation.eq_ignore_ascii_case(&other.continuation)
     }
 }

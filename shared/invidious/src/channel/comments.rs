@@ -1,7 +1,7 @@
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use crate::fetch::fetch;
-use crate::hidden::Comment;
+use crate::Comment;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ChannelComments {

@@ -3,7 +3,6 @@
 mod fetch;
 mod hidden;
 mod video;
-mod comments;
 mod common;
 mod channel;
 mod universal;
@@ -15,7 +14,6 @@ mod formats;
 pub use fetch::*;
 pub use hidden::*;
 pub use video::*;
-pub use comments::*;
 pub use common::*;
 pub use channel::*;
 pub use universal::*;
