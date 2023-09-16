@@ -15,7 +15,7 @@ pub fn Page(cx: Scope, children: Children) -> impl IntoView {
             <Sidebar/>
             <div data-expanded=expanded class=PAGE_CLASSES>
                 <Header />
-                <div class="min-h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] bg-base-100 overflow-hidden">
+                <div class="min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] bg-base-100 overflow-hidden">
                     {children(cx)}
                 </div>
             </div>
