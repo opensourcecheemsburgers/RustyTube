@@ -36,6 +36,9 @@
   * {
     scrollbar-width: auto !important;
     scrollbar-color: hsl(var(--bc)) hsl(var(--b1)) !important;
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
   }
 
   ::-webkit-scrollbar {
