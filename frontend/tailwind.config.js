@@ -1,24 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     mode: 'jit',
-
     content: ['./css/*.{js,ts,jsx,tsx,css,scss,html}', './css/**/*.{js,ts,jsx,tsx}',
         './src/**/*.{js,ts,jsx,tsx,rs,scss,css,html}', './index.html',  './src/main.rs'
     ],
-    corePlugins: {
-        aspectRatio: false,
-    },
     plugins: [
         require('daisyui'),
-        require('@tailwindcss/aspect-ratio'),
         require('@tailwindcss/typography'),
         require("tailwindcss-animate")
     ],
     theme: {
         fontFamily: {
             'sans': ['Open Sans', 'Noto Color Emoji'],
-            'display': ['Comfortaa', 'display'],
-            'mono': ['Fira Mono', 'mono']
+            'display': ['Comfortaa', 'Noto Color Emoji'],
+            'mono': ['Fira Mono', 'Noto Color Emoji']
         },
     },
     daisyui: {
