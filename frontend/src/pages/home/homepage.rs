@@ -1,4 +1,4 @@
-use crate::components::{FerrisError, Header, Page};
+use crate::components::{Header, Page};
 use crate::pages::home::trending::TrendingSection;
 use leptos::*;
 use config::HomepageCategory::*;
@@ -21,7 +21,6 @@ pub fn Homepage(cx: Scope) -> impl IntoView {
         <Page>
             { current }
         </Page>
-
     }
 }
 

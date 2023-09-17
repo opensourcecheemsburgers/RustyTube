@@ -26,3 +26,7 @@ workspace = true
 
 [dependencies.wasm-bindgen]
 workspace = true
+
+[dependencies.leptos]
+workspace = true
+features = ["csr", "nightly"]

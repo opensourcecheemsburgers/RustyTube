@@ -3,6 +3,7 @@ use gloo::file::FileReadError;
 use serde::{Serialize, Deserialize};
 use gloo::storage::errors::StorageError;
 use chrono::ParseError;
+use leptos::{Scope, View, IntoView, view};
 use wasm_bindgen::JsValue;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

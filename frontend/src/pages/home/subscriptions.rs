@@ -13,45 +13,34 @@ use crate::icons::FerrisWaveIcon;
 #[component]
 pub fn SubscriptionsSection(cx: Scope) -> impl IntoView {
 	let subs = expect_context::<SubscriptionsCtx>(cx).0;
-
-	let subscriptions_content = move || match subs.get().channels.len() == 0 {
-		false => { view! {cx, <SubscriptionsContent subs=subs.read_only() />} },
-		true => { view! {cx, <ImportSubscriptions subs=subs.write_only() />} }
-	};
+	let subs_videos_resource = expect_context::<SubsVideosCtx>(cx).0;
 
 	view! {cx,
 		<HomepageSection>
 			<HomepageSectionTitle title={"Subscriptions".to_string()}/>
-				{ subscriptions_content }
+			<Suspense fallback=move || view! {cx, <VideoPreviewCardPlaceholderArray />}>
+				{
+					move || match subs.get().channels.len() == 0 {
+						false => subs_videos_resource.read(cx).map(|subs_videos_res| {
+							match subs_videos_res {
+								Ok(subs_videos) => view! {cx, <SubscriptionsVideos subs_videos=subs_videos />},
+								Err(err) => view! {cx, <FerrisError error=err/>},
+							}
+						}),
+						true => Some(view!{cx, <ImportSubscriptions/>})
+					}
+				}
+        	</Suspense>
 		</HomepageSection>
 	}
 }
 
 #[component]
-pub fn SubscriptionsContent(cx: Scope, subs: ReadSignal<Subscriptions>) -> impl IntoView {
-	let server = expect_context::<ServerCtx>(cx).0.0;
-	let subs = expect_context::<SubsVideosCtx>(cx).0;
-
-	let subscriptions_view = move || match subs.read(cx) {
-		Some(subs) => {
-			match subs {
-				Ok(subs) => {view! {cx, <SubscriptionsVideos subs=subs/>}},
-				Err(err) => {view! {cx, <SubscriptionsError error=err/>}}
-			}
-		},
-		None => view! {cx, <VideoPreviewCardPlaceholderArray />}.into_view(cx)
-	};
-
-
-	view! {cx, {subscriptions_view} }
-}
-
-#[component]
-pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoView {
+pub fn SubscriptionsVideos(cx: Scope, subs_videos: SubscriptionsVideos) -> impl IntoView {
 	let mut videos: Vec<Vec<CommonVideo>> = Vec::new();
 	let mut fails: Vec<RustyTubeError> = Vec::new();
 
-	subs.into_iter().for_each(|sub| {
+	subs_videos.into_iter().for_each(|sub| {
 		match sub {
 			Ok(sub_videos) => videos.push(sub_videos),
 			Err(error) => fails.push(error)
@@ -63,7 +52,11 @@ pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoVie
 
 	let total_videos_len = total_videos.len();
 
-	let initial_videos= Vec::from(&total_videos[0..100]);
+	let initial_len = match total_videos_len > 100 {
+		true => 100,
+		false => total_videos_len
+	};
+	let initial_videos = Vec::from(&total_videos[0..initial_len]);
 	let visible_videos = create_rw_signal(cx, initial_videos);
 
 	let videos_view = move || {
@@ -99,14 +92,14 @@ pub fn SubscriptionsVideos(cx: Scope, subs: SubscriptionsVideos) -> impl IntoVie
 }
 
 #[component]
-pub fn ImportSubscriptions(cx: Scope, subs: WriteSignal<Subscriptions>) -> impl IntoView {
+pub fn ImportSubscriptions(cx: Scope) -> impl IntoView {
 	view! {cx,
 		<div class="hero min-h-full">
 			<div class="flex flex-col space-y-8">
-				<FerrisWaveIcon width=96/>
+				<FerrisWaveIcon width=96 />
 				<div class="flex flex-row space-x-4">
 					<ImportSubscriptionsTutorial />
-					<ImportSubscriptionsBtn subs=subs />
+					<ImportSubscriptionsBtn />
 				</div>
 			</div>
 		</div>
@@ -121,8 +114,11 @@ pub fn ImportSubscriptionsTutorial(cx: Scope) -> impl IntoView {
 		</a>
 	}
 }
+
 #[component]
-pub fn ImportSubscriptionsBtn(cx: Scope, subs: WriteSignal<Subscriptions>) -> impl IntoView {
+pub fn ImportSubscriptionsBtn(cx: Scope) -> impl IntoView {
+	let subs = expect_context::<SubscriptionsCtx>(cx).0.write_only();
+
 	let parse_subs_file = create_action(cx, |input: &(WriteSignal<Subscriptions>, Event)| {
 		let subs = input.0.clone();
 		let event = input.1.clone();
@@ -150,14 +146,6 @@ pub fn ImportSubscriptionsBtn(cx: Scope, subs: WriteSignal<Subscriptions>) -> im
 	}
 }
 
-#[component]
-pub fn SubscriptionsError(cx: Scope, error: RustyTubeError) -> impl IntoView {
-	view! {cx,
-        <div class="h-[calc(100vh-64px-1rem-128px)]">
-            <FerrisError error=error width=96 />
-        </div>
-    }
-}
 async fn get_subs_from_file(subs: WriteSignal<Subscriptions>, event: Event) -> Result<(), RustyTubeError> {
 	let input: HtmlInputElement = event.target().unwrap().dyn_into().unwrap();
 	let filelist = input.files().ok_or(RustyTubeError::no_file_selected())?;

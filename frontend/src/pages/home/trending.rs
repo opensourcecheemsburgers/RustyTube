@@ -9,33 +9,8 @@ use crate::pages::home::homepage::{HomepageSection, HomepageSectionTitle};
 #[component]
 pub fn TrendingSection(cx: Scope) -> impl IntoView {
     let category = create_rw_signal(cx, Default);
-
-    view! {cx,
-        <HomepageSection>
-                <HomepageSectionTitle title={"Trending".to_string()}/>
-                <TrendingHeader category=category.write_only() />
-                <TrendingContent category=category.read_only() />
-        </HomepageSection>
-    }
-}
-
-#[component]
-pub fn TrendingHeader(cx: Scope, category: WriteSignal<TrendingCategory>) -> impl IntoView {
-    view! {cx,
-        <div class="pl-4 flex flex-row gap-x-3">
-            <button on:click=move |_| category.set(Default) class="btn btn-sm btn-outline font-normal normal-case rounded-lg">All</button>
-            <button on:click=move |_| category.set(Music) class="btn btn-sm btn-outline font-normal normal-case rounded-lg">Music</button>
-            <button on:click=move |_| category.set(Gaming) class="btn btn-sm btn-outline font-normal normal-case rounded-lg">Gaming</button>
-            <button on:click=move |_| category.set(Movies) class="btn btn-sm btn-outline font-normal normal-case rounded-lg">Movies</button>
-       </div>
-    }
-}
-
-#[component]
-pub fn TrendingContent(cx: Scope, category: ReadSignal<TrendingCategory>) -> impl IntoView {
     let server = expect_context::<ServerCtx>(cx).0.0;
-
-    let trending_videos = create_resource(
+    let trending_resource = create_resource(
         cx,
         move || (server.get(), category.get()),
         |(server, category)| async move {
@@ -43,15 +18,43 @@ pub fn TrendingContent(cx: Scope, category: ReadSignal<TrendingCategory>) -> imp
         },
     );
 
-    let trending_content_view = move || match trending_videos.read(cx) {
-        Some(result) => match result {
-            Ok(trending) => view! {cx, <TrendingVideos trending=trending />},
-            Err(err) => view! {cx, <TrendingError error=err />}
-        },
-        None => view! {cx, <VideoPreviewCardPlaceholderArray />}
-    };
+    // let trending_content_view = move || trending_resource.read(cx).map(|trending_videos_res| {
+    //     match trending_videos_res {
+    //         Ok(trending) => view! {cx, <TrendingVideos trending=trending />},
+    //         Err(err) => view! {cx, <FerrisError error=err/>}
+    //     }
+    // }) ;
 
-    view! {cx, { trending_content_view } }
+    view! {cx,
+        <HomepageSection>
+                <HomepageSectionTitle title={"Trending".to_string()}/>
+                <TrendingHeader category=category />
+                <Suspense fallback=move || view! {cx, <VideoPreviewCardPlaceholderArray />}>
+                    {
+                        move || trending_resource.read(cx).map(|trending_videos_res| {
+                            match trending_videos_res {
+                                Ok(trending) => view! {cx, <TrendingVideos trending=trending />},
+                                Err(err) => view! {cx, <FerrisError error=err/>}
+                            }
+                        })
+                    }
+                </Suspense>
+        </HomepageSection>
+    }
+}
+
+#[component]
+pub fn TrendingHeader(cx: Scope, category: RwSignal<TrendingCategory>) -> impl IntoView {
+    let header_btn_classes = "btn btn-sm btn-outline font-normal normal-case rounded-lg";
+
+    view! {cx,
+        <div class="pl-4 flex flex-row gap-x-3">
+            <button on:click=move |_| category.set(Default) class=header_btn_classes>All</button>
+            <button on:click=move |_| category.set(Music) class=header_btn_classes>Music</button>
+            <button on:click=move |_| category.set(Gaming) class=header_btn_classes>Gaming</button>
+            <button on:click=move |_| category.set(Movies) class=header_btn_classes>Movies</button>
+       </div>
+    }
 }
 
 #[component]
@@ -75,11 +78,17 @@ pub fn TrendingVideos(cx: Scope, trending: Trending) -> impl IntoView {
     }
 }
 
-#[component]
-pub fn TrendingError(cx: Scope, error: RustyTubeError) -> impl IntoView {
-    view! {cx,
-        <div class="h-[calc(100vh-64px-1rem-128px)]">
-            <FerrisError error=error width=96 />
-        </div>
-    }
-}
+// fn fetch_trending_resource(cx: Scope, category: RwSignal<TrendingCategory>) -> TrendingVideosResource {
+//     let server = expect_context::<ServerCtx>(cx).0.0;
+
+//     create_resource(
+//         cx,
+//         move || (server.get(), category.get()),
+//         |(server, category)| async move {
+//             Trending::fetch_trending(&server, category, CountryCode::IE).await
+//         },
+//     )
+// }
+
+type TrendingVideosResource = Resource<TrendingVideosResourceArgs, Result<Trending, RustyTubeError>>;
+type TrendingVideosResourceArgs = (String, TrendingCategory);
