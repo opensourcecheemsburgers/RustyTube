@@ -1,5 +1,5 @@
 use invidious::{Channel, CommonVideo, fetch_instance_info, Instances, Subscriptions, SubscriptionsFetch};
-use leptos::{create_resource, create_rw_signal, expect_context, provide_context, Resource, RwSignal, Scope, SignalGet};
+use leptos::{create_effect, create_resource, create_rw_signal, expect_context, provide_context, Resource, RwSignal, Scope, SignalGet, SignalUpdate, SignalWith};
 use wasm_bindgen_futures::spawn_local;
 use rustytube_error::RustyTubeError;
 use crate::contexts::ServerCtx;
@@ -32,7 +32,6 @@ pub fn provide_user_resources(cx: Scope) {
 			subs.fetch_videos(&server, false).await
 		},
 	);
-
 	let instances_ctx = create_resource(
 		cx,
 		move || (),
@@ -40,7 +39,6 @@ pub fn provide_user_resources(cx: Scope) {
 			fetch_instance_info().await
 		},
 	);
-
 	let channels_ctx = create_resource(
 		cx,
 		move || (server.get(), subs.get()),
@@ -48,6 +46,12 @@ pub fn provide_user_resources(cx: Scope) {
 			subs.fetch_channels(&server).await.unwrap()
 		},
 	);
+
+	create_effect(cx, move |_| {
+		subs.track();
+		subs_ctx.refetch();
+		channels_ctx.refetch();
+	});
 
 	provide_context(cx, SubsVideosCtx(subs_ctx));
 	provide_context(cx, InstancesCtx(instances_ctx));
