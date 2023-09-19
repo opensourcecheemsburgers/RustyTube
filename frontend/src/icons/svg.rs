@@ -1,11 +1,11 @@
 use leptos::{Children, component, IntoView, Scope, view};
 
-#[component]
-pub fn Svg(cx: Scope, children: Children, height: u8, width: u8) -> impl IntoView {
-	/// UI Icons from https://lucide.dev
+pub const RESPONSIVE_ICON_LG: &'static str = "h-5 w-5 lg:h-6 lg:w-6 2xl:h-7 2xl:w-7";
+pub const RESPONSIVE_ICON: &'static str = "h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6";
 
-	pub static RESPONSIVE_ICON_LG: &'static str = "h-5 w-5 lg:h-6 lg:w-6 2xl:h-7 2xl:w-7";
-	pub static RESPONSIVE_ICON: &'static str = "h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6";
+#[component]
+pub fn Svg(cx: Scope, children: Children, class: &'static str) -> impl IntoView {
+	/// UI Icons from https://lucide.dev
 
 	const STROKE: &'static str = "currentColor";
 	const STROKE_WIDTH: &'static str = "1.5";
@@ -16,8 +16,7 @@ pub fn Svg(cx: Scope, children: Children, height: u8, width: u8) -> impl IntoVie
 
 	view! {cx,
         <svg
-            height={height}
-            width={width}
+			class=class
             viewBox={BOX}
             fill={FILL}
             stroke={STROKE}
