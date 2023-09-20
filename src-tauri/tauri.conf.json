@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "ie.stephenpower.rustytube",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
