@@ -5,7 +5,7 @@ use crate::fetch::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ChannelSearch {
-    pub items: Vec<SearchItem>,
+    pub items: Vec<SearchResult>,
 }
 
 impl ChannelSearch {

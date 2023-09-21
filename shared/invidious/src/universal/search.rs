@@ -1,15 +1,17 @@
 use serde::{Deserialize, Serialize};
-use crate::hidden::{CountryCode, SearchItem};
+use crate::hidden::{CountryCode, SearchResult};
 use std::fmt;
 use std::fmt::{Display, Formatter};
 use rustytube_error::RustyTubeError;
 use crate::fetch::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Search {
-    pub items: Vec<SearchItem>,
+pub struct SearchResults {
+    pub items: Vec<SearchResult>,
 }
 
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SearchArgs {
     pub page: u32,
     pub query: String,
@@ -22,20 +24,20 @@ pub struct SearchArgs {
 
 }
 
-impl Search {
-    fn url(server: &str, args: &SearchArgs) -> String {
-        let mut url: String = format!("{}/api/v1/search/?q={}&sort_by=", server, args.query);
+impl SearchArgs {
+    fn url(&self, server: &str) -> String {
+        let mut url: String = format!("{}/api/v1/search/?q={}&sort_by=", server, self.query);
 
-        if let Some(timespan) = &args.timespan {
+        if let Some(timespan) = self.timespan {
             url.push_str(&format!("?date={timespan}"))
         }
-        if let Some(duration) = &args.duration {
+        if let Some(duration) = self.duration {
             url.push_str(&format!("?duration={duration}"))
         }
-        if let Some(response_type) = &args.response_type {
+        if let Some(response_type) = self.response_type {
             url.push_str(&format!("?duration={response_type}"))
         }
-        if let Some(features) = &args.features {
+        if let Some(features) = self.features.clone() {
             let mut features_string = String::from("?features=");
             features.iter().enumerate().for_each(|(index, feature)| {
                 let feature_string: String = feature.clone().into();
@@ -49,16 +51,17 @@ impl Search {
 
         url
     }
+}
 
-    pub async fn search(server: &str, args: &SearchArgs) -> Result<Search, RustyTubeError> {
-        let url = Self::url(server, args);
+impl SearchResults {
+    pub async fn search(url: &str) -> Result<Self, RustyTubeError> {
         let search_json = fetch(&url).await?;
-        let items: Vec<SearchItem> = serde_json::from_str(&search_json)?;
-        Ok(Search { items })
+        let items: Vec<SearchResult> = serde_json::from_str(&search_json)?;
+        Ok(Self { items })
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum Sort {
     Relevance,
     Rating,
@@ -72,7 +75,7 @@ impl Display for Sort {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum TimeSpan {
     Hour,
     Day,
@@ -87,7 +90,7 @@ impl Display for TimeSpan {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum Duration {
     Short,
     Long,
@@ -100,7 +103,7 @@ impl Display for Duration {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum ResponseType {
     Video,
     Playlist,
@@ -116,7 +119,7 @@ impl Display for ResponseType {
     }
 }
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum Feature {
     HighDefinition,
     Subtitles,

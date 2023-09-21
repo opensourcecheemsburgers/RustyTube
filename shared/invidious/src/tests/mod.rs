@@ -148,7 +148,7 @@ mod tests {
 
     #[wasm_bindgen_test]
     async fn get_comments() {
-        let comments = Comments::fetch_comments(TEST_SERVER, TEST_VIDEO_COMMENTS).await.unwrap();
+        let comments = Comments::fetch_comments(TEST_SERVER, TEST_VIDEO_COMMENTS, None).await.unwrap();
 
         let local_json = include_str!("./files/comments.json");
         let local: Comments = serde_json::from_str(local_json).unwrap();
