@@ -1,5 +1,5 @@
 use invidious::{Channel, CommonVideo, fetch_instance_info, Instances, Subscriptions, SubscriptionsFetch};
-use leptos::{create_effect, create_resource, create_rw_signal, expect_context, provide_context, Resource, RwSignal, Scope, SignalGet, SignalUpdate, SignalWith};
+use leptos::*;
 use wasm_bindgen_futures::spawn_local;
 use rustytube_error::RustyTubeError;
 use crate::contexts::ServerCtx;
@@ -16,44 +16,41 @@ pub struct SubsVideosCtx(pub Resource<(String, Subscriptions), SubscriptionsFetc
 #[derive(Copy, Clone)]
 pub struct InstancesCtx(pub Resource<(), Result<Instances, RustyTubeError>>);
 
-pub fn provide_user_contexts(cx: Scope) {
+pub fn provide_user_contexts() {
 	let subscriptions = Subscriptions::load().unwrap_or_default();
-	provide_context(cx, SubscriptionsCtx(create_rw_signal(cx, subscriptions)));
+	provide_context(SubscriptionsCtx(create_rw_signal(subscriptions)));
 }
 
-pub fn provide_user_resources(cx: Scope) {
-	let subs = expect_context::<SubscriptionsCtx>(cx).0;
-	let server = expect_context::<ServerCtx>(cx).0.0;
+pub fn provide_user_resources() {
+	let subs = expect_context::<SubscriptionsCtx>().0;
+	let server = expect_context::<ServerCtx>().0.0;
 
 	let subs_ctx = create_resource(
-		cx,
 		move || (server.get(), subs.get()),
 		|(server, subs)| async move {
 			subs.fetch_videos(&server, false).await
 		},
 	);
 	let instances_ctx = create_resource(
-		cx,
 		move || (),
 		|_| async move {
 			fetch_instance_info().await
 		},
 	);
 	let channels_ctx = create_resource(
-		cx,
 		move || (server.get(), subs.get()),
 		|(server, subs)| async move {
 			subs.fetch_channels(&server).await.unwrap()
 		},
 	);
 
-	create_effect(cx, move |_| {
+	create_effect(move |_| {
 		subs.track();
 		subs_ctx.refetch();
 		channels_ctx.refetch();
 	});
 
-	provide_context(cx, SubsVideosCtx(subs_ctx));
-	provide_context(cx, InstancesCtx(instances_ctx));
-	provide_context(cx, ChannelsCtx(channels_ctx));
+	provide_context(SubsVideosCtx(subs_ctx));
+	provide_context(InstancesCtx(instances_ctx));
+	provide_context(ChannelsCtx(channels_ctx));
 }

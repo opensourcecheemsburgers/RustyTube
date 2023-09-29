@@ -7,10 +7,10 @@ use crate::contexts::{ChannelsCtx, ServerCtx, SubscriptionsCtx, ThemeCtx, UiConf
 use crate::icons::{SubscriptionsIcon, TrendingIcon, PopularIcon, HamburgerIcon, FerrisIcon, CogIcon, HeartIcon, SettingsIcon};
 
 #[component]
-pub fn Sidebar(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn Sidebar() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
-	view! {cx,
+	view!{
         <div
 			data-expanded=expanded
 			class=SIDEBAR_CLASSES
@@ -33,15 +33,15 @@ pub fn Sidebar(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn SidebarSubs(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
-	let channels = expect_context::<ChannelsCtx>(cx).0;
-	let channels_view = move || match channels.read(cx) {
-		Some(mut results) => view! {cx, <SidebarSubsList results=results/>}.into_view(cx),
-		None => view! {cx, <SidebarSubsListPlaceholderArray />}.into_view(cx)
+pub fn SidebarSubs() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
+	let channels = expect_context::<ChannelsCtx>().0;
+	let channels_view = move || match channels.get() {
+		Some(mut results) => view!{<SidebarSubsList results=results/>}.into_view(),
+		None => view!{<SidebarSubsListPlaceholderArray />}.into_view()
 	};
 
-	view! {cx,
+	view! {
 		<div class="min-h-[calc(100vh-19.25rem)] max-h-[calc(100vh-19.25rem)] overflow-x-auto overflow-y-scroll scroll-smooth">
 			{channels_view}
 		</div>
@@ -49,12 +49,12 @@ pub fn SidebarSubs(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn SidebarHeader(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn SidebarHeader() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
 	let toggle = move |_| expanded.set((!expanded.get().parse::<bool>().unwrap()).to_string());
 
-	view! {cx,
+	view!{
 		<button data-expanded=expanded on:click=toggle class=SIDEBAR_HEADER_CLASSES>
 			<FerrisIcon />
 			<p data-expanded=expanded class=SIDEBAR_HEADER_TEXT_CLASSES>{"RustyTube"}</p>
@@ -63,10 +63,10 @@ pub fn SidebarHeader(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn ChannelButton(cx: Scope, channel: Channel) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn ChannelButton(channel: Channel) -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
-	view! {cx,
+	view!{
 		<div data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 			<img src=channel.thumbnails.first().unwrap().url.clone() class="w-6 h-6 rounded-full" />
 			<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>{channel.name}</p>
@@ -75,8 +75,8 @@ pub fn ChannelButton(cx: Scope, channel: Channel) -> impl IntoView {
 }
 
 #[component]
-pub fn SidebarSubsList(cx: Scope, results: Vec<Result<Channel, RustyTubeError>>) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn SidebarSubsList(results: Vec<Result<Channel, RustyTubeError>>) -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
 	let mut channels_view_vec = Vec::new();
 
@@ -89,35 +89,35 @@ pub fn SidebarSubsList(cx: Scope, results: Vec<Result<Channel, RustyTubeError>>)
 	channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
 
 	channels.into_iter().for_each(|channel| {
-		let view = view! {cx, <ChannelButton channel=channel />};
+		let view = view!{<ChannelButton channel=channel />};
 		channels_view_vec.push(view);
 	});
-	channels_view_vec.collect_view(cx)
+	channels_view_vec.collect_view()
 }
 
 #[component]
-pub fn SidebarSubsListPlaceholderArray(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn SidebarSubsListPlaceholderArray() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
 	let mut channels = Subscriptions::load().unwrap_or_default().channels;
 	channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
 	channels.into_iter().map(|channel| {
-		view! {cx,
+		view!{
 		<div data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 			<div class="w-6 h-6 rounded-full animate-pulse bg-neutral" />
 			<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>{channel.name}</p>
 		</div>
 	}
-	}).collect_view(cx)
+	}).collect_view()
 }
 
 #[component]
-pub fn SubscriptionsButton(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn SubscriptionsButton() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
-	let change_category = move |_| { change_homepage_category(cx, HomepageCategory::Subscriptions)};
+	let change_category = move |_| { change_homepage_category(HomepageCategory::Subscriptions)};
 
-	view! {cx,
+	view!{
 		<div on:click=change_category data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 			<SubscriptionsIcon />
 			<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>Subscriptions</p>
@@ -126,12 +126,12 @@ pub fn SubscriptionsButton(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn TrendingButton(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn TrendingButton() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
-	let change_category = move |_| { change_homepage_category(cx, HomepageCategory::Trending)};
+	let change_category = move |_| { change_homepage_category(HomepageCategory::Trending)};
 
-	view! {cx,
+	view!{
 		<div on:click=change_category data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 			<TrendingIcon />
 		<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>Trending</p>
@@ -140,12 +140,12 @@ pub fn TrendingButton(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn PopularButton(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn PopularButton() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
-	let change_category = move |_| { change_homepage_category(cx, HomepageCategory::Popular)};
+	let change_category = move |_| { change_homepage_category(HomepageCategory::Popular)};
 
-	view! {cx,
+	view!{
 		<div on:click=change_category data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 			<PopularIcon />
 			<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>Popular</p>
@@ -154,10 +154,10 @@ pub fn PopularButton(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn SettingsButton(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn SettingsButton() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
-	view! {cx,
+	view!{
 		<div data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 			<SettingsIcon />
 			<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>Settings</p>
@@ -166,10 +166,10 @@ pub fn SettingsButton(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn DonateButton(cx: Scope) -> impl IntoView {
-	let expanded = expect_context::<RwSignal<String>>(cx);
+pub fn DonateButton() -> impl IntoView {
+	let expanded = expect_context::<RwSignal<String>>();
 
-	view! {cx,
+	view!{
 		<div data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 			<HeartIcon />
 			<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>Contribute</p>
@@ -177,8 +177,8 @@ pub fn DonateButton(cx: Scope) -> impl IntoView {
 	}
 }
 
-fn change_homepage_category(cx: Scope, category: HomepageCategory) {
-	let ui_config_ctx = expect_context::<UiConfigCtx>(cx);
+fn change_homepage_category(category: HomepageCategory) {
+	let ui_config_ctx = expect_context::<UiConfigCtx>();
 	let mut ui_config = ui_config_ctx.0.0.get();
 	ui_config.homepage = category;
 	ui_config_ctx.0.1.set(ui_config);

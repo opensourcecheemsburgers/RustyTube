@@ -1,13 +1,15 @@
 use invidious::{Instance, InstanceInfo, fetch_instance_info};
 use leptos::*;
+use wasm_bindgen::JsCast;
+use web_sys::{InputEvent, HtmlInputElement, Event};
 
 use crate::components::{Tooltip, TooltipPosition};
 use crate::contexts::{ThemeCtx, ServerCtx, InstancesCtx};
 use crate::icons::{PaletteIcon, ServerIcon, FerrisIcon};
 
 #[component]
-pub fn Header(cx: Scope) -> impl IntoView {
-    view! {cx,
+pub fn Header() -> impl IntoView {
+    view! {
         <div class="navbar bg-base-100">
             <div class="navbar-start">
             </div>
@@ -28,15 +30,31 @@ pub fn Header(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
-    let instances = expect_context::<InstancesCtx>(cx).0;
+pub fn Search() -> impl IntoView {
+    let on_search = move |ev: Event| {
+        let search_bar: HtmlInputElement = ev.target().unwrap().dyn_into().unwrap();
+        let search_str = search_bar.value();
+        
+    };
+    
+    view! { 
+        <div class="form-control">
+            <input on:input=on_search id="search" type="text" placeholder="Search" class="input input-bordered w-auto md:w-96" />
+        </div>
+    }
+}
 
-    view! {cx,
+
+#[component]
+pub fn InstanceSelectDropdown() -> impl IntoView {
+    let instances = expect_context::<InstancesCtx>().0;
+
+    view! {
         {
             move ||
-                match instances.read(cx) {
-                    None => view! {cx, <div></div>},
-                    Some(instances) => view! {cx,
+                match instances.get() {
+                    None => view! { <div></div>},
+                    Some(instances) => view! {
                         <div class="dropdown dropdown-end">
                             <Tooltip tip={"Instances"} position={TooltipPosition::Bottom}>
                                 <label tabindex="0" class="btn btn-ghost rounded-btn">
@@ -53,15 +71,15 @@ pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
                                             let server_visible = api && cors;
 
                                             match server_visible {
-                                                true => view! { cx,
+                                                true => view! { 
                                                     <InstanceDropdownListItem instance=instance />
                                                 },
-                                                false => view! { cx,
+                                                false => view! { 
                                                     <div class="hidden"></div>
-                                                }.into_view(cx)
+                                                }.into_view()
                                             }
                                         }
-                                        ).collect_view(cx)
+                                        ).collect_view()
                                     }
                                 </div>
                             </ul>
@@ -73,8 +91,8 @@ pub fn InstanceSelectDropdown(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn InstanceDropdownListItem(cx: Scope, instance: Instance) -> impl IntoView {
-    let server = expect_context::<ServerCtx>(cx).0;
+pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
+    let server = expect_context::<ServerCtx>().0;
 
     let instance_name = instance.0;
     let flag = instance.1.flag;
@@ -89,7 +107,7 @@ pub fn InstanceDropdownListItem(cx: Scope, instance: Instance) -> impl IntoView 
             false => {
                 let uri = uri.clone();
 
-                view! {cx,
+                view! {
                 <div
                 class="p-3 rounded-lg bg-base-100"
                 on:click=move |_| server.1.set(uri.clone())>
@@ -100,7 +118,7 @@ pub fn InstanceDropdownListItem(cx: Scope, instance: Instance) -> impl IntoView 
             }},
             true => {
                 let uri = uri.clone();
-                view! {cx,
+                view! {
                 <div
                 class="p-3 rounded-lg bg-base-100 border-2 border-primary"
                 on:click=move |_| server.1.set(uri.clone())>
@@ -116,11 +134,11 @@ pub fn InstanceDropdownListItem(cx: Scope, instance: Instance) -> impl IntoView 
 }
 
 #[component]
-pub fn ThemeDropdownListItem(cx: Scope, name: &'static str) -> impl IntoView {
-    let theme_ctx = expect_context::<ThemeCtx>(cx).0;
+pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
+    let theme_ctx = expect_context::<ThemeCtx>().0;
 
     let theme_view = move || match theme_ctx.0.get().eq_ignore_ascii_case(name) {
-        true => view! {cx,
+        true => view! {
             <div
             data-theme={name}
             class="p-3 rounded-lg bg-base-100 border-2 border-primary"
@@ -138,7 +156,7 @@ pub fn ThemeDropdownListItem(cx: Scope, name: &'static str) -> impl IntoView {
                 </a>
             </div>
         },
-        false => view! {cx,
+        false => view! {
             <div
             data-theme={name}
             class="p-3 rounded-lg bg-base-100"
@@ -162,8 +180,8 @@ pub fn ThemeDropdownListItem(cx: Scope, name: &'static str) -> impl IntoView {
 }
 
 #[component]
-pub fn ThemeSelectDropdown(cx: Scope) -> impl IntoView {
-    view! {cx,
+pub fn ThemeSelectDropdown() -> impl IntoView {
+    view! {
         <div class="dropdown dropdown-end">
             <Tooltip tip={"Themes"} position={TooltipPosition::Bottom}>
                 <label tabindex="0" class="btn btn-ghost rounded-btn">
@@ -174,10 +192,10 @@ pub fn ThemeSelectDropdown(cx: Scope) -> impl IntoView {
                 <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
                     {
                         THEMES.into_iter().map(|theme| view!
-                            { cx,
+                            { 
                                 <ThemeDropdownListItem name={theme} />
                             }
-                        ).collect_view(cx)
+                        ).collect_view()
                     }
                 </div>
             </ul>

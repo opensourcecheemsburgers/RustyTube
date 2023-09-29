@@ -6,7 +6,7 @@ use web_sys::HtmlDivElement;
 use crate::{icons::FullScreenIcon, contexts::VIDEO_CONTAINER_ID};
 
 #[component]
-pub fn FullScreenBtn(cx: Scope) -> impl IntoView {
+pub fn FullScreenBtn() -> impl IntoView {
     let fullscreen = move |_| { 
         match document().fullscreen() {
             true => document().exit_fullscreen(),
@@ -14,7 +14,7 @@ pub fn FullScreenBtn(cx: Scope) -> impl IntoView {
         }
      };
 
-    view! {cx, 
+    view! {
         <button on:click=fullscreen class="btn btn-ghost btn-xs">
             <FullScreenIcon />
         </button>

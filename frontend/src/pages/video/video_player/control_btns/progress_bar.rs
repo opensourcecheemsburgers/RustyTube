@@ -6,11 +6,11 @@ use utils::get_element_by_id;
 use crate::contexts::{PlayerState, PlayerStyle};
 
 #[component]
-pub fn ProgressBar(cx: Scope) -> impl IntoView {
-    let state = expect_context::<PlayerState>(cx);
-    let style = expect_context::<PlayerStyle>(cx);
+pub fn ProgressBar() -> impl IntoView {
+    let state = expect_context::<PlayerState>();
+    let style = expect_context::<PlayerStyle>();
 
-    let seek = create_action(cx, move |input: &(PlayerState, f64)| {
+    let seek = create_action(move |input: &(PlayerState, f64)| {
         let input = input.clone();
         async move { input.0.seek(input.1).await }
     });
@@ -26,7 +26,7 @@ pub fn ProgressBar(cx: Scope) -> impl IntoView {
         seek.dispatch((state, time));
     };
 
-    view! {cx, 
+    view! {
         <progress
             on:click=on_click
             on:dragend=on_drag

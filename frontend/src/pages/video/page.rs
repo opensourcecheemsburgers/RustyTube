@@ -10,27 +10,25 @@ use crate::pages::video::get_current_video_query_signal;
 use super::{video_player::{VideoContainer, VideoPlaceholder}, info::{VideoInfo, VideoInfoPlaceholder}, comments::{CommentsSection, CommentsSectionPlaceholder}, recommended::{RecommendedSection, RecommendedSectionPlaceholder}};
 
 #[component]
-pub fn VideoPage(cx: Scope) -> impl IntoView {
-    let player_style = PlayerStyle::init(cx);
-    let player_state = PlayerState::init(cx);
+pub fn VideoPage() -> impl IntoView {
+    let player_style = PlayerStyle::init();
+    let player_state = PlayerState::init();
 
-    provide_context(cx, player_style);
-    provide_context(cx, player_state);
+    provide_context(player_style);
+    provide_context(player_state);
 
-    let server = expect_context::<ServerCtx>(cx).0.0;
-    let id = get_current_video_query_signal(cx);
+    let server = expect_context::<ServerCtx>().0.0;
+    let id = get_current_video_query_signal();
 
     let video_resource: VideoResource = create_resource(
-        cx,
-        move || (server.get(), id.0.get().unwrap_or_default()),
+                move || (server.get(), id.0.get().unwrap_or_default()),
         |(server, id)| async move {
             let video = Video::fetch_video(&server, &id).await;
             video
         }
     );
 
-    view! {cx,
-        <ScrollablePage>
+    view! {        <ScrollablePage>
             <div class="flex flex-row space-x-4 px-4">
                 <div class="flex flex-col basis-4/6 item-start">
                     <VideoContainer video_resource=video_resource />

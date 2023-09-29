@@ -7,13 +7,13 @@ use crate::contexts::{VolumeCtx, PlayerState, VIDEO_PLAYER_ID, AUDIO_PLAYER_ID};
 use crate::icons::VolumeDefaultIcon;
 
 #[component]
-pub fn VolumeKnob(cx: Scope) -> impl IntoView {
-    let state = expect_context::<PlayerState>(cx);
+pub fn VolumeKnob() -> impl IntoView {
+    let state = expect_context::<PlayerState>();
     let vol_position = state.volume.get() * 100f64  ;
 
     let vol_change = move |event| { change_volume(event, state.volume.write_only()) };
 
-    view! {cx, 
+    view! {
         <div class="flex flex-row group items-center peer cursor-pointer">
             <button class="btn btn-ghost btn-xs peer" id="vol_btn">
                 <VolumeDefaultIcon />

@@ -8,17 +8,15 @@ use super::{control_btns::*};
 
 #[component]
 pub fn VideoPlayerControls(
-    cx: Scope,
     formats: Vec<VideoFormat>,
     captions: Vec<Caption>,
 ) -> impl IntoView {
-    let state = expect_context::<PlayerState>(cx);
-    let style = expect_context::<PlayerStyle>(cx);
+    let state = expect_context::<PlayerState>();
+    let style = expect_context::<PlayerStyle>();
 
     let show_controls = move |_| { style.controls_visible.set(true) };
 
-    view! {cx,
-        <AnimatedShow
+    view! {        <AnimatedShow
            when=style.controls_visible
            show_class="transition-all opacity-100 duration-1000"
            hide_class="transition-all opacity-0 duration-1000 cursor-none"

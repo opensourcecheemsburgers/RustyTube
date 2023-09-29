@@ -1,10 +1,10 @@
-use leptos::{Children, component, IntoView, Scope, view};
+use leptos::*;
 
 pub const RESPONSIVE_ICON_LG: &'static str = "h-5 w-5 lg:h-6 lg:w-6 2xl:h-7 2xl:w-7";
 pub const RESPONSIVE_ICON: &'static str = "h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6";
 
 #[component]
-pub fn Svg(cx: Scope, children: Children, class: &'static str) -> impl IntoView {
+pub fn Svg(children: Children, class: &'static str) -> impl IntoView {
 	/// UI Icons from https://lucide.dev
 
 	const STROKE: &'static str = "currentColor";
@@ -14,7 +14,7 @@ pub fn Svg(cx: Scope, children: Children, class: &'static str) -> impl IntoView 
 	const LCAP: &'static str = "round";
 	const LJOIN: &'static str = "round";
 
-	view! {cx,
+	view! {
         <svg
 			class=class
             viewBox={BOX}
@@ -23,7 +23,7 @@ pub fn Svg(cx: Scope, children: Children, class: &'static str) -> impl IntoView 
             stroke-width={STROKE_WIDTH}
             stroke-linecap={LCAP}
             stroke-linejoin={LJOIN}>
-            {children(cx)}
+            {children()}
         </svg>
     }
 }

@@ -11,23 +11,22 @@ use crate::pages::home::homepage::{HomepageSection, HomepageSectionTitle};
 use crate::icons::FerrisWaveIcon;
 
 #[component]
-pub fn SubscriptionsSection(cx: Scope) -> impl IntoView {
-	let subs = expect_context::<SubscriptionsCtx>(cx).0;
-	let subs_videos_resource = expect_context::<SubsVideosCtx>(cx).0;
+pub fn SubscriptionsSection() -> impl IntoView {
+	let subs = expect_context::<SubscriptionsCtx>().0;
+	let subs_videos_resource = expect_context::<SubsVideosCtx>().0;
 
-	view! {cx,
-		<HomepageSection>
+	view! {		<HomepageSection>
 			<HomepageSectionTitle title={"Subscriptions".to_string()}/>
-			<Suspense fallback=move || view! {cx, <VideoPreviewCardPlaceholderArray />}>
+			<Suspense fallback=move || view! {<VideoPreviewCardPlaceholderArray />}>
 				{
 					move || match subs.get().channels.len() == 0 {
-						false => subs_videos_resource.read(cx).map(|subs_videos_res| {
+						false => subs_videos_resource.read().map(|subs_videos_res| {
 							match subs_videos_res {
-								Ok(subs_videos) => view! {cx, <SubscriptionsVideos subs_videos=subs_videos />},
-								Err(err) => view! {cx, <FerrisError error=err/>},
+								Ok(subs_videos) => view! {<SubscriptionsVideos subs_videos=subs_videos />},
+								Err(err) => view! {<FerrisError error=err/>},
 							}
 						}),
-						true => Some(view!{cx, <ImportSubscriptions/>})
+						true => Some(view!{<ImportSubscriptions/>})
 					}
 				}
         	</Suspense>
@@ -36,7 +35,7 @@ pub fn SubscriptionsSection(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn SubscriptionsVideos(cx: Scope, subs_videos: SubscriptionsVideos) -> impl IntoView {
+pub fn SubscriptionsVideos(subs_videos: SubscriptionsVideos) -> impl IntoView {
 	let mut videos: Vec<Vec<CommonVideo>> = Vec::new();
 	let mut fails: Vec<RustyTubeError> = Vec::new();
 
@@ -57,12 +56,11 @@ pub fn SubscriptionsVideos(cx: Scope, subs_videos: SubscriptionsVideos) -> impl 
 		false => total_videos_len
 	};
 	let initial_videos = Vec::from(&total_videos[0..initial_len]);
-	let visible_videos = create_rw_signal(cx, initial_videos);
+	let visible_videos = create_rw_signal(initial_videos);
 
 	let videos_view = move || {
 		visible_videos.get().into_iter().map(|video| view!
-		{ cx,
-                <VideoPreviewCard
+		{                 <VideoPreviewCard
 					video_id=video.id
                     title=video.title
                     author=video.author
@@ -71,18 +69,17 @@ pub fn SubscriptionsVideos(cx: Scope, subs_videos: SubscriptionsVideos) -> impl 
                     thumbnail_url=video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
                 />
 			}
-		).collect_view(cx)
+		).collect_view()
 	};
 
 	let load_more = move |_| { load_more_videos(visible_videos, total_videos.clone()) };
 
 	let view_more_btn = match visible_videos.get().len() == total_videos_len {
-		true => view! {cx, <div></div>}.into_view(cx),
-		false => view! {cx, <div class="flex justify-center"><button on:click=load_more class="btn btn-lg btn-primary btn-outline">{"Load More"}</button></div>}.into_view(cx)
+		true => view! {<div></div>}.into_view(),
+		false => view! {<div class="flex justify-center"><button on:click=load_more class="btn btn-lg btn-primary btn-outline">{"Load More"}</button></div>}.into_view()
 	};
 
-	view! {cx,
-		<div class="flex flex-col h-[calc(100vh-64px-1rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
+	view! {		<div class="flex flex-col h-[calc(100vh-64px-1rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
 		    <div class="flex flex-row flex-wrap gap-y-8 justify-between">
 				{ videos_view }
 		    </div>
@@ -92,9 +89,8 @@ pub fn SubscriptionsVideos(cx: Scope, subs_videos: SubscriptionsVideos) -> impl 
 }
 
 #[component]
-pub fn ImportSubscriptions(cx: Scope) -> impl IntoView {
-	view! {cx,
-		<div class="hero min-h-full">
+pub fn ImportSubscriptions() -> impl IntoView {
+	view! {		<div class="hero min-h-full">
 			<div class="flex flex-col space-y-8">
 				<FerrisWaveIcon width=96 />
 				<div class="flex flex-row space-x-4">
@@ -107,19 +103,18 @@ pub fn ImportSubscriptions(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn ImportSubscriptionsTutorial(cx: Scope) -> impl IntoView {
-	view! {cx,
-		<a target="_blank" class="btn btn-lg btn-outline btn-info" href="https://docs.invidious.io/export-youtube-subscriptions/">
+pub fn ImportSubscriptionsTutorial() -> impl IntoView {
+	view! {		<a target="_blank" class="btn btn-lg btn-outline btn-info" href="https://docs.invidious.io/export-youtube-subscriptions/">
 			{"Tutorial"}
 		</a>
 	}
 }
 
 #[component]
-pub fn ImportSubscriptionsBtn(cx: Scope) -> impl IntoView {
-	let subs = expect_context::<SubscriptionsCtx>(cx).0.write_only();
+pub fn ImportSubscriptionsBtn() -> impl IntoView {
+	let subs = expect_context::<SubscriptionsCtx>().0.write_only();
 
-	let parse_subs_file = create_action(cx, |input: &(WriteSignal<Subscriptions>, Event)| {
+	let parse_subs_file = create_action(|input: &(WriteSignal<Subscriptions>, Event)| {
 		let subs = input.0.clone();
 		let event = input.1.clone();
 
@@ -130,8 +125,7 @@ pub fn ImportSubscriptionsBtn(cx: Scope) -> impl IntoView {
 		parse_subs_file.dispatch((subs, event));
 	};
 
-	view! {cx,
-		<>
+	view! {		<>
             <label class="btn btn-lg btn-outline btn-primary" for="subs_upload">
                 {"Import Subscriptions"}
             </label>

@@ -11,20 +11,19 @@ use web_sys::HtmlDivElement;
 use crate::pages::video::utils::{get_current_video_query_signal, VideoQuerySignal};
 
 #[component]
-pub fn CommentsSection(cx: Scope) -> impl IntoView {
-	let server = expect_context::<ServerCtx>(cx).0.0;
-    let comments_vec = create_rw_signal::<Vec<Comment>>(cx, vec![]);
-    let continuation = create_rw_signal::<Option<String>>(cx, None);
+pub fn CommentsSection() -> impl IntoView {
+	let server = expect_context::<ServerCtx>().0.0;
+    let comments_vec = create_rw_signal::<Vec<Comment>>(vec![]);
+    let continuation = create_rw_signal::<Option<String>>(None);
 
-    let fetch_comments = create_action(cx, |input: &CommentFetchArgs| {
+    let fetch_comments = create_action(|input: &CommentFetchArgs| {
         let args = input.clone();
         async move { fetch_comments(args).await; }
     });
 
-    let video_id = get_current_video_query_signal(cx);
+    let video_id = get_current_video_query_signal();
     let comments_resource = create_resource(
-        cx,
-        move || (server.get(), video_id.0.get().unwrap_or_default()),
+                move || (server.get(), video_id.0.get().unwrap_or_default()),
         |(server, id)| async move {
             Comments::fetch_comments(&server, &id, None).await
         },
@@ -38,23 +37,22 @@ pub fn CommentsSection(cx: Scope) -> impl IntoView {
         fetch_comments
     };
 
-    let comments_view = move || comments_resource.read(cx).map(|comments_result| {
+    let comments_view = move || comments_resource.read().map(|comments_result| {
         match comments_result {
             Ok(comments) => comments
                 .comments
                 .into_iter()
-                .map(|comment| view! {cx, <Comment comment=comment />})
-                .collect_view(cx),
-            Err(err) => view! {cx, <FerrisError error=err/>}
+                .map(|comment| view! {<Comment comment=comment />})
+                .collect_view(),
+            Err(err) => view! {<FerrisError error=err/>}
         }
     });
 
     let fetch_more_comments_btn = move || {
-        continuation.get().map(|_| view! {cx, <button class="btn btn-primary btn-outline btn-sm" on:click=move |_| fetch_comments.dispatch(comment_fetch_args.clone())>{"Load more"}</button>}.into_view(cx))
+        continuation.get().map(|_| view! {<button class="btn btn-primary btn-outline btn-sm" on:click=move |_| fetch_comments.dispatch(comment_fetch_args.clone())>{"Load more"}</button>}.into_view())
     };
 
-	view! {cx,
-        <div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
+	view! {        <div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
             <div class="flex flex-col space-y-8">
                 {comments_view}
             </div>
@@ -64,7 +62,7 @@ pub fn CommentsSection(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn Comment(cx: Scope, comment: Comment) -> impl IntoView {
+pub fn Comment(comment: Comment) -> impl IntoView {
     let content = comment.content_html;
     let author = comment.author;
     let author_thumb_url = comment
@@ -83,9 +81,9 @@ pub fn Comment(cx: Scope, comment: Comment) -> impl IntoView {
     .clone()
     .map(|replies| replies.continuation);
 
-    let replies_visible = create_rw_signal(cx, false);
-    let replies_vec = create_rw_signal::<Vec<Comment>>(cx, vec![]);
-    let fetch_replies_action = create_action(cx, |input: &ReplyFetchArgs| { 
+    let replies_visible = create_rw_signal(false);
+    let replies_vec = create_rw_signal::<Vec<Comment>>(vec![]);
+    let fetch_replies_action = create_action(|input: &ReplyFetchArgs| { 
         let args = input.clone();
         async move {
             fetch_replies(args).await;
@@ -94,10 +92,10 @@ pub fn Comment(cx: Scope, comment: Comment) -> impl IntoView {
 
     let reply_fetch_args = ReplyFetchArgs {
         replies_visible,
-        continuation: create_rw_signal(cx, reply_continuation),
+        continuation: create_rw_signal(reply_continuation),
         replies_vec,
-        server: expect_context::<ServerCtx>(cx).0.0,
-        video_id: get_current_video_query_signal(cx),
+        server: expect_context::<ServerCtx>().0.0,
+        video_id: get_current_video_query_signal(),
         fetch_replies: fetch_replies_action
     };
 
@@ -110,12 +108,11 @@ pub fn Comment(cx: Scope, comment: Comment) -> impl IntoView {
     };
 
     let replies_view = move || match reply_count != 0 && replies_visible.get() {
-        true => Some(view! {cx, <CommentReplies reply_fetch_args=reply_fetch_args/>}),
+        true => Some(view! {<CommentReplies reply_fetch_args=reply_fetch_args/>}),
         false => None
     };
 
-    view! {cx,
-        <div class="flex flex-col space-y-4 h-max">
+    view! {        <div class="flex flex-col space-y-4 h-max">
             <div class="flex flex-row w-full items-start space-x-4">
                 <CommenterIcon url=author_thumb_url.unwrap_or_default() />
                 <div class="flex flex-col text-sm">
@@ -142,12 +139,11 @@ pub fn Comment(cx: Scope, comment: Comment) -> impl IntoView {
 }
 
 #[component]
-pub fn CommenterIcon(cx: Scope, url: String) -> impl IntoView {
-    let loaded = create_rw_signal(cx, false.to_string());
+pub fn CommenterIcon(url: String) -> impl IntoView {
+    let loaded = create_rw_signal(false.to_string());
     let show_image = move |_| loaded.set(true.to_string());
 
-    view! {cx,
-        <div data-loaded=loaded class="data-[loaded=true]:hidden bg-neutral animate-pulse w-6 h-6 rounded-full" />
+    view! {        <div data-loaded=loaded class="data-[loaded=true]:hidden bg-neutral animate-pulse w-6 h-6 rounded-full" />
         <img
             on:load=show_image
             data-loaded=loaded
@@ -158,20 +154,18 @@ pub fn CommenterIcon(cx: Scope, url: String) -> impl IntoView {
 }
 
 #[component]
-pub fn CommentsSectionPlaceholder(cx: Scope) -> impl IntoView {
-   let comment_placeholders = (0..50).map(|_| view! {cx, <CommentPlaceholder />}).collect_view(cx);
+pub fn CommentsSectionPlaceholder() -> impl IntoView {
+   let comment_placeholders = (0..50).map(|_| view! {<CommentPlaceholder />}).collect_view();
 
-    view! {cx,
-        <div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)]">
+    view! {        <div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)]">
             {comment_placeholders}
         </div>
     }
 }
 
 #[component]
-pub fn CommentPlaceholder(cx: Scope) -> impl IntoView {
-    view! {cx,
-        <div class="flex flex-row w-full space-x-4">
+pub fn CommentPlaceholder() -> impl IntoView {
+    view! {        <div class="flex flex-row w-full space-x-4">
           <div class="bg-neutral animate-pulse h-12 w-12 rounded-full"></div>
           <div class="flex flex-col w-full space-y-4">
             <div class="flex flex-row space-x-2 items-center">
@@ -194,18 +188,17 @@ pub fn CommentPlaceholder(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn CommentReplies(cx: Scope, reply_fetch_args: ReplyFetchArgs) -> impl IntoView {
+pub fn CommentReplies(reply_fetch_args: ReplyFetchArgs) -> impl IntoView {
     let fetch_replies = move |_| reply_fetch_args.fetch_replies.dispatch(reply_fetch_args.clone());
 
     let load_more_replies_btn = move || {
         (!reply_fetch_args.replies_vec.get().is_empty() && reply_fetch_args.continuation.get().is_some())
-            .then_some(view! {cx, <button class="btn btn-primary btn-outline btn-sm" on:click=fetch_replies>{"Load more"}</button>}).into_view(cx)
+            .then_some(view! {<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_replies>{"Load more"}</button>}).into_view()
     };
 
-    let replies = move || reply_fetch_args.replies_vec.get().into_iter().map(|reply| view! {cx, <Reply comment=reply />}).collect_view(cx);
+    let replies = move || reply_fetch_args.replies_vec.get().into_iter().map(|reply| view! {<Reply comment=reply />}).collect_view();
 
-    view! {cx,
-		<div class="pl-2 flex flex-row h-max space-x-3">
+    view! {		<div class="pl-2 flex flex-row h-max space-x-3">
 			<div class="w-0.5 h-full bg-primary rounded-xl"/>
 			<div class="flex flex-col w-full h-max space-y-4">
                 <div class="flex flex-col space-y-4">
@@ -218,7 +211,7 @@ pub fn CommentReplies(cx: Scope, reply_fetch_args: ReplyFetchArgs) -> impl IntoV
 }
 
 #[component]
-pub fn Reply(cx: Scope, comment: Comment) -> impl IntoView {
+pub fn Reply(comment: Comment) -> impl IntoView {
     let content = comment.content_html;
     let author = comment.author;
     let author_thumb_url = comment
@@ -229,8 +222,7 @@ pub fn Reply(cx: Scope, comment: Comment) -> impl IntoView {
     let published = comment.published_text;
     let likes = comment.likes.to_formatted_string(&Locale::en);
 
-    view! {cx,
-        <div class="flex flex-col space-y-4 h-max">
+    view! {        <div class="flex flex-col space-y-4 h-max">
             <div class="flex flex-row w-full items-start space-x-4">
                 <CommenterIcon url=author_thumb_url.unwrap_or_default() />
                 <div class="flex flex-col text-sm">

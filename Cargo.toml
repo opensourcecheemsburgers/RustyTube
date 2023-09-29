@@ -25,7 +25,7 @@ ron = "0.8.0"
 csv = "1.2.2"
 humantime = "2.1.0"
 chrono = "0.4.26"
-toml = "0.7.6"
+toml = "0.8.8"
 num-format = "0.4.4"
 console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
@@ -36,14 +36,14 @@ version = "1.4.1"
 features = []
 
 [workspace.dependencies.leptos]
-version = "0.4.6"
+version = "0.5.2"
 features = ["csr", "nightly"]
 
 [workspace.dependencies.leptos-use]
-version = "0.6.0"
+version = "0.8.1"
 
 [workspace.dependencies.leptos_router]
-version = "0.4.6"
+version = "0.5.2"
 features = ["csr", "nightly"]
 
 [workspace.dependencies.serde]
@@ -67,7 +67,7 @@ features=[
 ]
 
 [workspace.dependencies.gloo]
-version = "0.9.0"
+version = "0.10.0"
 features = ["file", "futures"]
 
 [workspace.dependencies.tauri-sys]

@@ -6,21 +6,20 @@ use crate::icons::{CalendarIcon, LikeIcon, ViewsIcon, DownloadIcon, ShareIcon, P
 use crate::pages::video::page::VideoResource;
 
 #[component]
-pub fn VideoInfo(cx: Scope, video_resource: VideoResource) -> impl IntoView {
-    let video_info_view = move || video_resource.read(cx).map(|res| match res {
-        Ok(video) => view! {cx, <VideoInfoContent video=video/>},
-        Err(err) => view! {cx, <FerrisError error=err/>}
+pub fn VideoInfo(video_resource: VideoResource) -> impl IntoView {
+    let video_info_view = move || video_resource.read().map(|res| match res {
+        Ok(video) => view! {<VideoInfoContent video=video/>},
+        Err(err) => view! {<FerrisError error=err/>}
     });
 
-    view! {cx,
-        <Suspense fallback=move || view! {cx, <VideoInfoPlaceholder />}>
+    view! {        <Suspense fallback=move || view! {<VideoInfoPlaceholder />}>
             {video_info_view}
         </Suspense>
     }
 }
 
 #[component]
-pub fn VideoInfoContent(cx: Scope, video: Video) -> impl IntoView {
+pub fn VideoInfoContent(video: Video) -> impl IntoView {
     let title = video.title;
     let published = video.published_text;
     let views = video.views.to_formatted_string(&Locale::en);
@@ -29,14 +28,13 @@ pub fn VideoInfoContent(cx: Scope, video: Video) -> impl IntoView {
     let author_url = video.author_url;
     let author_thumb_url = video.author_thumbnails.first().cloned().map(|thumb| thumb.url);
 
-    let img_loaded = create_rw_signal(cx, false);
+    let img_loaded = create_rw_signal(false);
 	let image_classes = move || match img_loaded.get() {
 		true => "h-16 w-16 rounded-full".to_string(),
 		false => "h-16 w-16 animate-pulse rounded-full bg-neutral".to_string()
 	};
 
-    view! {cx,
-        <div class="flex h-max w-full flex-row justify-between rounded-lg bg-base-200 p-4">
+    view! {        <div class="flex h-max w-full flex-row justify-between rounded-lg bg-base-200 p-4">
             <div class="flex w-full flex-col">
                 <h1 class="text-xl font-semibold">{title}</h1>
                 <div class="mt-2 flex flex-row flex-wrap items-center gap-2">
@@ -86,9 +84,8 @@ pub fn VideoInfoContent(cx: Scope, video: Video) -> impl IntoView {
 }
 
 #[component]
-pub fn VideoInfoPlaceholder(cx: Scope) -> impl IntoView {
-    view! {cx,
-        <div class="flex flex-col space-y-4 w-full bg-base-200 rounded-lg">
+pub fn VideoInfoPlaceholder() -> impl IntoView {
+    view! {        <div class="flex flex-col space-y-4 w-full bg-base-200 rounded-lg">
             <h1>{}</h1>
         </div>
     }

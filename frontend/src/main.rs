@@ -16,18 +16,18 @@ use crate::pages::{Homepage, VideoPage};
 
 
 #[component]
-fn App(cx: Scope) -> impl IntoView {
+fn App() -> impl IntoView {
     console_error_panic_hook::set_once();
-    provide_config_context_slices(cx, Config::load().unwrap_or_default());
-    provide_user_contexts(cx);
-    provide_user_resources(cx);
-    provide_player_contexts(cx);
+    provide_config_context_slices(Config::load().unwrap_or_default());
+    provide_user_contexts();
+    provide_user_resources();
+    provide_player_contexts();
 
-    let home = move |cx| view! { cx, <Homepage /> };
-    let video = move |cx| view! { cx, <VideoPage /> };
-    let view = move |cx| view! { cx, <div></div> }.into_view(cx);
+    let home = move || view! { <Homepage /> };
+    let video = move || view! { <VideoPage /> };
+    let view = move || view! { <div></div> }.into_view();
 
-    view! {cx,
+    view! {        
         <Router>
             <Routes>
                 <Route path="/" view=home />
@@ -43,5 +43,5 @@ fn App(cx: Scope) -> impl IntoView {
 }
 
 fn main() {
-    mount_to_body(|cx| view! { cx, <App/> })
+    mount_to_body(|| view! { <App/> })
 }

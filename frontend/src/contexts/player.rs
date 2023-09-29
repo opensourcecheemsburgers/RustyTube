@@ -1,6 +1,5 @@
-use leptos::{create_rw_signal, provide_context, RwSignal, Scope};
-use invidious::VideoFormat;
 use leptos::*;
+use invidious::VideoFormat;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{HtmlVideoElement, HtmlAudioElement};
 use rustytube_error::RustyTubeError;
@@ -38,17 +37,17 @@ pub struct PlayerState {
 }
 
 impl PlayerState {
-    pub fn init(cx: Scope) -> Self {
-        let format = create_rw_signal(cx, None);
-        let playback_state = create_rw_signal(cx, PlaybackState::Paused);
-        let video_ready = create_rw_signal(cx, false);
-        let audio_ready = create_rw_signal(cx, false);
-        let buffering = create_rw_signal(cx, true);
-        let volume = create_rw_signal(cx, expect_context::<VolumeCtx>(cx).0.0.get());
-        let current_time_str = create_rw_signal(cx, String::from("0:00"));
-        let duration_str = create_rw_signal(cx, String::from("0:00"));
-        let current_time = create_rw_signal(cx, 0f64);
-        let duration = create_rw_signal(cx, 0f64);
+    pub fn init() -> Self {
+        let format = create_rw_signal(None);
+        let playback_state = create_rw_signal(PlaybackState::Paused);
+        let video_ready = create_rw_signal(false);
+        let audio_ready = create_rw_signal(false);
+        let buffering = create_rw_signal(true);
+        let volume = create_rw_signal(expect_context::<VolumeCtx>().0.0.get());
+        let current_time_str = create_rw_signal(String::from("0:00"));
+        let duration_str = create_rw_signal(String::from("0:00"));
+        let current_time = create_rw_signal(0f64);
+        let duration = create_rw_signal(0f64);
 
         Self {
             format,
@@ -222,19 +221,19 @@ pub struct PlayerStyle {
 }
 
 impl PlayerStyle {
-    pub fn init(cx: Scope) -> Self {
-        let controls_visible = create_rw_signal(cx, false);
-        let full_window = create_rw_signal(cx, false);
-        let fullscreen = create_rw_signal(cx, false);
+    pub fn init() -> Self {
+        let controls_visible = create_rw_signal(false);
+        let full_window = create_rw_signal(false);
+        let fullscreen = create_rw_signal(false);
 
         Self { controls_visible, full_window, fullscreen }
     }
 }
 
-pub fn provide_player_contexts(cx: Scope) {
-    let player_state = PlayerState::init(cx);
-    let player_style = PlayerStyle::init(cx);
+pub fn provide_player_contexts() {
+    let player_state = PlayerState::init();
+    let player_style = PlayerStyle::init();
 
-    provide_context(cx, player_state);
-    provide_context(cx, player_style);
+    provide_context(player_state);
+    provide_context(player_style);
 }
