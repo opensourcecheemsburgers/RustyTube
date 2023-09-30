@@ -34,7 +34,7 @@ pub fn ProgressBar() -> impl IntoView {
             max=state.duration.read_only()
             value=state.current_time.read_only()
             class=PROGRESS_BAR
-        />
+        ></progress>
     }
 }
 
@@ -110,3 +110,5 @@ const PROGRESS_BAR: &'static str = "
     peer-focus/controls:h-1
     peer-focus/controls:scale-y-[2.5]
 ";
+
+

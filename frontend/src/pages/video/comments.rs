@@ -42,22 +42,28 @@ pub fn CommentsSection() -> impl IntoView {
             Ok(comments) => comments
                 .comments
                 .into_iter()
-                .map(|comment| view! {<Comment comment=comment />})
+                .map(|comment| view! { <Comment comment=comment/> })
                 .collect_view(),
-            Err(err) => view! {<FerrisError error=err/>}
+            Err(err) => view! { <FerrisError error=err/> }
         }
     });
 
     let fetch_more_comments_btn = move || {
-        continuation.get().map(|_| view! {<button class="btn btn-primary btn-outline btn-sm" on:click=move |_| fetch_comments.dispatch(comment_fetch_args.clone())>{"Load more"}</button>}.into_view())
+        continuation.get().map(|_| view! {
+			<button
+				class="btn btn-primary btn-outline btn-sm"
+				on:click=move |_| fetch_comments.dispatch(comment_fetch_args.clone())
+			>
+				{"Load more"}
+			</button>
+		}.into_view())
     };
 
-	view! {        <div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
-            <div class="flex flex-col space-y-8">
-                {comments_view}
-            </div>
-            {fetch_more_comments_btn}
-        </div>
+	view! {
+		<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
+			<div class="flex flex-col space-y-8">{comments_view}</div>
+			{fetch_more_comments_btn}
+		</div>
 	}
 }
 
@@ -108,34 +114,38 @@ pub fn Comment(comment: Comment) -> impl IntoView {
     };
 
     let replies_view = move || match reply_count != 0 && replies_visible.get() {
-        true => Some(view! {<CommentReplies reply_fetch_args=reply_fetch_args/>}),
+        true => Some(view! { <CommentReplies reply_fetch_args=reply_fetch_args/> }),
         false => None
     };
 
-    view! {        <div class="flex flex-col space-y-4 h-max">
-            <div class="flex flex-row w-full items-start space-x-4">
-                <CommenterIcon url=author_thumb_url.unwrap_or_default() />
-                <div class="flex flex-col text-sm">
-                    <div class="flex flex-row gap-1">
-                        <p class="font-semibold">{author}</p>
-                        <p>{"•"}</p>
-                        <p>{published}</p>
-                    </div>
-                    <div class="mt-1" inner_html=content />
-                    <div class="mt-3 flex flex-row gap-1 items-center">
-                        <LikeIcon />
-                        <p>{likes}</p>
-                        <p>{"•"}</p>
-                        <div class="flex flex-row gap-1 items-center" on:click=toggle_replies_visible>
-                            <RepliesIcon />
-                            <p>{reply_count}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {replies_view}
-        </div>
-    }
+    view! {
+		<div class="flex flex-col space-y-4 h-max">
+			<div class="flex flex-row w-full items-start space-x-4">
+				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
+				<div class="flex flex-col text-sm">
+					<div class="flex flex-row gap-1">
+						<p class="font-semibold">{author}</p>
+						<p>{"•"}</p>
+						<p>{published}</p>
+					</div>
+					<div class="mt-1" inner_html=content></div>
+					<div class="mt-3 flex flex-row gap-1 items-center">
+						<LikeIcon/>
+						<p>{likes}</p>
+						<p>{"•"}</p>
+						<div
+							class="flex flex-row gap-1 items-center"
+							on:click=toggle_replies_visible
+						>
+							<RepliesIcon/>
+							<p>{reply_count}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			{replies_view}
+		</div>
+	}
 }
 
 #[component]
@@ -143,48 +153,54 @@ pub fn CommenterIcon(url: String) -> impl IntoView {
     let loaded = create_rw_signal(false.to_string());
     let show_image = move |_| loaded.set(true.to_string());
 
-    view! {        <div data-loaded=loaded class="data-[loaded=true]:hidden bg-neutral animate-pulse w-6 h-6 rounded-full" />
-        <img
-            on:load=show_image
-            data-loaded=loaded
-            src=url
-            class="data-[loaded=false]:hidden w-12 h-12 rounded-full mt-1"
-        />
-    }
+    view! {
+		<div
+			data-loaded=loaded
+			class="data-[loaded=true]:hidden bg-neutral animate-pulse w-6 h-6 rounded-full"
+		></div>
+		<img
+			on:load=show_image
+			data-loaded=loaded
+			src=url
+			class="data-[loaded=false]:hidden w-12 h-12 rounded-full mt-1"
+		/>
+	}
 }
 
 #[component]
 pub fn CommentsSectionPlaceholder() -> impl IntoView {
-   let comment_placeholders = (0..50).map(|_| view! {<CommentPlaceholder />}).collect_view();
+   let comment_placeholders = (0..50).map(|_| view! { <CommentPlaceholder/> }).collect_view();
 
-    view! {        <div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)]">
-            {comment_placeholders}
-        </div>
-    }
+    view! {
+		<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)]">
+			{comment_placeholders}
+		</div>
+	}
 }
 
 #[component]
 pub fn CommentPlaceholder() -> impl IntoView {
-    view! {        <div class="flex flex-row w-full space-x-4">
-          <div class="bg-neutral animate-pulse h-12 w-12 rounded-full"></div>
-          <div class="flex flex-col w-full space-y-4">
-            <div class="flex flex-row space-x-2 items-center">
-              <p class="bg-neutral w-32 h-3 animate-pulse rounded-xl"/>
-              <p class="bg-neutral h-1 w-1 animate-pulse rounded-full"/>
-              <p class="bg-neutral w-20 h-3 animate-pulse rounded-xl"/>
-            </div>
-            <div class="flex flex-col space-y-2">
-              <p class="bg-neutral w-full h-2 animate-pulse rounded-xl" />
-              <p class="bg-neutral w-full h-2 animate-pulse rounded-xl" />
-            </div>
-            <div class="flex flex-row space-x-2 items-center">
-              <p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"/>
-              <p class="bg-neutral h-1 w-1 animate-pulse rounded-full"/>
-              <p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"/>
-            </div>
-          </div>
-        </div>
-    }
+    view! {
+		<div class="flex flex-row w-full space-x-4">
+			<div class="bg-neutral animate-pulse h-12 w-12 rounded-full"></div>
+			<div class="flex flex-col w-full space-y-4">
+				<div class="flex flex-row space-x-2 items-center">
+					<p class="bg-neutral w-32 h-3 animate-pulse rounded-xl"></p>
+					<p class="bg-neutral h-1 w-1 animate-pulse rounded-full"></p>
+					<p class="bg-neutral w-20 h-3 animate-pulse rounded-xl"></p>
+				</div>
+				<div class="flex flex-col space-y-2">
+					<p class="bg-neutral w-full h-2 animate-pulse rounded-xl"></p>
+					<p class="bg-neutral w-full h-2 animate-pulse rounded-xl"></p>
+				</div>
+				<div class="flex flex-row space-x-2 items-center">
+					<p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"></p>
+					<p class="bg-neutral h-1 w-1 animate-pulse rounded-full"></p>
+					<p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"></p>
+				</div>
+			</div>
+		</div>
+	}
 }
 
 #[component]
@@ -193,21 +209,24 @@ pub fn CommentReplies(reply_fetch_args: ReplyFetchArgs) -> impl IntoView {
 
     let load_more_replies_btn = move || {
         (!reply_fetch_args.replies_vec.get().is_empty() && reply_fetch_args.continuation.get().is_some())
-            .then_some(view! {<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_replies>{"Load more"}</button>}).into_view()
+            .then_some(view! {
+				<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_replies>
+					{"Load more"}
+				</button>
+			}).into_view()
     };
 
-    let replies = move || reply_fetch_args.replies_vec.get().into_iter().map(|reply| view! {<Reply comment=reply />}).collect_view();
+    let replies = move || reply_fetch_args.replies_vec.get().into_iter().map(|reply| view! { <Reply comment=reply/> }).collect_view();
 
-    view! {		<div class="pl-2 flex flex-row h-max space-x-3">
-			<div class="w-0.5 h-full bg-primary rounded-xl"/>
+    view! {
+		<div class="pl-2 flex flex-row h-max space-x-3">
+			<div class="w-0.5 h-full bg-primary rounded-xl"></div>
 			<div class="flex flex-col w-full h-max space-y-4">
-                <div class="flex flex-col space-y-4">
-				    {replies}
-                </div>
-                {load_more_replies_btn}
+				<div class="flex flex-col space-y-4">{replies}</div>
+				{load_more_replies_btn}
 			</div>
 		</div>
-    }
+	}
 }
 
 #[component]
@@ -222,25 +241,26 @@ pub fn Reply(comment: Comment) -> impl IntoView {
     let published = comment.published_text;
     let likes = comment.likes.to_formatted_string(&Locale::en);
 
-    view! {        <div class="flex flex-col space-y-4 h-max">
-            <div class="flex flex-row w-full items-start space-x-4">
-                <CommenterIcon url=author_thumb_url.unwrap_or_default() />
-                <div class="flex flex-col text-sm">
-                    <div class="flex flex-row gap-1">
-                        <p class="font-semibold">{author}</p>
-                        <p>{"•"}</p>
-                        <p>{published}</p>
-                    </div>
-                    <div class="mt-1" inner_html=content />
-                    <div class="mt-3 flex flex-row gap-1 items-center">
-                        <LikeIcon />
-                        <p>{likes}</p>
-                        <p>{"•"}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+    view! {
+		<div class="flex flex-col space-y-4 h-max">
+			<div class="flex flex-row w-full items-start space-x-4">
+				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
+				<div class="flex flex-col text-sm">
+					<div class="flex flex-row gap-1">
+						<p class="font-semibold">{author}</p>
+						<p>{"•"}</p>
+						<p>{published}</p>
+					</div>
+					<div class="mt-1" inner_html=content></div>
+					<div class="mt-3 flex flex-row gap-1 items-center">
+						<LikeIcon/>
+						<p>{likes}</p>
+						<p>{"•"}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
 }
 
 async fn fetch_comments(args: CommentFetchArgs) {

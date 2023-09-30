@@ -1,3 +1,4 @@
 mod player;
 
-pub use player::{VideoPlayer, VideoContainer, VideoPlaceholder};
+pub use player::{VideoContainer, VideoPlaceholder, VideoPlayer};
+

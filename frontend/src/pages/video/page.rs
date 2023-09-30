@@ -28,19 +28,20 @@ pub fn VideoPage() -> impl IntoView {
         }
     );
 
-    view! {        <ScrollablePage>
+    view! {
+        <ScrollablePage>
             <div class="flex flex-row space-x-4 px-4">
                 <div class="flex flex-col basis-4/6 item-start">
-                    <VideoContainer video_resource=video_resource />
+                    <VideoContainer video_resource=video_resource/>
                     <div class="mt-5">
-                        <VideoInfo video_resource=video_resource />
+                        <VideoInfo video_resource=video_resource/>
                     </div>
                     <div class="mt-10">
-                        <CommentsSection />
+                        <CommentsSection/>
                     </div>
                 </div>
                 <div class="flex flex-col basis-2/6">
-                    <RecommendedSection video_resource=video_resource />
+                    <RecommendedSection video_resource=video_resource/>
                 </div>
             </div>
         </ScrollablePage>

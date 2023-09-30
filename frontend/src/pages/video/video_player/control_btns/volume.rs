@@ -1,31 +1,47 @@
-use std::ops::Mul;
+use crate::contexts::{PlayerState, VolumeCtx, AUDIO_PLAYER_ID, VIDEO_PLAYER_ID};
 use leptos::*;
-use web_sys::{HtmlVideoElement, HtmlInputElement, Event, HtmlAudioElement};
+use std::ops::Mul;
 use wasm_bindgen::JsCast;
-use crate::contexts::{VolumeCtx, PlayerState, VIDEO_PLAYER_ID, AUDIO_PLAYER_ID};
+use web_sys::{Event, HtmlAudioElement, HtmlInputElement, HtmlVideoElement};
 
 use crate::icons::VolumeDefaultIcon;
 
 #[component]
 pub fn VolumeKnob() -> impl IntoView {
     let state = expect_context::<PlayerState>();
-    let vol_position = state.volume.get() * 100f64  ;
+    let vol_position = state.volume.get() * 100f64;
 
-    let vol_change = move |event| { change_volume(event, state.volume.write_only()) };
+    let vol_change = move |event| change_volume(event, state.volume.write_only());
 
     view! {
         <div class="flex flex-row group items-center peer cursor-pointer">
             <button class="btn btn-ghost btn-xs peer" id="vol_btn">
-                <VolumeDefaultIcon />
+                <VolumeDefaultIcon/>
             </button>
-            <input on:input=vol_change id="vol_knob" type="range" min="0" max="100" value=vol_position class=VOL_KNOB_CONTROLS />
+            <input
+                on:input=vol_change
+                id="vol_knob"
+                type="range"
+                min="0"
+                max="100"
+                value=vol_position
+                class=VOL_KNOB_CONTROLS
+            />
         </div>
     }
 }
 
 fn change_volume(event: Event, volume: WriteSignal<f64>) {
-    let video: HtmlVideoElement = document().get_element_by_id(VIDEO_PLAYER_ID).unwrap().dyn_into().unwrap();
-    let audio: HtmlAudioElement = document().get_element_by_id(AUDIO_PLAYER_ID).unwrap().dyn_into().unwrap();
+    let video: HtmlVideoElement = document()
+        .get_element_by_id(VIDEO_PLAYER_ID)
+        .unwrap()
+        .dyn_into()
+        .unwrap();
+    let audio: HtmlAudioElement = document()
+        .get_element_by_id(AUDIO_PLAYER_ID)
+        .unwrap()
+        .dyn_into()
+        .unwrap();
 
     let range: HtmlInputElement = event.target().unwrap().dyn_into().unwrap();
     let vol = range.value().parse::<f64>().unwrap_or_default() / 100f64;
@@ -87,3 +103,4 @@ const VOL_KNOB_CONTROLS: &'static str = "
     [&::-moz-range-thumb]:border-primary
     [&::-moz-range-thumb]:rounded-full
 ";
+

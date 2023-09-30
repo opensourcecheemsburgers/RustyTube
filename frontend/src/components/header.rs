@@ -1,28 +1,43 @@
-use invidious::{Instance, InstanceInfo, fetch_instance_info};
+use invidious::{fetch_instance_info, Instance, InstanceInfo};
 use leptos::*;
 use wasm_bindgen::JsCast;
-use web_sys::{InputEvent, HtmlInputElement, Event};
+use web_sys::{Event, HtmlInputElement, InputEvent};
 
 use crate::components::{Tooltip, TooltipPosition};
-use crate::contexts::{ThemeCtx, ServerCtx, InstancesCtx};
-use crate::icons::{PaletteIcon, ServerIcon, FerrisIcon};
+use crate::contexts::{InstancesCtx, ServerCtx, ThemeCtx};
+use crate::icons::{FerrisIcon, PaletteIcon, ServerIcon};
 
 #[component]
 pub fn Header() -> impl IntoView {
     view! {
         <div class="navbar bg-base-100">
-            <div class="navbar-start">
-            </div>
+            <div class="navbar-start"></div>
             <div class="navbar-center">
                 <div class="form-control">
-                    <input type="text" placeholder="Search" class="input input-bordered w-auto md:w-96" />
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        class="input input-bordered w-auto md:w-96"
+                    />
                 </div>
             </div>
             <div class="navbar-end">
-                <InstanceSelectDropdown />
-                <ThemeSelectDropdown />
+                <InstanceSelectDropdown/>
+                <ThemeSelectDropdown/>
                 <button class="btn btn-square btn-ghost">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="inline-block w-5 h-5 stroke-current"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+                        ></path>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -34,59 +49,64 @@ pub fn Search() -> impl IntoView {
     let on_search = move |ev: Event| {
         let search_bar: HtmlInputElement = ev.target().unwrap().dyn_into().unwrap();
         let search_str = search_bar.value();
-        
     };
-    
-    view! { 
+
+    view! {
         <div class="form-control">
-            <input on:input=on_search id="search" type="text" placeholder="Search" class="input input-bordered w-auto md:w-96" />
+            <input
+                on:input=on_search
+                id="search"
+                type="text"
+                placeholder="Search"
+                class="input input-bordered w-auto md:w-96"
+            />
         </div>
     }
 }
-
 
 #[component]
 pub fn InstanceSelectDropdown() -> impl IntoView {
     let instances = expect_context::<InstancesCtx>().0;
 
     view! {
-        {
-            move ||
-                match instances.get() {
-                    None => view! { <div></div>},
-                    Some(instances) => view! {
-                        <div class="dropdown dropdown-end">
-                            <Tooltip tip={"Instances"} position={TooltipPosition::Bottom}>
-                                <label tabindex="0" class="btn btn-ghost rounded-btn">
-                                    <ServerIcon />
-                                </label>
-                            </Tooltip>
-                            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10">
-                                <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
-                                    {
-                                        instances.unwrap().into_iter().map(|instance: (String, InstanceInfo)| {
-                                            let api = instance.1.api.unwrap_or_default();
-                                            let cors = instance.1.cors.unwrap_or_default();
+        {move || match instances.get() {
+            None => view! { <div></div> },
+            Some(instances) => {
+                view! {
+                    <div class="dropdown dropdown-end">
+                        <Tooltip tip="Instances" position=TooltipPosition::Bottom>
+                            <label tabindex="0" class="btn btn-ghost rounded-btn">
+                                <ServerIcon/>
+                            </label>
+                        </Tooltip>
+                        <ul
+                            tabindex="0"
+                            class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
+                        >
+                            <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
 
-                                            let server_visible = api && cors;
-
-                                            match server_visible {
-                                                true => view! { 
-                                                    <InstanceDropdownListItem instance=instance />
-                                                },
-                                                false => view! { 
-                                                    <div class="hidden"></div>
-                                                }.into_view()
+                                {instances
+                                    .unwrap()
+                                    .into_iter()
+                                    .map(|instance: (String, InstanceInfo)| {
+                                        let api = instance.1.api.unwrap_or_default();
+                                        let cors = instance.1.cors.unwrap_or_default();
+                                        let server_visible = api && cors;
+                                        match server_visible {
+                                            true => {
+                                                view! { <InstanceDropdownListItem instance=instance/> }
                                             }
+                                            false => view! { <div class="hidden"></div> }.into_view(),
                                         }
-                                        ).collect_view()
-                                    }
-                                </div>
-                            </ul>
-                        </div>
-                    }
+                                    })
+                                    .collect_view()}
+
+                            </div>
+                        </ul>
+                    </div>
                 }
-        }
+            }
+        }}
     }
 }
 
@@ -108,26 +128,25 @@ pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
                 let uri = uri.clone();
 
                 view! {
-                <div
-                class="p-3 rounded-lg bg-base-100"
-                on:click=move |_| server.1.set(uri.clone())>
-                    <a class="text-base-content font-sans">
-                        {flag}{" "}{instance_name}
-                    </a>
-                </div>
-            }},
+                    <div
+                        class="p-3 rounded-lg bg-base-100"
+                        on:click=move |_| server.1.set(uri.clone())
+                    >
+                        <a class="text-base-content font-sans">{flag} {" "} {instance_name}</a>
+                    </div>
+                }
+            }
             true => {
                 let uri = uri.clone();
                 view! {
-                <div
-                class="p-3 rounded-lg bg-base-100 border-2 border-primary"
-                on:click=move |_| server.1.set(uri.clone())>
-                    <a class="text-base-content font-sans">
-                        {flag}{" "}{instance_name}
-                    </a>
-                </div>
+                    <div
+                        class="p-3 rounded-lg bg-base-100 border-2 border-primary"
+                        on:click=move |_| server.1.set(uri.clone())
+                    >
+                        <a class="text-base-content font-sans">{flag} {" "} {instance_name}</a>
+                    </div>
                 }
-            },
+            }
         }
     };
     instance_view
@@ -140,40 +159,40 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
     let theme_view = move || match theme_ctx.0.get().eq_ignore_ascii_case(name) {
         true => view! {
             <div
-            data-theme={name}
-            class="p-3 rounded-lg bg-base-100 border-2 border-primary"
-            on:click=move |_| theme_ctx.1.set(name.to_string())>
+                data-theme=name
+                class="p-3 rounded-lg bg-base-100 border-2 border-primary"
+                on:click=move |_| theme_ctx.1.set(name.to_string())
+            >
                 <a class="capitalize text-base-content font-sans">
-                <div class="flex flex-row justify-between w-full items-center rounded-lg">
-                    {name}
-                    <div class="flex flex-row gap-1">
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-primary"></div>
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-secondary"></div>
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-accent"></div>
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-neutral"></div>
+                    <div class="flex flex-row justify-between w-full items-center rounded-lg">
+                        {name} <div class="flex flex-row gap-1">
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-primary"></div>
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-secondary"></div>
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-accent"></div>
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-neutral"></div>
+                        </div>
                     </div>
-                </div>
                 </a>
             </div>
         },
         false => view! {
             <div
-            data-theme={name}
-            class="p-3 rounded-lg bg-base-100"
-            on:click=move |_| theme_ctx.1.set(name.to_string())>
+                data-theme=name
+                class="p-3 rounded-lg bg-base-100"
+                on:click=move |_| theme_ctx.1.set(name.to_string())
+            >
                 <a class="capitalize text-base-content font-sans">
-                <div class="flex flex-row justify-between w-full items-center rounded-lg">
-                    {name}
-                    <div class="flex flex-row gap-1">
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-primary"></div>
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-secondary"></div>
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-accent"></div>
-                        <div data-theme={name} class="w-4 h-4 rounded-full bg-neutral"></div>
+                    <div class="flex flex-row justify-between w-full items-center rounded-lg">
+                        {name} <div class="flex flex-row gap-1">
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-primary"></div>
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-secondary"></div>
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-accent"></div>
+                            <div data-theme=name class="w-4 h-4 rounded-full bg-neutral"></div>
+                        </div>
                     </div>
-                </div>
                 </a>
             </div>
-        }
+        },
     };
 
     theme_view
@@ -183,20 +202,22 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
 pub fn ThemeSelectDropdown() -> impl IntoView {
     view! {
         <div class="dropdown dropdown-end">
-            <Tooltip tip={"Themes"} position={TooltipPosition::Bottom}>
+            <Tooltip tip="Themes" position=TooltipPosition::Bottom>
                 <label tabindex="0" class="btn btn-ghost rounded-btn">
-                    <PaletteIcon />
+                    <PaletteIcon/>
                 </label>
             </Tooltip>
-            <ul tabindex="0" class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10">
+            <ul
+                tabindex="0"
+                class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
+            >
                 <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
-                    {
-                        THEMES.into_iter().map(|theme| view!
-                            { 
-                                <ThemeDropdownListItem name={theme} />
-                            }
-                        ).collect_view()
-                    }
+
+                    {THEMES
+                        .into_iter()
+                        .map(|theme| view! { <ThemeDropdownListItem name=theme/> })
+                        .collect_view()}
+
                 </div>
             </ul>
         </div>
@@ -234,3 +255,4 @@ pub const THEMES: &'static [&'static str] = &[
     "emerald",
     "corporate",
 ];
+

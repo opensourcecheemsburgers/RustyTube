@@ -120,3 +120,4 @@ pub const THEMES: &'static [&'static str] = &[
     "emerald",
     "corporate",
 ];
+

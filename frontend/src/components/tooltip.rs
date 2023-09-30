@@ -5,7 +5,7 @@ pub enum TooltipPosition {
     Top,
     Bottom,
     Left,
-    Right
+    Right,
 }
 
 impl Default for TooltipPosition {
@@ -17,7 +17,7 @@ impl Default for TooltipPosition {
 #[component]
 pub fn Tooltip(children: Children, tip: &'static str, position: TooltipPosition) -> impl IntoView {
     let mut tooltip_classes = String::from("overflow-visible tooltip tooltip-info block ");
-    
+
     match position {
         TooltipPosition::Top => tooltip_classes.push_str("tooltip-top"),
         TooltipPosition::Bottom => tooltip_classes.push_str("tooltip-bottom"),
@@ -25,10 +25,10 @@ pub fn Tooltip(children: Children, tip: &'static str, position: TooltipPosition)
         TooltipPosition::Right => tooltip_classes.push_str("tooltip-right"),
     }
 
-    view! {        <div 
-            data-tip={tip} 
-            class={tooltip_classes} >
+    view! {
+        <div data-tip=tip class=tooltip_classes>
             {children()}
         </div>
     }
 }
+

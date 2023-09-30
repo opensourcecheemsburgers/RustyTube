@@ -13,18 +13,25 @@ pub fn PopularSection() -> impl IntoView {
         |server| async move { Popular::fetch_popular(&server).await },
     );
 
-    view! {       
+    view! {
         <HomepageSection>
-            <HomepageSectionTitle title={"Popular".to_string()}/>
-            <Suspense fallback=move || view! {<VideoPreviewCardPlaceholderArray />}>
-                {
-                    move || popular_videos.get().map(|popular_videos_res| {
-                        match popular_videos_res {
-                            Ok(popular) => view! {<PopularVideos popular=popular/>}.into_view(),
-                            Err(err) => view! {<FerrisError error=err/>}
-                        }
-                    })
-                }
+            <HomepageSectionTitle title="Popular".to_string()/>
+            <Suspense fallback=move || {
+                view! { <VideoPreviewCardPlaceholderArray/> }
+            }>
+                {move || {
+                    popular_videos
+                        .get()
+                        .map(|popular_videos_res| {
+                            match popular_videos_res {
+                                Ok(popular) => {
+                                    view! { <PopularVideos popular=popular/> }.into_view()
+                                }
+                                Err(err) => view! { <FerrisError error=err/> },
+                            }
+                        })
+                }}
+
             </Suspense>
         </HomepageSection>
     }
@@ -45,7 +52,11 @@ pub fn PopularVideos(popular: Popular) -> impl IntoView {
 
     view! {
         <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-auto scroll-smooth">
-            { popular_videos_view }
+            {popular_videos_view}
         </div>
     }
 }
+
+
+
+

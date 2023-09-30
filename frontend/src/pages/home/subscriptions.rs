@@ -15,21 +15,30 @@ pub fn SubscriptionsSection() -> impl IntoView {
 	let subs = expect_context::<SubscriptionsCtx>().0;
 	let subs_videos_resource = expect_context::<SubsVideosCtx>().0;
 
-	view! {		<HomepageSection>
-			<HomepageSectionTitle title={"Subscriptions".to_string()}/>
-			<Suspense fallback=move || view! {<VideoPreviewCardPlaceholderArray />}>
-				{
-					move || match subs.get().channels.len() == 0 {
-						false => subs_videos_resource.read().map(|subs_videos_res| {
-							match subs_videos_res {
-								Ok(subs_videos) => view! {<SubscriptionsVideos subs_videos=subs_videos />},
-								Err(err) => view! {<FerrisError error=err/>},
-							}
-						}),
-						true => Some(view!{<ImportSubscriptions/>})
+	view! {
+		<HomepageSection>
+			<HomepageSectionTitle title="Subscriptions".to_string()/>
+			<Suspense fallback=move || {
+				view! { <VideoPreviewCardPlaceholderArray/> }
+			}>
+
+				{move || match subs.get().channels.len() == 0 {
+					false => {
+						subs_videos_resource
+							.read()
+							.map(|subs_videos_res| {
+								match subs_videos_res {
+									Ok(subs_videos) => {
+										view! { <SubscriptionsVideos subs_videos=subs_videos/> }
+									}
+									Err(err) => view! { <FerrisError error=err/> },
+								}
+							})
 					}
-				}
-        	</Suspense>
+					true => Some(view! { <ImportSubscriptions/> }),
+				}}
+
+			</Suspense>
 		</HomepageSection>
 	}
 }
@@ -59,43 +68,49 @@ pub fn SubscriptionsVideos(subs_videos: SubscriptionsVideos) -> impl IntoView {
 	let visible_videos = create_rw_signal(initial_videos);
 
 	let videos_view = move || {
-		visible_videos.get().into_iter().map(|video| view!
-		{                 <VideoPreviewCard
-					video_id=video.id
-                    title=video.title
-                    author=video.author
-                    views=video.views
-                    published=video.published_text
-                    thumbnail_url=video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
-                />
-			}
+		visible_videos.get().into_iter().map(|video| view! {
+			<VideoPreviewCard
+				video_id=video.id
+				title=video.title
+				author=video.author
+				views=video.views
+				published=video.published_text
+				thumbnail_url=video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
+			/>
+		}
 		).collect_view()
 	};
 
 	let load_more = move |_| { load_more_videos(visible_videos, total_videos.clone()) };
 
 	let view_more_btn = match visible_videos.get().len() == total_videos_len {
-		true => view! {<div></div>}.into_view(),
-		false => view! {<div class="flex justify-center"><button on:click=load_more class="btn btn-lg btn-primary btn-outline">{"Load More"}</button></div>}.into_view()
+		true => view! { <div></div> }.into_view(),
+		false => view! {
+			<div class="flex justify-center">
+				<button on:click=load_more class="btn btn-lg btn-primary btn-outline">
+					{"Load More"}
+				</button>
+			</div>
+		}.into_view()
 	};
 
-	view! {		<div class="flex flex-col h-[calc(100vh-64px-1rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
-		    <div class="flex flex-row flex-wrap gap-y-8 justify-between">
-				{ videos_view }
-		    </div>
+	view! {
+		<div class="flex flex-col h-[calc(100vh-64px-1rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
+			<div class="flex flex-row flex-wrap gap-y-8 justify-between">{videos_view}</div>
 			{view_more_btn}
 		</div>
-    }
+	}
 }
 
 #[component]
 pub fn ImportSubscriptions() -> impl IntoView {
-	view! {		<div class="hero min-h-full">
+	view! {
+		<div class="hero min-h-full">
 			<div class="flex flex-col space-y-8">
-				<FerrisWaveIcon width=96 />
+				<FerrisWaveIcon width=96/>
 				<div class="flex flex-row space-x-4">
-					<ImportSubscriptionsTutorial />
-					<ImportSubscriptionsBtn />
+					<ImportSubscriptionsTutorial/>
+					<ImportSubscriptionsBtn/>
 				</div>
 			</div>
 		</div>
@@ -104,7 +119,12 @@ pub fn ImportSubscriptions() -> impl IntoView {
 
 #[component]
 pub fn ImportSubscriptionsTutorial() -> impl IntoView {
-	view! {		<a target="_blank" class="btn btn-lg btn-outline btn-info" href="https://docs.invidious.io/export-youtube-subscriptions/">
+	view! {
+		<a
+			target="_blank"
+			class="btn btn-lg btn-outline btn-info"
+			href="https://docs.invidious.io/export-youtube-subscriptions/"
+		>
 			{"Tutorial"}
 		</a>
 	}
@@ -125,17 +145,19 @@ pub fn ImportSubscriptionsBtn() -> impl IntoView {
 		parse_subs_file.dispatch((subs, event));
 	};
 
-	view! {		<>
-            <label class="btn btn-lg btn-outline btn-primary" for="subs_upload">
-                {"Import Subscriptions"}
-            </label>
-            <input
+	view! {
+		<>
+			<label class="btn btn-lg btn-outline btn-primary" for="subs_upload">
+				{"Import Subscriptions"}
+			</label>
+			<input
 				id="subs_upload"
 				type="file"
 				accept=".ron,.json,.csv"
-				multiple={false}
+				multiple=false
 				on:change=on_file_upload
-				class="hidden" />
+				class="hidden"
+			/>
 		</>
 	}
 }
