@@ -1,7 +1,7 @@
 use leptos::*;
-use wasm_bindgen::JsCast;
-use web_sys::{MouseEvent, HtmlProgressElement, HtmlVideoElement, HtmlAudioElement, DragEvent};
 use utils::get_element_by_id;
+use wasm_bindgen::JsCast;
+use web_sys::{DragEvent, HtmlAudioElement, HtmlProgressElement, HtmlVideoElement, MouseEvent};
 
 use crate::contexts::{PlayerState, PlayerStyle};
 
@@ -10,20 +10,11 @@ pub fn ProgressBar() -> impl IntoView {
     let state = expect_context::<PlayerState>();
     let style = expect_context::<PlayerStyle>();
 
-    let seek = create_action(move |input: &(PlayerState, f64)| {
-        let input = input.clone();
-        async move { input.0.seek(input.1).await }
-    });
-
     let on_click = move |mouse_event| {
-        let state = state.clone();
-        let time = seek_pos(mouse_event);
-        seek.dispatch((state, time));
+        state.seek(seek_pos(mouse_event));
     };
     let on_drag = move |drag_event: DragEvent| {
-        let state = state.clone();
-        let time = seek_drag_pos(drag_event);
-        seek.dispatch((state, time));
+        state.seek(seek_drag_pos(drag_event));
     };
 
     view! {
@@ -110,5 +101,4 @@ const PROGRESS_BAR: &'static str = "
     peer-focus/controls:h-1
     peer-focus/controls:scale-y-[2.5]
 ";
-
 

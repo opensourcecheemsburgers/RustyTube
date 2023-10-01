@@ -3,7 +3,6 @@
 mod components;
 mod contexts;
 mod icons;
-mod pages;
 
 use console_error_panic_hook;
 
@@ -11,8 +10,7 @@ use leptos::*;
 use leptos_router::*;
 
 use crate::contexts::{
-    provide_config_context_slices, provide_player_contexts, provide_user_contexts,
-    provide_user_resources,
+    provide_config_context_slices, provide_user_contexts, provide_user_resources,
 };
 use crate::pages::{Homepage, VideoPage};
 use config::Config;
@@ -23,7 +21,6 @@ fn App() -> impl IntoView {
     provide_config_context_slices(Config::load().unwrap_or_default());
     provide_user_contexts();
     provide_user_resources();
-    provide_player_contexts();
 
     let home = move || view! { <Homepage/> };
     let video = move || view! { <VideoPage/> };

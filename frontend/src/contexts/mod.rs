@@ -13,7 +13,7 @@ pub use user::{
 };
 
 pub use player::{
-    provide_player_contexts, PlaybackState, PlayerState, PlayerStyle, VideoFormatCtx, VideoTime,
-    AUDIO_PLAYER_ID, VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
+    PlaybackState, PlayerState, PlayerStyle, VideoFormatCtx, VideoTime, AUDIO_PLAYER_ID,
+    VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
 };
 

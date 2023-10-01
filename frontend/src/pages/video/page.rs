@@ -11,12 +11,6 @@ use super::{video_player::{VideoContainer, VideoPlaceholder}, info::{VideoInfo, 
 
 #[component]
 pub fn VideoPage() -> impl IntoView {
-    let player_style = PlayerStyle::init();
-    let player_state = PlayerState::init();
-
-    provide_context(player_style);
-    provide_context(player_state);
-
     let server = expect_context::<ServerCtx>().0.0;
     let id = get_current_video_query_signal();
 
@@ -49,3 +43,4 @@ pub fn VideoPage() -> impl IntoView {
 }
 
 pub type VideoResource = Resource<(String, String), Result<Video, RustyTubeError>>;
+

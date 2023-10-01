@@ -30,41 +30,57 @@ pub fn VideoContainer(video_resource: VideoResource) -> impl IntoView {
 #[component]
 pub fn VideoPlayer(video: Video) -> impl IntoView {
     let server = expect_context::<ServerCtx>().0.0;
-    let state = expect_context::<PlayerState>();
-    let style = expect_context::<PlayerStyle>();
+
+    let video_player = create_node_ref::<leptos::html::Video>();
+    let audio_player = create_node_ref::<leptos::html::Audio>();
+
+    let state = PlayerState::init(video_player, audio_player);
+    let style = PlayerStyle::init();
+    provide_context(state);
+    provide_context(style);
+
 
     let formats = Formats::from((video.adaptive_formats, video.format_streams));
     let webm_dash_formats = filter_webm_dash_formats(&formats.video_formats);
     let format = provide_video_format_ctx(&formats);
 
-    let video_buffering = move |_| { video_ready_action().dispatch((state, false)); };
-    let audio_buffering = move |_| { audio_ready_action().dispatch((state, false)); };
-    let can_play_video = move |_| { video_ready_action().dispatch((state, true)); };
-    let can_play_audio = move |_| { audio_ready_action().dispatch((state, true)); };
-
-    let toggle_video_playback = move |_| toggle_video_playback_action().dispatch(state);
-
-    let update_time = move |_| { state.update_time(); };
-
     let handle_store: RwSignal<Option<TimeoutHandle>> = create_rw_signal(None);
+
+    let idle_detection = move |_| {
+        style.controls_visible.set(true);
+        if let Some(handle) = handle_store.get() {
+            handle.clear();
+        }
+        let handle = set_timeout_with_handle(move || {
+            style.controls_visible.set(cursor_visible());
+        }, Duration::from_secs(3)).unwrap();
+        handle_store.set(Some(handle));
+    };
 
 	view! {
         <div
             data-controls=style.controls_visible
             data-fullwindow=style.full_window
-            on:click=toggle_video_playback
+            on:click=move |_| {
+                state.toggle_playback();
+            }
+
             on:dblclick=move |_| toggle_fullscreen()
-            on:mouseover=move |_| idle_detection(handle_store)
-            on:mousemove=move |_| idle_detection(handle_store)
+            on:mouseover=idle_detection
+            on:mousemove=idle_detection
             class=VIDEO_CLASSES
             id=VIDEO_CONTAINER_ID
         >
             <video
-                on:waiting=video_buffering
-                on:canplay=can_play_video
+                _ref=video_player
+                on:waiting=move |_| state.set_video_ready(false)
+                on:canplay=move |_| state.set_video_ready(true)
                 class="w-full rounded"
                 id=VIDEO_PLAYER_ID
-                on:timeupdate=update_time
+                on:timeupdate=move |_| {
+                    state.update_time();
+                }
+
                 poster=&video.thumbnails.first().unwrap().url
                 preload="auto"
                 controls=false
@@ -90,8 +106,9 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 
             </video>
             <audio
-                on:waiting=audio_buffering
-                on:canplay=can_play_audio
+                _ref=audio_player
+                on:waiting=move |_| state.set_audio_ready(false)
+                on:canplay=move |_| state.set_audio_ready(true)
                 id=AUDIO_PLAYER_ID
                 src=formats.audio_formats.first().unwrap().url.clone()
                 preload="auto"
@@ -158,39 +175,9 @@ fn toggle_video_playback_action() -> Action<PlayerState, ()> {
     create_action(|input: &PlayerState| {
         let state = input.clone();
         async move { 
-            if !controls_hovered() {
-                state.toggle_playback().await;
-            }
+            state.toggle_playback().await;
         }
     })
-}
-
-fn video_ready_action() -> Action<(PlayerState, bool), ()>{
-    create_action(|input: &(PlayerState, bool)| {
-        let input = input.clone();
-        async move { input.0.toggle_video_ready(input.1).await; }
-    })
-}
-
-fn audio_ready_action() -> Action<(PlayerState, bool), ()> {
-    create_action(|input: &(PlayerState, bool)| {
-        let input = input.clone();
-        async move { input.0.toggle_audio_ready(input.1).await; }
-    })
-}
-
-
-fn idle_detection(handle_store: RwSignal<Option<TimeoutHandle>>) {
-    let style = expect_context::<PlayerStyle>();
-
-    style.controls_visible.set(true);
-    if let Some(handle) = handle_store.get() {
-        handle.clear();
-    }
-    let handle = set_timeout_with_handle(move || {
-        style.controls_visible.set(cursor_visible());
-    }, Duration::from_secs(3)).unwrap();
-    handle_store.set(Some(handle));
 }
 
 fn provide_video_format_ctx(formats: &Formats) -> Result<(), RustyTubeError> {
@@ -223,7 +210,7 @@ fn filter_webm_dash_formats(video_formats: &Vec<VideoFormat>) -> Vec<VideoFormat
 }
 
 fn cursor_visible() -> bool {
-    !document().fullscreen() && controls_hovered()
+    !document().fullscreen() || controls_hovered()
 }
 
 fn controls_hovered() -> bool {
@@ -265,6 +252,45 @@ data-[fullwindow=true]:object-cover
 data-[fullwindow=true]:ease-in
 data-[fullwindow=true]:duration-300
 ";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
