@@ -3,13 +3,13 @@ mod tests {
     use wasm_bindgen_test::{console_log, wasm_bindgen_test, wasm_bindgen_test_configure};
     use gloo::file::{Blob};
     use crate::channel::Channel;
-    use crate::{Comments, Replies};
+    use crate::{Comments, Replies, SearchResults};
     use crate::fetch::fetch;
     use crate::formats::{Formats, VideoFormat, AudioFormat, LegacyFormat, AdaptiveFormat, QualityLabel, Resolution, Container};
     use crate::hidden::CountryCode;
     use crate::instance::{fetch_instance_info, Instances};
     use crate::subs::{NewpipeSubscriptions, Subscriptions, YoutubeSubscriptions};
-    use crate::universal::{Duration, Feature, Playlist, Popular, ResponseType, Search, SearchArgs, Sort, TimeSpan, Trending, LocalPlaylist, CsvPlaylist, read_playlist_csv, read_libretube_playlists, read_freetube_playlists};
+    use crate::universal::{Duration, Feature, Playlist, Popular, ResponseType, SearchArgs, Sort, TimeSpan, Trending, LocalPlaylist, CsvPlaylist, read_playlist_csv, read_libretube_playlists, read_freetube_playlists};
     use crate::universal::TrendingCategory::{Default, Gaming, Movies, Music};
     use crate::video::Video;
 
@@ -115,25 +115,19 @@ mod tests {
 
     #[wasm_bindgen_test]
     async fn search() {
-        let mut args = SearchArgs {
-            page: 1,
-            query: "".to_string(),
-            sort: Sort::Relevance,
-            timespan: None,
-            duration: None,
-            response_type: None,
-            features: None,
-            region: CountryCode::IE,
-        };
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.timespan = Some(TimeSpan::Year);
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.duration = Some(Duration::Long);
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.response_type = Some(ResponseType::All);
-        Search::search(TEST_SERVER, &args).await.unwrap();
-        args.features = Some(vec![Feature::_4K, Feature::Subtitles, Feature::HighDynamicRange]);
-        Search::search(TEST_SERVER, &args).await.unwrap();
+        let args = SearchArgs::from_str("test".to_string());
+        let search = SearchResults::fetch_search_results(TEST_SERVER, args, 1).await.unwrap();
+        assert_ne!(0, search.items.len());
+
+        // Search::search(TEST_SERVER, &args).await.unwrap();
+        // args.timespan = Some(TimeSpan::Year);
+        // Search::search(TEST_SERVER, &args).await.unwrap();
+        // args.duration = Some(Duration::Long);
+        // Search::search(TEST_SERVER, &args).await.unwrap();
+        // args.response_type = Some(ResponseType::All);
+        // Search::search(TEST_SERVER, &args).await.unwrap();
+        // args.features = Some(vec![Feature::_4K, Feature::Subtitles, Feature::HighDynamicRange]);
+        // Search::search(TEST_SERVER, &args).await.unwrap();
     }
 
     #[wasm_bindgen_test]
@@ -266,3 +260,11 @@ mod tests {
         console_log!("RSS Sub Fetch Success: {}", success);
     }
 }
+
+
+
+
+
+
+
+

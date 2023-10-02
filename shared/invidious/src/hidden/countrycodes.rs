@@ -1,6 +1,6 @@
-use std::fmt;
-use std::fmt::{Display, Formatter, Result};
 use serde::{Deserialize, Serialize};
+use std::fmt::{Display, Formatter, Result};
+use std::{default, fmt};
 
 impl Display for CountryCode {
     fn fmt(&self, f: &mut Formatter) -> Result {
@@ -8,7 +8,7 @@ impl Display for CountryCode {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum CountryCode {
     AD,
     AE,
@@ -242,6 +242,7 @@ pub enum CountryCode {
     UA,
     UG,
     UM,
+    #[default]
     US,
     UY,
     UZ,
@@ -260,3 +261,4 @@ pub enum CountryCode {
     ZM,
     ZW,
 }
+

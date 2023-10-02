@@ -15,7 +15,7 @@ pub struct Subscriptions {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct Subscription {
     pub id: String,
-    pub name: String,
+    pub name: String
 }
 
 pub const SUBS_KEY: &'static str = "subscriptions";
@@ -98,3 +98,5 @@ async fn read_newpipe(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
     let newpipe_subs = NewpipeSubscriptions::read_subs_from_file(&json_str)?;
     Ok(newpipe_subs.into())
 }
+
+

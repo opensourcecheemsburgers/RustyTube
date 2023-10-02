@@ -121,6 +121,8 @@ impl Into<CommonVideo> for Entry {
 		let description = self.group.description;
 		let description_html = "".to_string();
 		let views = self.group.community.statistics.views;
+		let views_text = "".to_string();
+		let author_verified = false;
 		let length = 0;
 		let published = utils::get_published_time_ms(&self.published).unwrap();
 		let published_text = utils::get_published_time(&self.published).unwrap();
@@ -146,6 +148,11 @@ impl Into<CommonVideo> for Entry {
 			live,
 			premium,
 			upcoming,
+			author_verified,
+			views_text,
 		}
 	}
 }
+
+
+
