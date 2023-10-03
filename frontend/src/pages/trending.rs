@@ -2,9 +2,8 @@ use invidious::{Trending, TrendingCategory, TrendingCategory::*, CountryCode};
 use leptos::*;
 use rustytube_error::RustyTubeError;
 
-use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
+use crate::components::{VideoPreviewCard, PlaceholderCardArray, FerrisError};
 use crate::contexts::ServerCtx;
-use crate::pages::home::homepage::{HomepageSection, HomepageSectionTitle};
 
 #[component]
 pub fn TrendingSection() -> impl IntoView {
@@ -25,26 +24,28 @@ pub fn TrendingSection() -> impl IntoView {
     // }) ;
 
     view! {
-        <HomepageSection>
-            <HomepageSectionTitle title="Trending".to_string()/>
-            <TrendingHeader category=category/>
-            <Suspense fallback=move || {
-                view! { <VideoPreviewCardPlaceholderArray/> }
-            }>
+        <div class="w-full flex justify-center mt-4">
+            <div class="w-[90%] flex flex-col gap-y-8">
+                <h1 class="pl-4 font-semibold text-2xl">{"Trending"}</h1>
+                <TrendingHeader category=category/>
+                <Suspense fallback=move || {
+                    view! { <PlaceholderCardArray/> }
+                }>
 
-                {move || {
-                    trending_resource
-                        .read()
-                        .map(|trending_videos_res| {
-                            match trending_videos_res {
-                                Ok(trending) => view! { <TrendingVideos trending=trending/> },
-                                Err(err) => view! { <FerrisError error=err/> },
-                            }
-                        })
-                }}
+                    {move || {
+                        trending_resource
+                            .read()
+                            .map(|trending_videos_res| {
+                                match trending_videos_res {
+                                    Ok(trending) => view! { <TrendingVideos trending=trending/> },
+                                    Err(err) => view! { <FerrisError error=err/> },
+                                }
+                            })
+                    }}
 
-            </Suspense>
-        </HomepageSection>
+                </Suspense>
+            </div>
+        </div>
     }
 }
 
@@ -72,16 +73,7 @@ pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
 
 #[component]
 pub fn TrendingVideos(trending: Trending) -> impl IntoView {
-    let trending_videos_view = trending.videos.into_iter().map(|trending_video| view! {
-        <VideoPreviewCard
-            video_id=trending_video.id
-            title=trending_video.title
-            author=trending_video.author
-            views=trending_video.views
-            published=trending_video.published_text
-            thumbnail_url=trending_video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
-        />
-    }).collect_view();
+    let trending_videos_view = trending.videos.into_iter().map(|video| view! { <VideoPreviewCard video=video/> }).collect_view();
 
     view! {
         <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-auto scroll-smooth">
@@ -89,5 +81,14 @@ pub fn TrendingVideos(trending: Trending) -> impl IntoView {
         </div>
     }
 }
+
+
+
+
+
+
+
+
+
 
 

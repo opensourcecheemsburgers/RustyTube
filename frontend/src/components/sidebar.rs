@@ -11,7 +11,8 @@ use rustytube_error::RustyTubeError;
 
 #[component]
 pub fn Sidebar() -> impl IntoView {
-    let expanded = expect_context::<RwSignal<String>>();
+    let expanded = create_rw_signal(false.to_string());
+    provide_context(expanded);
 
     view! {
         <div data-expanded=expanded class=SIDEBAR_CLASSES>
@@ -124,10 +125,15 @@ pub fn SidebarSubsListPlaceholderArray() -> impl IntoView {
 pub fn SubscriptionsButton() -> impl IntoView {
     let expanded = expect_context::<RwSignal<String>>();
 
-    let change_category = move |_| change_homepage_category(HomepageCategory::Subscriptions);
+    let go_to_subs = move |_| {
+        let navigate = leptos_router::use_navigate();
+        request_animation_frame(move || {
+            _ = navigate("/subscriptions", Default::default());
+        })
+    };
 
     view! {
-        <div on:click=change_category data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
+        <div on:click=go_to_subs data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
             <SubscriptionsIcon/>
             <p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
                 Subscriptions
@@ -140,10 +146,15 @@ pub fn SubscriptionsButton() -> impl IntoView {
 pub fn TrendingButton() -> impl IntoView {
     let expanded = expect_context::<RwSignal<String>>();
 
-    let change_category = move |_| change_homepage_category(HomepageCategory::Trending);
+    let go_to_trending = move |_| {
+        let navigate = leptos_router::use_navigate();
+        request_animation_frame(move || {
+            _ = navigate("/trending", Default::default());
+        })
+    };
 
     view! {
-        <div on:click=change_category data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
+        <div on:click=go_to_trending data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
             <TrendingIcon/>
             <p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
                 Trending
@@ -156,10 +167,15 @@ pub fn TrendingButton() -> impl IntoView {
 pub fn PopularButton() -> impl IntoView {
     let expanded = expect_context::<RwSignal<String>>();
 
-    let change_category = move |_| change_homepage_category(HomepageCategory::Popular);
+    let go_to_popular = move |_| {
+        let navigate = leptos_router::use_navigate();
+        request_animation_frame(move || {
+            _ = navigate("/popular", Default::default());
+        })
+    };
 
     view! {
-        <div on:click=change_category data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
+        <div on:click=go_to_popular data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
             <PopularIcon/>
             <p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
                 Popular

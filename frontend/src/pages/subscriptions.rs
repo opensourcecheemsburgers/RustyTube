@@ -5,9 +5,8 @@ use web_sys::{HtmlInputElement, Event};
 use gloo::file::Blob;
 use wasm_bindgen::JsCast;
 
-use crate::components::{VideoPreviewCard, VideoPreviewCardPlaceholderArray, FerrisError};
+use crate::components::{VideoPreviewCard, FerrisError, PlaceholderCardArray};
 use crate::contexts::{ServerCtx, SubscriptionsCtx, SubsVideosCtx};
-use crate::pages::home::homepage::{HomepageSection, HomepageSectionTitle};
 use crate::icons::FerrisWaveIcon;
 
 #[component]
@@ -16,30 +15,32 @@ pub fn SubscriptionsSection() -> impl IntoView {
 	let subs_videos_resource = expect_context::<SubsVideosCtx>().0;
 
 	view! {
-		<HomepageSection>
-			<HomepageSectionTitle title="Subscriptions".to_string()/>
-			<Suspense fallback=move || {
-				view! { <VideoPreviewCardPlaceholderArray/> }
-			}>
+		<div class="w-full flex justify-center mt-4">
+			<div class="w-[90%] flex flex-col gap-y-8">
+				<h1 class="pl-4 font-semibold text-2xl">{"Subscriptions"}</h1>
+				<Suspense fallback=move || {
+					view! { <PlaceholderCardArray/> }
+				}>
 
-				{move || match subs.get().channels.len() == 0 {
-					false => {
-						subs_videos_resource
-							.read()
-							.map(|subs_videos_res| {
-								match subs_videos_res {
-									Ok(subs_videos) => {
-										view! { <SubscriptionsVideos subs_videos=subs_videos/> }
+					{move || match subs.get().channels.len() == 0 {
+						false => {
+							subs_videos_resource
+								.read()
+								.map(|subs_videos_res| {
+									match subs_videos_res {
+										Ok(subs_videos) => {
+											view! { <SubscriptionsVideos subs_videos=subs_videos/> }
+										}
+										Err(err) => view! { <FerrisError error=err/> },
 									}
-									Err(err) => view! { <FerrisError error=err/> },
-								}
-							})
-					}
-					true => Some(view! { <ImportSubscriptions/> }),
-				}}
+								})
+						}
+						true => Some(view! { <ImportSubscriptions/> }),
+					}}
 
-			</Suspense>
-		</HomepageSection>
+				</Suspense>
+			</div>
+		</div>
 	}
 }
 
@@ -68,16 +69,7 @@ pub fn SubscriptionsVideos(subs_videos: SubscriptionsVideos) -> impl IntoView {
 	let visible_videos = create_rw_signal(initial_videos);
 
 	let videos_view = move || {
-		visible_videos.get().into_iter().map(|video| view! {
-			<VideoPreviewCard
-				video_id=video.id
-				title=video.title
-				author=video.author
-				views=video.views
-				published=video.published_text
-				thumbnail_url=video.thumbnails.get(3).cloned().unwrap_or_default().url.clone()
-			/>
-		}
+		visible_videos.get().into_iter().map(|video| view! { <VideoPreviewCard video=video/> }
 		).collect_view()
 	};
 
@@ -180,3 +172,12 @@ fn load_more_videos(visible_videos: RwSignal<Vec<CommonVideo>>, total_videos: Ve
 			visible.extend_from_slice(next_slice);
 		});
 }
+
+
+
+
+
+
+
+
+
