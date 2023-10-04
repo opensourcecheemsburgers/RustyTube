@@ -1,27 +1,30 @@
-use std::time::Duration;
+use config::Config;
 use gloo::timers::future::TimeoutFuture;
-use leptos::*;
+use invidious::{AdaptiveFormat, Container, Formats, LegacyFormat, Video, VideoFormat};
 use leptos::leptos_dom::helpers::TimeoutHandle;
+use leptos::*;
 use rustytube_error::RustyTubeError;
+use std::time::Duration;
 use utils::get_element_by_id;
 use wasm_bindgen::JsCast;
-use web_sys::{Event, Element, NodeList, HtmlVideoElement, HtmlDivElement};
-use config::Config;
-use invidious::{Formats, Video, VideoFormat, Container, LegacyFormat, AdaptiveFormat};
+use web_sys::{Element, Event, HtmlDivElement, HtmlVideoElement, NodeList};
 
 use crate::components::FerrisError;
-use crate::contexts::{ServerCtx, VideoFormatCtx, PlayerStyle, PlayerState, VIDEO_PLAYER_ID, AUDIO_PLAYER_ID, PlaybackState, VIDEO_CONTROLS_ID, VIDEO_CONTAINER_ID};
+use crate::contexts::{
+    PlaybackState, PlayerState, PlayerStyle, ServerCtx, VideoFormatCtx, AUDIO_PLAYER_ID,
+    VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
+};
 use crate::pages::video::page::VideoResource;
 use crate::pages::video::video_player::VideoPlayerControls;
 
 #[component]
 pub fn VideoContainer(video_resource: VideoResource) -> impl IntoView {
-    let video_player_view = move || video_resource.get().map(|video_result| {
-        match video_result {
+    let video_player_view = move || {
+        video_resource.get().map(|video_result| match video_result {
             Ok(video) => view! { <VideoPlayer video=video/> },
             Err(err) => view! { <FerrisError error=err/> },
-        }
-    });
+        })
+    };
     let fallback = move || view! { <VideoPlaceholder/> };
 
     view! { <Suspense fallback=fallback>{video_player_view}</Suspense> }
@@ -29,20 +32,16 @@ pub fn VideoContainer(video_resource: VideoResource) -> impl IntoView {
 
 #[component]
 pub fn VideoPlayer(video: Video) -> impl IntoView {
-    let server = expect_context::<ServerCtx>().0.0;
+    let server = expect_context::<ServerCtx>().0 .0;
 
-    let video_player = create_node_ref::<leptos::html::Video>();
-    let audio_player = create_node_ref::<leptos::html::Audio>();
-
-    let state = PlayerState::init(video_player, audio_player);
-    let style = PlayerStyle::init();
-    provide_context(state);
-    provide_context(style);
-
+    let state = expect_context::<PlayerState>();
+    let style = expect_context::<PlayerStyle>();
 
     let formats = Formats::from((video.adaptive_formats, video.format_streams));
     let webm_dash_formats = filter_webm_dash_formats(&formats.video_formats);
-    let format = provide_video_format_ctx(&formats);
+
+    let format = get_video_format_ctx(&formats).ok();
+    provide_context(create_rw_signal(format));
 
     let handle_store: RwSignal<Option<TimeoutHandle>> = create_rw_signal(None);
 
@@ -51,28 +50,39 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
         if let Some(handle) = handle_store.get() {
             handle.clear();
         }
-        let handle = set_timeout_with_handle(move || {
-            style.controls_visible.set(cursor_visible());
-        }, Duration::from_secs(3)).unwrap();
+        let handle = set_timeout_with_handle(
+            move || {
+                style.controls_visible.set(cursor_visible());
+            },
+            Duration::from_secs(3),
+        )
+        .unwrap();
         handle_store.set(Some(handle));
     };
 
-	view! {
+    view! {
         <div
             data-controls=style.controls_visible
             data-fullwindow=style.full_window
+
             on:click=move |_| {
-                state.toggle_playback();
+                if !controls_hovered() {
+                    state.toggle_playback();
+                }
             }
 
-            on:dblclick=move |_| toggle_fullscreen()
+            on:dblclick=move |_| {
+                if !controls_hovered() {
+                    toggle_fullscreen()
+                }
+            }
+
             on:mouseover=idle_detection
             on:mousemove=idle_detection
             class=VIDEO_CLASSES
             id=VIDEO_CONTAINER_ID
         >
             <video
-                _ref=video_player
                 on:waiting=move |_| state.set_video_ready(false)
                 on:canplay=move |_| state.set_video_ready(true)
                 class="w-full rounded"
@@ -88,7 +98,6 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
                 playsinline
             >
                 <VideoFormat/>
-
                 {video
                     .captions
                     .iter()
@@ -106,7 +115,6 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 
             </video>
             <audio
-                _ref=audio_player
                 on:waiting=move |_| state.set_audio_ready(false)
                 on:canplay=move |_| state.set_audio_ready(true)
                 id=AUDIO_PLAYER_ID
@@ -130,17 +138,19 @@ pub fn VideoPlaceholder() -> impl IntoView {
     }
 }
 
-
 #[component]
 pub fn VideoFormat() -> impl IntoView {
-    let src = expect_context::<VideoFormatCtx>().0.get().url;
-    move || view! { <source src=src.clone()/> }
-}
+    let url = expect_context::<RwSignal<Option<VideoFormat>>>()
+        .get()
+        .map(|format| format.url);
 
+    move || view! { <source src=url.clone()/> }
+}
 
 #[component]
 pub fn LoadingCircle(state: PlayerState) -> impl IntoView {
     move || {
+        {
         match state.playback_state.get() == PlaybackState::Loading {
             true => view! {
                 <div
@@ -169,43 +179,38 @@ pub fn LoadingCircle(state: PlayerState) -> impl IntoView {
             false => view! { <div></div> }
         }
     }.into_view()
+    }
 }
 
-fn toggle_video_playback_action() -> Action<PlayerState, ()> {
-    create_action(|input: &PlayerState| {
-        let state = input.clone();
-        async move { 
-            state.toggle_playback().await;
-        }
-    })
-}
-
-fn provide_video_format_ctx(formats: &Formats) -> Result<(), RustyTubeError> {
+fn get_video_format_ctx(formats: &Formats) -> Result<VideoFormat, RustyTubeError> {
     let webm_dash_formats = filter_webm_dash_formats(&formats.video_formats);
 
-    let default_quality = expect_context::<RwSignal<Config>>().read_only().get().player.default_quality;
+    let default_quality = expect_context::<RwSignal<Config>>()
+        .read_only()
+        .get()
+        .player
+        .default_quality;
     let default_format = formats
         .video_formats
         .iter()
         .find(|x| x.quality_label == default_quality)
         .cloned();
 
-    let format = match default_format {
+    match default_format {
         Some(format) => Ok(format),
-        None => webm_dash_formats.last().cloned().ok_or(RustyTubeError::no_dash_format_available()),
-    };
-    provide_context(VideoFormatCtx(create_rw_signal(format.clone()?)));
-    Ok(())
+        None => webm_dash_formats
+            .last()
+            .cloned()
+            .ok_or(RustyTubeError::no_dash_format_available()),
+    }
 }
 
 fn filter_webm_dash_formats(video_formats: &Vec<VideoFormat>) -> Vec<VideoFormat> {
     let mut webm_dash_formats = video_formats.clone();
-    webm_dash_formats.retain(|format|
-        match format.container.clone() {
-            Some(container) => container == Container::WEBM,
-            None => false,
-        }
-    );
+    webm_dash_formats.retain(|format| match format.container.clone() {
+        Some(container) => container == Container::WEBM,
+        None => false,
+    });
     webm_dash_formats
 }
 
@@ -225,8 +230,11 @@ fn controls_hovered() -> bool {
                 elements_vec.push(element);
                 index = index + 1;
             }
-            elements_vec.iter().find(|element| element.id().eq(VIDEO_CONTROLS_ID)).is_some()
-        },
+            elements_vec
+                .iter()
+                .find(|element| element.id().eq(VIDEO_CONTROLS_ID))
+                .is_some()
+        }
         None => false,
     }
 }
@@ -234,7 +242,11 @@ fn controls_hovered() -> bool {
 fn toggle_fullscreen() {
     match document().fullscreen() {
         true => document().exit_fullscreen(),
-        false => { get_element_by_id::<HtmlDivElement>(VIDEO_CONTAINER_ID).unwrap().request_fullscreen(); }
+        false => {
+            get_element_by_id::<HtmlDivElement>(VIDEO_CONTAINER_ID)
+                .unwrap()
+                .request_fullscreen();
+        }
     }
 }
 
@@ -252,53 +264,4 @@ data-[fullwindow=true]:object-cover
 data-[fullwindow=true]:ease-in
 data-[fullwindow=true]:duration-300
 ";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

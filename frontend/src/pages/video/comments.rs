@@ -8,7 +8,7 @@ use leptos::*;
 use leptos_router::{use_params, use_params_map};
 use num_format::{Locale, ToFormattedString};
 use web_sys::HtmlDivElement;
-use crate::pages::video::utils::{get_current_video_query_signal, VideoQuerySignal};
+use crate::utils::{get_current_video_query_signal, VideoQuerySignal};
 
 #[component]
 pub fn CommentsSection() -> impl IntoView {
@@ -16,18 +16,55 @@ pub fn CommentsSection() -> impl IntoView {
     let comments_vec = create_rw_signal::<Vec<Comment>>(vec![]);
     let continuation = create_rw_signal::<Option<String>>(None);
 
+    let video_id = get_current_video_query_signal();
+
+    let comments_resource = create_resource(
+        move || (server.get(), video_id.0.get().unwrap_or_default()), 
+        |(server, id)| async move {
+            Comments::fetch_comments(&server, &id, None).await
+        }
+    );
+
+    
+    view! {
+		<Suspense fallback=move || {
+			view! { <CommentsSectionPlaceholder/> }
+		}>
+			{move || {
+				comments_resource
+					.get()
+					.map(|comments_result| {
+						match comments_result {
+							Ok(comments) => view! { <CommentsSectionContent comments=comments/> },
+							Err(err) => view! { <FerrisError error=err/> },
+						}
+					})
+			}}
+
+		</Suspense>
+	}
+}
+
+
+#[component]
+pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
+	let server = expect_context::<ServerCtx>().0.0;
+    let comments_vec = create_rw_signal(comments.comments);
+    let continuation = create_rw_signal(comments.continuation);
+
+    let video_id = get_current_video_query_signal();
+
+    let comments_resource = create_resource(
+        move || (server.get(), video_id.0.get().unwrap_or_default()), 
+        |(server, id)| async move {
+            Comments::fetch_comments(&server, &id, None).await
+        }
+    );
+
     let fetch_comments = create_action(|input: &CommentFetchArgs| {
         let args = input.clone();
         async move { fetch_comments(args).await; }
     });
-
-    let video_id = get_current_video_query_signal();
-    let comments_resource = create_resource(
-                move || (server.get(), video_id.0.get().unwrap_or_default()),
-        |(server, id)| async move {
-            Comments::fetch_comments(&server, &id, None).await
-        },
-    );
 
     let comment_fetch_args = CommentFetchArgs {
         comments_vec,
@@ -37,35 +74,27 @@ pub fn CommentsSection() -> impl IntoView {
         fetch_comments
     };
 
-    let comments_view = move || comments_resource.read().map(|comments_result| {
-        match comments_result {
-            Ok(comments) => comments
-                .comments
-                .into_iter()
-                .map(|comment| view! { <Comment comment=comment/> })
-                .collect_view(),
-            Err(err) => view! { <FerrisError error=err/> }
-        }
-    });
+    let fetch_comments = move |_| comment_fetch_args.fetch_comments.dispatch(comment_fetch_args.clone());
 
     let fetch_more_comments_btn = move || {
-        continuation.get().map(|_| view! {
-			<button
-				class="btn btn-primary btn-outline btn-sm"
-				on:click=move |_| fetch_comments.dispatch(comment_fetch_args.clone())
-			>
-				{"Load more"}
-			</button>
-		}.into_view())
+        (!comment_fetch_args.comments_vec.get().is_empty() && comment_fetch_args.continuation.get().is_some())
+            .then_some(view! {
+				<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_comments>
+					{"Load more"}
+				</button>
+			}).into_view()
     };
 
-	view! {
+    let comments_view = move || comment_fetch_args.comments_vec.get().into_iter().map(|comment| view! { <Comment comment=comment/> }).collect_view();
+
+    view! {
 		<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
 			<div class="flex flex-col space-y-8">{comments_view}</div>
 			{fetch_more_comments_btn}
 		</div>
 	}
 }
+
 
 #[component]
 pub fn Comment(comment: Comment) -> impl IntoView {
@@ -265,7 +294,7 @@ pub fn Reply(comment: Comment) -> impl IntoView {
 
 async fn fetch_comments(args: CommentFetchArgs) {
     if let Some(token) = args.continuation.get() {
-        let comments = Comments::fetch_comments(token.as_str(), args.server.get().as_str(), Some(args.video_id.0.get().unwrap().as_str()))
+        let comments = Comments::fetch_comments(args.server.get().as_str(),  args.video_id.0.get().unwrap().as_str(), Some(token.as_str()))
             .await
             .unwrap();
         args.continuation.set(comments.continuation);
@@ -305,3 +334,51 @@ pub struct ReplyFetchArgs {
     pub video_id: VideoQuerySignal,
     pub fetch_replies: Action<Self, ()>
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

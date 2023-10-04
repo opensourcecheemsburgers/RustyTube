@@ -1,7 +1,5 @@
-use crate::{
-    components::FerrisError,
-    pages::video::{get_current_video_query_signal, page::VideoResource},
-};
+use crate::utils::get_current_video_query_signal;
+use crate::{components::FerrisError, pages::video::page::VideoResource};
 use invidious::{Video, VideoShort};
 use leptos::*;
 
@@ -21,9 +19,9 @@ pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
     };
 
     view! {
-        <div class="flex flex-col rounded-lg bg-base-200 p-4">
+        <div class="flex flex-col rounded-lg bg-base-200 p-4 space-y-4">
             <h1 class="font-semibold text-xl">Recommended</h1>
-            <div class="flex flex-col space-y-6 pr-4 rounded-lg bg-base-200">
+            <div class="flex flex-col space-y-4 pr-4 rounded-lg bg-base-200">
                 <Suspense fallback=move || {
                     view! { <RecommendedSectionPlaceholder/> }
                 }>{recommended_view}</Suspense>
@@ -43,8 +41,10 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 
     let img_loaded = create_rw_signal(false);
     let image_classes = move || match img_loaded.get() {
-        true => "w-32 object-center object-cover bg-base-content rounded-lg".to_string(),
-        false => "animate-pulse w-32 h-18 bg-base-content rounded-lg".to_string(),
+        true => {
+            "w-[30%] aspect-video object-center object-cover bg-base-content rounded-lg".to_string()
+        }
+        false => "animate-pulse w-[30%] aspect-video bg-base-content rounded-lg".to_string(),
     };
 
     view! {
@@ -55,7 +55,7 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
                 src=src
                 class=image_classes
             />
-            <div class="flex flex-col">
+            <div class="flex flex-col w-[70%]">
                 <p class="text-sm">{video.title}</p>
                 <div class="flex flex-row flex-wrap mt-2 space-x-1 text-sm">
                     <p>{video.author}</p>

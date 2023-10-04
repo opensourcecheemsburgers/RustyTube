@@ -26,8 +26,6 @@ pub enum PlaybackState {
 
 #[derive(Clone, Copy)]
 pub struct PlayerState {
-    video_player: NodeRef<Video>,
-    audio_player: NodeRef<Audio>,
     format: RwSignal<Option<VideoFormat>>,
     pub playback_state: RwSignal<PlaybackState>,
     video_ready: RwSignal<bool>,
@@ -40,7 +38,7 @@ pub struct PlayerState {
 }
 
 impl PlayerState {
-    pub fn init(video_player: NodeRef<Video>, audio_player: NodeRef<Audio>) -> Self {
+    pub fn init() -> Self {
         let format = create_rw_signal(None);
         let playback_state = create_rw_signal(PlaybackState::Paused);
         let video_ready = create_rw_signal(false);
@@ -52,8 +50,6 @@ impl PlayerState {
         let duration = create_rw_signal(0f64);
 
         Self {
-            video_player,
-            audio_player,
             format,
             playback_state,
             video_ready,
@@ -67,16 +63,16 @@ impl PlayerState {
     }
 
     pub fn ready(&self) -> Result<bool, RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
-        let audio = self.audio_player.get().ok_or(RustyTubeError::element_not_found(AUDIO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
         let ready = self.audio_ready.get() && self.video_ready.get();
         Ok(ready)
     }
 
     pub fn play(&self) -> Result<(), RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
-        let audio = self.audio_player.get().ok_or(RustyTubeError::element_not_found(AUDIO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
         if self.playback_state.get() != PlaybackState::Playing && self.ready()? {
             audio.set_volume(self.volume.get());
@@ -91,8 +87,8 @@ impl PlayerState {
     }
 
     pub fn load(&self) -> Result<(), RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
-        let audio = self.audio_player.get().ok_or(RustyTubeError::element_not_found(AUDIO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
         if video.network_state() != 2 || audio.network_state() != 2 {
             video.load();
@@ -102,8 +98,8 @@ impl PlayerState {
     }
 
     pub fn pause(&self) -> Result<(), RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
-        let audio = self.audio_player.get().ok_or(RustyTubeError::element_not_found(AUDIO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
         let video_pause = video.pause();
         let audio_pause = audio.pause();
         if let Ok(_) = video_pause && let Ok(_) = audio_pause {
@@ -112,7 +108,7 @@ impl PlayerState {
         Ok(())
     }
 
-    pub async fn toggle_playback(&self) -> Result<(), RustyTubeError> {
+    pub fn toggle_playback(&self) -> Result<(), RustyTubeError> {
         match self.playback_state.get() {
             PlaybackState::Playing => self.pause()?,
             PlaybackState::Paused => self.play()?,
@@ -136,16 +132,16 @@ impl PlayerState {
     }
 
     pub fn sync(&self) -> Result<(), RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
-        let audio = self.audio_player.get().ok_or(RustyTubeError::element_not_found(AUDIO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
         audio.set_current_time(video.current_time());
         Ok(())
     }
 
     pub fn seek(&self, time: f64) -> Result<(), RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
-        let audio = self.audio_player.get().ok_or(RustyTubeError::element_not_found(AUDIO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
         let fast_seek_video = video.fast_seek(time);
         let fast_seek_audio = audio.fast_seek(time);
@@ -166,7 +162,7 @@ impl PlayerState {
     }
 
     pub fn update_time(&self) -> Result<(), RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
 
         let current_time = video.current_time();
         let total_time = video.duration();
@@ -178,8 +174,8 @@ impl PlayerState {
     }
 
     pub async fn change_quality(&self, format: VideoFormat) -> Result<(), RustyTubeError> {
-        let video = self.video_player.get().ok_or(RustyTubeError::element_not_found(VIDEO_PLAYER_ID))?;
-        let audio = self.audio_player.get().ok_or(RustyTubeError::element_not_found(AUDIO_PLAYER_ID))?;
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
         let current_time = video.current_time();
         video.set_src(&format.url);
@@ -217,6 +213,8 @@ impl PlayerStyle {
         Self { controls_visible, full_window, fullscreen }
     }
 }
+
+
 
 
 

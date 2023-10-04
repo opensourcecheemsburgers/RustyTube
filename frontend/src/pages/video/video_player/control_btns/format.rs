@@ -59,7 +59,6 @@ pub fn VideoFormatList(formats: Vec<VideoFormat>) -> impl IntoView {
 
 #[component]
 pub fn VideoFormatListItem(format: VideoFormat) -> impl IntoView {
-    let video_format = expect_context::<VideoFormatCtx>();
     let quality_label = format.quality_label.to_string();
 
     let change_format = create_action(|input: &(PlayerState, VideoFormat)| {
@@ -78,4 +77,5 @@ pub fn VideoFormatListItem(format: VideoFormat) -> impl IntoView {
 		</div>
 	}
 }
+
 
