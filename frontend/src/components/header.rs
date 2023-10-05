@@ -1,7 +1,9 @@
-use invidious::{fetch_instance_info, Instance, InstanceInfo};
+use gloo::console::debug;
+use invidious::{fetch_instance_info, Instance, InstanceInfo, SearchArgs};
+use leptos::html::Input;
 use leptos::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Event, HtmlInputElement, InputEvent};
+use web_sys::{Event, HtmlInputElement, InputEvent, KeyboardEvent, SubmitEvent};
 
 use crate::components::{Tooltip, TooltipPosition};
 use crate::contexts::{InstancesCtx, ServerCtx, ThemeCtx};
@@ -13,13 +15,7 @@ pub fn Header() -> impl IntoView {
         <div class="navbar bg-base-100">
             <div class="navbar-start"></div>
             <div class="navbar-center">
-                <div class="form-control">
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        class="input input-bordered w-auto md:w-96"
-                    />
-                </div>
+                <Search/>
             </div>
             <div class="navbar-end">
                 <InstanceSelectDropdown/>
@@ -46,20 +42,53 @@ pub fn Header() -> impl IntoView {
 
 #[component]
 pub fn Search() -> impl IntoView {
-    let on_search = move |ev: Event| {
-        let search_bar: HtmlInputElement = ev.target().unwrap().dyn_into().unwrap();
-        let search_str = search_bar.value();
+    let search_bar = create_node_ref::<Input>();
+
+    let search = move |_| {
+        let search_str = search_bar.get().unwrap().value();
+        let search_args = SearchArgs::from_str(search_str);
+
+        provide_context(create_rw_signal(search_args.clone()));
+
+        let navigate = leptos_router::use_navigate();
+        request_animation_frame(move || {
+            _ = navigate(
+                &format!("/search{}", search_args.to_url()),
+                Default::default(),
+            );
+        })
+    };
+
+    let check_for_enter_key = move |keyboard_event: KeyboardEvent| {
+        if keyboard_event.key_code() == 13 {
+            let search_str = search_bar.get().unwrap().value();
+            let search_args = SearchArgs::from_str(search_str);
+
+            provide_context(create_rw_signal(search_args.clone()));
+
+            let navigate = leptos_router::use_navigate();
+            request_animation_frame(move || {
+                _ = navigate(
+                    &format!("/search{}", search_args.to_url()),
+                    Default::default(),
+                );
+            })
+        }
     };
 
     view! {
-        <div class="form-control">
+        <div class="join">
             <input
-                on:input=on_search
+                on:keydown=check_for_enter_key
+                _ref=search_bar
                 id="search"
                 type="text"
-                placeholder="Search"
-                class="input input-bordered w-auto md:w-96"
+                placeholder="Type your search here..."
+                class="input input-bordered input-primary w-auto md:w-96 join-item"
             />
+            <button class="btn btn-primary join-item" on:click=search>
+                Search
+            </button>
         </div>
     }
 }

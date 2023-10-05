@@ -1,8 +1,13 @@
-use std::{fmt::{Formatter, Display, self, Debug}, io, string::FromUtf8Error, ops::Range};
-use gloo::file::FileReadError;
-use serde::{Serialize, Deserialize};
-use gloo::storage::errors::StorageError;
 use chrono::ParseError;
+use gloo::file::FileReadError;
+use gloo::storage::errors::StorageError;
+use serde::{Deserialize, Serialize};
+use std::{
+    fmt::{self, Debug, Display, Formatter},
+    io,
+    ops::Range,
+    string::FromUtf8Error,
+};
 use wasm_bindgen::JsValue;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -154,13 +159,19 @@ impl RustyTubeError {
 
     pub fn element_not_found(id: &str) -> Self {
         let title = String::from("Element Error");
-        let description = format!("An element with id: '{}' could not be found in the window.", id);
+        let description = format!(
+            "An element with id: '{}' could not be found in the window.",
+            id
+        );
         Self { title, description }
     }
 
     pub fn dyn_into_fail(id: &str) -> Self {
         let title = String::from("Element Error");
-        let description = format!("An element with id: '{}' could not be dynamically changed.", id);
+        let description = format!(
+            "An element with id: '{}' could not be dynamically changed.",
+            id
+        );
         Self { title, description }
     }
 
@@ -199,4 +210,11 @@ impl RustyTubeError {
         let description = format!("Unable to parse container info on format: {}", name);
         Self { title, description }
     }
+
+    pub fn search_url_parse() -> Self {
+        let title = String::from("Search Url Parse Error");
+        let description = format!("Unable to parse search url.");
+        Self { title, description }
+    }
 }
+

@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use crate::hidden::{CountryCode, SearchResult};
-use std::fmt;
+use std::str::FromStr;
+use std::{fmt, default};
 use std::fmt::{Display, Formatter};
 use rustytube_error::RustyTubeError;
 use crate::fetch::fetch;
@@ -11,57 +12,67 @@ pub struct SearchResults {
 }
 
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 pub struct SearchArgs {
-    pub page: u32,
+    page: Option<u32>,
     pub query: String,
-    pub sort: Sort,
+    pub sort: Option<Sort>,
     pub timespan: Option<TimeSpan>,
     pub duration: Option<Duration>,
     pub response_type: Option<ResponseType>,
     pub features: Option<Vec<Feature>>,
-    pub region: CountryCode,
-
+    // pub region: Option<CountryCode>,
 }
 
 impl SearchArgs {
-    fn url(&self, server: &str) -> String {
-        let mut url: String = format!("{}/api/v1/search/?q={}&sort_by=", server, self.query);
-
-        if let Some(timespan) = self.timespan {
-            url.push_str(&format!("?date={timespan}"))
-        }
-        if let Some(duration) = self.duration {
-            url.push_str(&format!("?duration={duration}"))
-        }
-        if let Some(response_type) = self.response_type {
-            url.push_str(&format!("?duration={response_type}"))
-        }
-        if let Some(features) = self.features.clone() {
-            let mut features_string = String::from("?features=");
-            features.iter().enumerate().for_each(|(index, feature)| {
-                let feature_string: String = feature.clone().into();
-                match index < features.len() {
-                    true => features_string.push_str(&format!("{},",feature_string)),
-                    false => features_string.push_str(&format!("{}", feature_string))
-                }
-            });
-            url.push_str(&features_string);
-        }
-
-        url
+    pub fn from_str(query: String) -> Self {
+        Self { query, ..Default::default()}
     }
+
+    pub fn new(
+        query: String,
+        sort: Option<Sort>, 
+        timespan: Option<TimeSpan>,
+        duration: Option<Duration>, 
+        response_type: Option<ResponseType>, 
+        features: Option<Vec<Feature>>, 
+        // region: Option<CountryCode>
+    ) -> Self {
+        let page = Some(1);
+
+        Self { page, query, sort, timespan, duration, response_type, features }
+    }
+
+    pub fn to_url(&self) -> String {
+            let mut url: String = format!("?q={}", self.query);
+    
+            self.timespan.map(|timespan| url.push_str(&format!("&date={}", timespan.to_string())));
+            self.duration.map(|duration| url.push_str(&format!("&duration={}", duration.to_string())));
+            self.response_type.map(|response_type| url.push_str(&format!("&type={}", response_type.to_string())));
+            self.features.clone().map(|features| {
+                let mut features_string = String::from("&features=");
+                features.iter().enumerate().for_each(|(index, feature)| {
+                    match index < features.len() {
+                        true => features_string.push_str(&format!("{},",feature.to_string())),
+                        false => features_string.push_str(&format!("{}", feature.to_string()))
+                    }
+                });
+                url.push_str(&features_string);
+            });
+            url
+        }
 }
 
 impl SearchResults {
-    pub async fn search(url: &str) -> Result<Self, RustyTubeError> {
+    pub async fn fetch_search_results(server: &str, args: SearchArgs, page_number: u32) -> Result<Self, RustyTubeError> {
+        let url = format!("{}/api/v1/search{}&page={}", server, args.to_url(), page_number);
         let search_json = fetch(&url).await?;
         let items: Vec<SearchResult> = serde_json::from_str(&search_json)?;
         Ok(Self { items })
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
 pub enum Sort {
     Relevance,
     Rating,
@@ -69,13 +80,32 @@ pub enum Sort {
     Views
 }
 
-impl Display for Sort {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        fmt::Debug::fmt(self, f)
+impl ToString for Sort {
+    fn to_string(&self) -> String {
+        match self {
+            Sort::Relevance => String::from("relevance"),
+            Sort::Rating => String::from("rating"),
+            Sort::Date => String::from("date"),
+            Sort::Views => String::from("views"),
+        }
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+impl FromStr for Sort {
+    type Err = RustyTubeError;
+    
+    fn from_str(duration_str: &str) -> Result<Self, Self::Err> {
+        match duration_str {
+            "relevance" => Ok(Sort::Relevance),
+            "rating" => Ok(Sort::Rating),
+            "date" => Ok(Sort::Date),
+            "views" => Ok(Sort::Views),
+            _ => Err(RustyTubeError::search_url_parse())
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
 pub enum TimeSpan {
     Hour,
     Day,
@@ -84,42 +114,106 @@ pub enum TimeSpan {
     Year
 }
 
-impl Display for TimeSpan {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        fmt::Debug::fmt(self, f)
+impl ToString for TimeSpan {
+    fn to_string(&self) -> String {
+        match self {
+            TimeSpan::Hour => String::from("hour"),
+            TimeSpan::Day => String::from("day"),
+            TimeSpan::Week => String::from("week"),
+            TimeSpan::Month => String::from("month"),
+            TimeSpan::Year => String::from("year"),
+        }
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+impl FromStr for TimeSpan {
+    type Err = RustyTubeError;
+    
+    fn from_str(duration_str: &str) -> Result<Self, Self::Err> {
+        match duration_str {
+            "hour" => Ok(TimeSpan::Hour),
+            "day" => Ok(TimeSpan::Day),
+            "week" => Ok(TimeSpan::Week),
+            "month" => Ok(TimeSpan::Month),
+            "year" => Ok(TimeSpan::Year),
+            _ => Err(RustyTubeError::search_url_parse())
+        }
+    }
+}
+
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
 pub enum Duration {
     Short,
     Long,
     Medium
 }
 
-impl Display for Duration {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        fmt::Debug::fmt(self, f)
+impl ToString for Duration {
+    fn to_string(&self) -> String {
+        match self {
+            Duration::Short => String::from("short"),
+            Duration::Long => String::from("long"),
+            Duration::Medium => String::from("medium"),
+        }
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+impl FromStr for Duration {
+    type Err = RustyTubeError;
+    
+    fn from_str(duration_str: &str) -> Result<Self, Self::Err> {
+        match duration_str {
+            "short" => Ok(Duration::Short),
+            "long" => Ok(Duration::Long),
+            "medium" => Ok(Duration::Medium),
+            _ => Err(RustyTubeError::search_url_parse())
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Default)]
 pub enum ResponseType {
     Video,
     Playlist,
     Channel,
     Movie,
     Show,
+    #[default]
     All
 }
 
-impl Display for ResponseType {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        fmt::Debug::fmt(self, f)
+impl ToString for ResponseType {
+    fn to_string(&self) -> String {
+        match self {
+            ResponseType::Video => String::from("video"),
+            ResponseType::Playlist => String::from("playlist"),
+            ResponseType::Channel => String::from("channel"),
+            ResponseType::Movie => String::from("movie"),
+            ResponseType::Show => String::from("show"),
+            ResponseType::All => String::from("all"),
+        }
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+impl FromStr for ResponseType {
+    type Err = RustyTubeError;
+
+    fn from_str(response_type_str: &str) -> Result<Self, Self::Err> {
+        match response_type_str {
+            "video" => Ok(ResponseType::Video),
+            "playlist" => Ok(ResponseType::Playlist),
+            "channel"=> Ok(ResponseType::Channel), 
+            "movie" => Ok(ResponseType::Movie),
+            "show" => Ok(ResponseType::Show), 
+            "all" => Ok(ResponseType::All),
+            _ => Err(RustyTubeError::search_url_parse())
+        }
+    }
+}
+
+
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
 pub enum Feature {
     HighDefinition,
     Subtitles,
@@ -134,8 +228,8 @@ pub enum Feature {
     VirtualReality180
 }
 
-impl Into<String> for Feature {
-    fn into(self) -> String {
+impl ToString for Feature {
+    fn to_string(&self) -> String {
         match self {
             Feature::HighDefinition => String::from("hd"),
             Feature::Subtitles => String::from("subtitles"),
@@ -151,3 +245,102 @@ impl Into<String> for Feature {
         }
     }
 }
+
+impl FromStr for Feature {
+    type Err = RustyTubeError;
+
+    fn from_str(feature_str: &str) -> Result<Self, Self::Err> {
+        match feature_str {
+            "hd" => Ok(Feature::HighDefinition),
+            "subtitles" => Ok(Feature::Subtitles),
+            "creative_commons" => Ok(Feature::CreativeCommons),
+            "3d" => Ok(Feature::_3D) ,
+            "live" => Ok(Feature::Live),
+            "purchased" => Ok(Feature::Purchased), 
+            "4k" => Ok(Feature::_4K),
+            "360" => Ok(Feature::_360Degrees) ,
+            "location" => Ok(Feature::Location), 
+            "hdr" => Ok(Feature::HighDynamicRange) ,
+            "vr180" => Ok(Feature::VirtualReality180),
+            _ => Err(RustyTubeError::search_url_parse())
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
