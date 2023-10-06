@@ -1,3 +1,4 @@
+mod donate_modal;
 mod error;
 mod header;
 mod page;
