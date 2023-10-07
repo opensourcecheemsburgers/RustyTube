@@ -48,8 +48,6 @@ pub fn Search() -> impl IntoView {
         let search_str = search_bar.get().unwrap().value();
         let search_args = SearchArgs::from_str(search_str);
 
-        provide_context(create_rw_signal(search_args.clone()));
-
         let navigate = leptos_router::use_navigate();
         request_animation_frame(move || {
             _ = navigate(
@@ -63,8 +61,6 @@ pub fn Search() -> impl IntoView {
         if keyboard_event.key_code() == 13 {
             let search_str = search_bar.get().unwrap().value();
             let search_args = SearchArgs::from_str(search_str);
-
-            provide_context(create_rw_signal(search_args.clone()));
 
             let navigate = leptos_router::use_navigate();
             request_animation_frame(move || {
@@ -254,6 +250,7 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 }
 
 pub const THEMES: &'static [&'static str] = &[
+    "rustytube",
     "dracula",
     "winter",
     "night",

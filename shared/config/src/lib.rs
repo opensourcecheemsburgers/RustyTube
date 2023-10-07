@@ -1,12 +1,11 @@
 mod tests;
 
-
-use serde::{Deserialize, Serialize};
+use crate::RememberPosition::VideosOnly;
 use gloo::storage::{LocalStorage, Storage};
 use invidious::QualityLabel;
 use rustytube_error::RustyTubeError;
+use serde::{Deserialize, Serialize};
 use utils::save_to_browser_storage;
-use crate::RememberPosition::VideosOnly;
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
 pub struct NetworkConfig {
@@ -21,7 +20,7 @@ pub struct UiConfig {
     pub theme: String,
     pub font_scale: u8,
     pub ui_scale: u8,
-    pub homepage: HomepageCategory
+    pub homepage: HomepageCategory,
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
@@ -30,7 +29,7 @@ pub struct PlayerConfig {
     pub fast_forward_interval: u8,
     pub default_quality: QualityLabel,
     pub remember_position: RememberPosition,
-    pub volume: f64
+    pub volume: f64,
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
@@ -51,7 +50,7 @@ pub struct Config {
 pub enum RememberPosition {
     Always,
     VideosOnly,
-    Never
+    Never,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
@@ -69,18 +68,28 @@ impl Default for NetworkConfig {
         let auto_fetch_subs = true;
         let fetch_rss = false;
 
-        Self { server, custom_servers, auto_fetch_subs, fetch_rss }
+        Self {
+            server,
+            custom_servers,
+            auto_fetch_subs,
+            fetch_rss,
+        }
     }
 }
 
 impl Default for UiConfig {
     fn default() -> Self {
-        let theme = String::from("dracula");
+        let theme = String::from("rustytube");
         let font_scale = 100u8;
         let ui_scale = 100u8;
         let homepage = HomepageCategory::Subscriptions;
 
-        Self { theme, font_scale, ui_scale, homepage }
+        Self {
+            theme,
+            font_scale,
+            ui_scale,
+            homepage,
+        }
     }
 }
 
@@ -92,7 +101,13 @@ impl Default for PlayerConfig {
         let remember_position = VideosOnly;
         let volume = 0.5f64;
 
-        Self { auto_play, volume, fast_forward_interval, default_quality, remember_position }
+        Self {
+            auto_play,
+            volume,
+            fast_forward_interval,
+            default_quality,
+            remember_position,
+        }
     }
 }
 
@@ -111,7 +126,12 @@ impl Default for Config {
         let player = PlayerConfig::default();
         let privacy = PrivacyConfig::default();
 
-        Self { network, ui, player, privacy }
+        Self {
+            network,
+            ui,
+            player,
+            privacy,
+        }
     }
 }
 
@@ -126,7 +146,7 @@ impl Config {
     pub fn load() -> Result<Self, RustyTubeError> {
         let config_str = LocalStorage::get::<String>(CONFIG_KEY)?;
         Self::from_toml_string(&config_str)
-    } 
+    }
 
     pub fn to_toml_string(&self) -> Result<String, RustyTubeError> {
         Ok(toml::to_string(&self)?)
@@ -136,3 +156,4 @@ impl Config {
         Ok(toml::from_str(toml_str)?)
     }
 }
+

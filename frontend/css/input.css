@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+[data-theme="rustytube"] .btn-ghost {
+  @apply hover:bg-primary;
+}
+
 @layer utilities {
 
   /* Chrome, Safari and Opera */
