@@ -87,7 +87,7 @@ pub fn SubscriptionsVideos(subs_videos: SubscriptionsVideos) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-col h-[calc(100vh-64px-1rem-128px)] gap-y-8 overflow-y-auto scroll-smooth">
+		<div class="flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-auto scroll-smooth">
 			<div class="flex flex-row flex-wrap gap-y-8 justify-between">{videos_view}</div>
 			{view_more_btn}
 		</div>
@@ -172,6 +172,7 @@ fn load_more_videos(visible_videos: RwSignal<Vec<CommonVideo>>, total_videos: Ve
 			visible.extend_from_slice(next_slice);
 		});
 }
+
 
 
 

@@ -76,11 +76,12 @@ pub fn TrendingVideos(trending: Trending) -> impl IntoView {
     let trending_videos_view = trending.videos.into_iter().map(|video| view! { <VideoPreviewCard video=video/> }).collect_view();
 
     view! {
-        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-auto scroll-smooth">
+        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-auto scroll-smooth">
             {trending_videos_view}
         </div>
     }
 }
+
 
 
 

@@ -43,11 +43,13 @@ pub fn PopularVideos(popular: Popular) -> impl IntoView {
     let popular_videos_view = popular.items.into_iter().map(|video| view! { <PopularPreviewCard video=video/> }).collect_view();
 
     view! {
-        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-auto scroll-smooth">
+        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-11.75rem)] pb-12 overflow-y-auto scroll-smooth">
             {popular_videos_view}
         </div>
     }
 }
+
+
 
 
 
