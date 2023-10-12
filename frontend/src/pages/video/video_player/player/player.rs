@@ -1,4 +1,5 @@
 use config::Config;
+use gloo::console::debug;
 use gloo::timers::future::TimeoutFuture;
 use invidious::{AdaptiveFormat, Container, Formats, LegacyFormat, Video, VideoFormat};
 use leptos::leptos_dom::helpers::TimeoutHandle;
@@ -7,7 +8,7 @@ use rustytube_error::RustyTubeError;
 use std::time::Duration;
 use utils::get_element_by_id;
 use wasm_bindgen::JsCast;
-use web_sys::{Element, Event, HtmlDivElement, HtmlVideoElement, NodeList};
+use web_sys::{Element, Event, HtmlAudioElement, HtmlDivElement, HtmlVideoElement, NodeList};
 
 use crate::components::FerrisError;
 use crate::contexts::{
@@ -15,6 +16,8 @@ use crate::contexts::{
     VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
 };
 use crate::pages::video::page::VideoResource;
+use crate::pages::video::video_player::player::audio::AudioStream;
+use crate::pages::video::video_player::player::video::VideoStream;
 use crate::pages::video::video_player::VideoPlayerControls;
 
 #[component]
@@ -32,12 +35,10 @@ pub fn VideoContainer(video_resource: VideoResource) -> impl IntoView {
 
 #[component]
 pub fn VideoPlayer(video: Video) -> impl IntoView {
-    let server = expect_context::<ServerCtx>().0 .0;
-
     let state = expect_context::<PlayerState>();
     let style = expect_context::<PlayerStyle>();
 
-    let formats = Formats::from((video.adaptive_formats, video.format_streams));
+    let formats = Formats::from((video.adaptive_formats.clone(), video.format_streams.clone()));
     let webm_dash_formats = filter_webm_dash_formats(&formats.video_formats);
 
     let format = get_video_format_ctx(&formats).ok();
@@ -60,9 +61,16 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
         handle_store.set(Some(handle));
     };
 
+    set_interval(
+        move || {
+            state.sync();
+        },
+        Duration::from_secs(3),
+    );
+
     view! {
         <div
-            data-controls=style.controls_visible
+            data-controls=move || style.controls_visible.get()
             data-fullwindow=style.full_window
 
             on:click=move |_| {
@@ -82,47 +90,8 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
             class=VIDEO_CLASSES
             id=VIDEO_CONTAINER_ID
         >
-            <video
-                on:waiting=move |_| state.set_video_ready(false)
-                on:canplay=move |_| state.set_video_ready(true)
-                class="w-full rounded"
-                id=VIDEO_PLAYER_ID
-                on:timeupdate=move |_| {
-                    state.update_time();
-                }
-
-                poster=&video.thumbnails.first().unwrap().url
-                preload="auto"
-                controls=false
-                autoplay=false
-                playsinline
-            >
-                <VideoFormat/>
-                {video
-                    .captions
-                    .iter()
-                    .map(|captions| {
-                        view! {
-                            <track
-                                id=captions.language.clone()
-                                src=captions.url(&server.get())
-                                srclang=captions.language.clone()
-                                label=captions.label.clone()
-                            />
-                        }
-                    })
-                    .collect_view()}
-
-            </video>
-            <audio
-                on:waiting=move |_| state.set_audio_ready(false)
-                on:canplay=move |_| state.set_audio_ready(true)
-                id=AUDIO_PLAYER_ID
-                src=formats.audio_formats.first().unwrap().url.clone()
-                preload="auto"
-                controls=false
-                autoplay=false
-            ></audio>
+            <VideoStream video=video.clone()/>
+            <AudioStream formats=formats.audio_formats/>
             <VideoPlayerControls captions=video.captions formats=webm_dash_formats/>
             <LoadingCircle state=state/>
         </div>
@@ -185,15 +154,17 @@ pub fn LoadingCircle(state: PlayerState) -> impl IntoView {
 fn get_video_format_ctx(formats: &Formats) -> Result<VideoFormat, RustyTubeError> {
     let webm_dash_formats = filter_webm_dash_formats(&formats.video_formats);
 
-    let default_quality = expect_context::<RwSignal<Config>>()
-        .read_only()
-        .get()
-        .player
-        .default_quality;
+    let default_quality = move || {
+        expect_context::<RwSignal<Config>>()
+            .read_only()
+            .get()
+            .player
+            .default_quality
+    };
     let default_format = formats
         .video_formats
         .iter()
-        .find(|x| x.quality_label == default_quality)
+        .find(|x| x.quality_label == default_quality())
         .cloned();
 
     match default_format {

@@ -71,13 +71,13 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
                         </div>
                     </div>
                     <div class="flex flex-row items-end space-x-2">
-                        <button class="btn btn-circle btn-primary btn-outline">
+                        <button class="btn btn-circle btn-secondary btn-outline">
                             <DownloadIcon/>
                         </button>
-                        <button class="btn btn-circle btn-primary btn-outline">
+                        <button class="btn btn-circle btn-secondary btn-outline">
                             <ShareIcon/>
                         </button>
-                        <button class="btn btn-circle btn-primary btn-outline">
+                        <button class="btn btn-circle btn-secondary btn-outline">
                             <PlaylistAddIcon/>
                         </button>
                     </div>

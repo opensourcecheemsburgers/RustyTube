@@ -1,8 +1,11 @@
 use leptos::*;
+use utils::get_element_by_id;
+use web_sys::HtmlAudioElement;
 
 use crate::{
-    contexts::{PlaybackState, PlayerState},
+    contexts::{PlaybackState, PlayerState, AUDIO_PLAYER_ID},
     icons::{PauseIcon, PlayIcon},
+    utils::is_webkit,
 };
 
 #[component]
@@ -13,6 +16,7 @@ pub fn PauseBtn() -> impl IntoView {
         PlaybackState::Playing => view! { <PauseIcon/> },
         PlaybackState::Paused => view! { <PlayIcon/> },
         PlaybackState::Loading => view! { <PauseIcon/> },
+        PlaybackState::Initial => view! { <PlayIcon/> },
     };
 
     view! {
