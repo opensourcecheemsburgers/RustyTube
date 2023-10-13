@@ -1,81 +1,145 @@
+use crate::{contexts::PlayerState, pages::video::utils::find_audio_format};
 use gloo::console::debug;
+use invidious::{AudioFormat, Container, DashFormat, Format, Formats, LegacyFormat, VideoFormat};
 use leptos::*;
-use invidious::{AudioFormat, Container, LegacyFormat, VideoFormat};
-use crate::contexts::{VideoFormatCtx, PlayerState};
 
 use crate::icons::CogIcon;
 
 #[component]
-pub fn FormatDropdown(formats: Vec<VideoFormat>) -> impl IntoView {
-	view! {
-		<div class="dropdown dropdown-top dropdown-end z-20">
-			<DropdownBtn/>
-			<DropdownContent formats=formats/>
-		</div>
-	}
+pub fn FormatDropdown() -> impl IntoView {
+    view! {
+        <div class="dropdown dropdown-top dropdown-end z-20">
+            <DropdownBtn/>
+            <DropdownContent/>
+        </div>
+    }
 }
 
 #[component]
 pub fn DropdownBtn() -> impl IntoView {
     view! {
-		<label tabindex="0" class="btn btn-ghost btn-xs">
-			<CogIcon/>
-		</label>
-	}
+        <label tabindex="0" class="btn btn-ghost btn-xs">
+            <CogIcon/>
+        </label>
+    }
 }
 
 #[component]
-pub fn DropdownContent(formats: Vec<VideoFormat>) -> impl IntoView {
+pub fn DropdownContent() -> impl IntoView {
     view! {
-		<ul
-			tabindex="0"
-			class="menu dropdown-content mb-4 px-1.5 py-3 shadow bg-base-200 rounded-xl w-max h-max"
-		>
-			<VideoFormatList formats=formats/>
-		</ul>
-	}
+        <ul
+            tabindex="0"
+            class="menu dropdown-content mb-4 px-1.5 py-3 shadow bg-base-200 rounded-xl w-max h-max"
+        >
+            <FormatList/>
+        </ul>
+    }
 }
 
 #[component]
-pub fn ListItem(children: Children) -> impl IntoView {
-    view! { <button class="btn btn-sm lowercase btn-ghost">{children()}</button> }
-}
-
-#[component]
-pub fn VideoFormatList(formats: Vec<VideoFormat>) -> impl IntoView {
-    view! {
-		<div class="flex flex-col bg-base-200">
-
-			{formats
-				.into_iter()
-				.map(|format| {
-					view! { <VideoFormatListItem format=format/> }
-				})
-				.collect_view()}
-
-		</div>
-	}
-}
-
-#[component]
-pub fn VideoFormatListItem(format: VideoFormat) -> impl IntoView {
-    let quality_label = format.quality_label.to_string();
-
-    let change_format = create_action(|input: &(PlayerState, VideoFormat)| {
-        let input = input.clone();
-        async move {
-            input.0.change_quality(input.1).await;
-        }
-    });
-
+pub fn FormatList() -> impl IntoView {
+    let current_format = expect_context::<RwSignal<Option<Format>>>();
+    let formats = expect_context::<RwSignal<Formats>>();
     let state = expect_context::<PlayerState>();
-    let on_click = move |_| { change_format.dispatch((state, format.clone())) };
+
+    let audio_formats_view = move || {
+        formats
+            .get()
+            .audio_formats
+            .into_iter()
+            .map(|format| {
+                let quality_str = format.audio_quality.clone().to_string();
+
+                let change_format = move |_| {
+                    state.change_format(Format::Audio(format.clone()));
+                };
+
+                view! {
+                    <button on:click=change_format class="btn btn-sm lowercase btn-ghost">
+                        {quality_str}
+                    </button>
+                }
+            })
+            .collect_view()
+    };
+
+    let adaptive_formats_view = move || {
+        formats
+            .get()
+            .video_formats
+            .into_iter()
+            .map(|format| {
+                let info_str = format.clone().container.map_or(
+                    format.quality_label.to_string(),
+                    |container| {
+                        format!(
+                            "{} - ({})",
+                            format.quality_label.to_string(),
+                            container.to_string()
+                        )
+                    },
+                );
+
+                let audio_format = current_format
+                    .get()
+                    .map_or(find_audio_format(&formats.get()).ok(), |current_format| {
+                        current_format.audio_format()
+                    });
+
+                let change_format = move |_| {
+                    state.change_format(Format::Dash(DashFormat::new(
+                        format.clone(),
+                        audio_format.clone().unwrap(),
+                    )));
+                };
+
+                view! {
+                    <button on:click=change_format class="btn btn-sm lowercase btn-ghost">
+                        {info_str}
+                    </button>
+                }
+            })
+            .collect_view()
+    };
+
+    let legacy_formats_view = move || {
+        formats
+            .get()
+            .legacy_formats
+            .into_iter()
+            .map(|format| {
+                let quality_str = format.quality_label.clone().to_string();
+
+                let change_format = move |_| {
+                    state.change_format(Format::Legacy(format.clone()));
+                };
+
+                view! {
+                    <button on:click=change_format class="btn btn-sm lowercase btn-ghost">
+                        {quality_str}
+                    </button>
+                }
+            })
+            .collect_view()
+    };
 
     view! {
-		<div on:click=on_click>
-			<ListItem>{quality_label}</ListItem>
-		</div>
-	}
-}
+        <div class="flex h-max w-max flex-row space-x-4 rounded-lg bg-base-200 p-2">
+            <div class="flex flex-col items-center">
+                <h1>Audio</h1>
+                <div class="my-4 flex flex-col h-64 overflow-y-scroll">{audio_formats_view}</div>
+            </div>
 
+            <div class="flex flex-col items-center">
+                <h1>Legacy</h1>
+                <div class="my-4 flex flex-col h-64 overflow-y-scroll">{legacy_formats_view}</div>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <h1>Dash</h1>
+                <div class="my-4 flex flex-col h-64 overflow-y-scroll">{adaptive_formats_view}</div>
+            </div>
+        </div>
+    }
+}
 

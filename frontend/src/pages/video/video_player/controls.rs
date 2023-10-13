@@ -1,4 +1,4 @@
-use invidious::{Caption, VideoFormat};
+use invidious::{Caption, Formats, VideoFormat};
 use leptos::*;
 use std::time::Duration;
 
@@ -7,7 +7,7 @@ use crate::contexts::{PlayerState, PlayerStyle, VIDEO_CONTROLS_ID};
 use super::control_btns::*;
 
 #[component]
-pub fn VideoPlayerControls(formats: Vec<VideoFormat>, captions: Vec<Caption>) -> impl IntoView {
+pub fn VideoPlayerControls(captions: Vec<Caption>) -> impl IntoView {
     let state = expect_context::<PlayerState>();
     let style = expect_context::<PlayerStyle>();
 
@@ -33,7 +33,7 @@ pub fn VideoPlayerControls(formats: Vec<VideoFormat>, captions: Vec<Caption>) ->
                         <TimeInfo/>
                     </div>
                     <div class="flex flex-row">
-                        <FormatDropdown formats=formats.clone()/>
+                        <FormatDropdown/>
                         <FullWindowBtn/>
                         <FullScreenBtn/>
                     </div>

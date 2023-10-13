@@ -1,7 +1,10 @@
 use config::Config;
 use gloo::console::debug;
 use gloo::timers::future::TimeoutFuture;
-use invidious::{AdaptiveFormat, Container, Formats, LegacyFormat, Video, VideoFormat};
+use invidious::{
+    AdaptiveFormat, AudioFormat, Container, DashFormat, Format, Formats, LegacyFormat, Video,
+    VideoFormat,
+};
 use leptos::leptos_dom::helpers::TimeoutHandle;
 use leptos::*;
 use rustytube_error::RustyTubeError;
@@ -12,13 +15,15 @@ use web_sys::{Element, Event, HtmlAudioElement, HtmlDivElement, HtmlVideoElement
 
 use crate::components::FerrisError;
 use crate::contexts::{
-    PlaybackState, PlayerState, PlayerStyle, ServerCtx, VideoFormatCtx, AUDIO_PLAYER_ID,
+    PlaybackState, PlayerConfigCtx, PlayerState, PlayerStyle, ServerCtx, AUDIO_PLAYER_ID,
     VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
 };
 use crate::pages::video::page::VideoResource;
+use crate::pages::video::utils::get_format;
 use crate::pages::video::video_player::player::audio::AudioStream;
 use crate::pages::video::video_player::player::video::VideoStream;
 use crate::pages::video::video_player::VideoPlayerControls;
+use crate::utils::is_webkit;
 
 #[component]
 pub fn VideoContainer(video_resource: VideoResource) -> impl IntoView {
@@ -39,10 +44,12 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
     let style = expect_context::<PlayerStyle>();
 
     let formats = Formats::from((video.adaptive_formats.clone(), video.format_streams.clone()));
-    let webm_dash_formats = filter_webm_dash_formats(&formats.video_formats);
+    let format = get_format(&formats).ok();
+    provide_context(create_rw_signal(formats));
+    provide_context::<RwSignal<Option<Format>>>(create_rw_signal(format));
 
-    let format = get_video_format_ctx(&formats).ok();
-    provide_context(create_rw_signal(format));
+    // let format = get_video_format_ctx(&formats).ok();
+    // provide_context(create_rw_signal(format));
 
     let handle_store: RwSignal<Option<TimeoutHandle>> = create_rw_signal(None);
 
@@ -70,8 +77,8 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 
     view! {
         <div
-            data-controls=move || style.controls_visible.get()
-            data-fullwindow=style.full_window
+            data-controls=move || style.controls_visible.get().to_string()
+            data-fullwindow=move || style.full_window.get().to_string()
 
             on:click=move |_| {
                 if !controls_hovered() {
@@ -91,8 +98,8 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
             id=VIDEO_CONTAINER_ID
         >
             <VideoStream video=video.clone()/>
-            <AudioStream formats=formats.audio_formats/>
-            <VideoPlayerControls captions=video.captions formats=webm_dash_formats/>
+            <AudioStream/>
+            <VideoPlayerControls captions=video.captions/>
             <LoadingCircle state=state/>
         </div>
     }
@@ -102,7 +109,7 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 pub fn VideoPlaceholder() -> impl IntoView {
     view! {
         <div class="w-full flex flex-col justify-center items-center bg-base-300 rounded">
-            <div class="w-full aspect-w-16 aspect-h-9 bg-base-300 rounded animate-pulse"></div>
+            <div class="w-full aspect-video bg-base-300 rounded animate-pulse"></div>
         </div>
     }
 }
@@ -151,39 +158,14 @@ pub fn LoadingCircle(state: PlayerState) -> impl IntoView {
     }
 }
 
-fn get_video_format_ctx(formats: &Formats) -> Result<VideoFormat, RustyTubeError> {
-    let webm_dash_formats = filter_webm_dash_formats(&formats.video_formats);
-
-    let default_quality = move || {
-        expect_context::<RwSignal<Config>>()
-            .read_only()
-            .get()
-            .player
-            .default_quality
-    };
-    let default_format = formats
-        .video_formats
-        .iter()
-        .find(|x| x.quality_label == default_quality())
-        .cloned();
-
-    match default_format {
-        Some(format) => Ok(format),
-        None => webm_dash_formats
-            .last()
-            .cloned()
-            .ok_or(RustyTubeError::no_dash_format_available()),
-    }
-}
-
-fn filter_webm_dash_formats(video_formats: &Vec<VideoFormat>) -> Vec<VideoFormat> {
-    let mut webm_dash_formats = video_formats.clone();
-    webm_dash_formats.retain(|format| match format.container.clone() {
-        Some(container) => container == Container::WEBM,
-        None => false,
-    });
-    webm_dash_formats
-}
+// fn filter_webm_dash_formats(video_formats: &Vec<VideoFormat>) -> Vec<VideoFormat> {
+//     let mut webm_dash_formats = video_formats.clone();
+//     webm_dash_formats.retain(|format| match format.container.clone() {
+//         Some(container) => container == Container::WEBM,
+//         None => false,
+//     });
+//     webm_dash_formats
+// }
 
 fn cursor_visible() -> bool {
     !document().fullscreen() || controls_hovered()
@@ -222,7 +204,7 @@ fn toggle_fullscreen() {
 }
 
 pub const VIDEO_CLASSES: &'static str = "
-relative flex flex-col transition-all object-contain
+relative flex flex-col transition-all object-contain items-center justify-center
 
 data-[controls=false]:cursor-none
 

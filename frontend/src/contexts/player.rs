@@ -1,22 +1,19 @@
+use crate::{contexts::VolumeCtx, utils::is_webkit};
 use gloo::console::debug;
-use leptos::{*, html::{Video, Audio}};
-use invidious::VideoFormat;
-use wasm_bindgen_futures::JsFuture;
-use web_sys::{HtmlVideoElement, HtmlAudioElement};
+use invidious::{Format, VideoFormat};
+use leptos::{
+    html::{Audio, Video},
+    *,
+};
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
-use crate::{contexts::VolumeCtx, utils::is_webkit};
-
-
+use wasm_bindgen_futures::JsFuture;
+use web_sys::{HtmlAudioElement, HtmlVideoElement};
 
 pub const VIDEO_CONTAINER_ID: &'static str = "video_container";
 pub const VIDEO_PLAYER_ID: &'static str = "video_player";
 pub const VIDEO_CONTROLS_ID: &'static str = "video_controls";
 pub const AUDIO_PLAYER_ID: &'static str = "audio_player";
-
-
-#[derive(Copy, Clone)]
-pub struct VideoFormatCtx(pub RwSignal<VideoFormat>);
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum PlaybackState {
@@ -28,7 +25,7 @@ pub enum PlaybackState {
 
 #[derive(Clone, Copy)]
 pub struct PlayerState {
-    format: RwSignal<Option<VideoFormat>>,
+    format: RwSignal<Option<Format>>,
     pub playback_state: RwSignal<PlaybackState>,
     video_ready: RwSignal<bool>,
     audio_ready: RwSignal<bool>,
@@ -45,7 +42,7 @@ impl PlayerState {
         let playback_state = create_rw_signal(PlaybackState::Initial);
         let video_ready = create_rw_signal(false);
         let audio_ready = create_rw_signal(false);
-        let volume = create_rw_signal(expect_context::<VolumeCtx>().0.0.get());
+        let volume = create_rw_signal(expect_context::<VolumeCtx>().0 .0.get());
         let current_time_str = create_rw_signal(String::from("0:00"));
         let duration_str = create_rw_signal(String::from("0:00"));
         let current_time = create_rw_signal(0f64);
@@ -59,8 +56,8 @@ impl PlayerState {
             volume,
             current_time,
             current_time_str,
-            duration, 
-            duration_str
+            duration,
+            duration_str,
         }
     }
 
@@ -81,11 +78,13 @@ impl PlayerState {
             let video_play = video.play();
             video.set_current_time(audio.current_time());
             let audio_play = audio.play();
-            if let Ok(_) = audio_play && let Ok(_) = video_play {
+            if let Ok(_) = audio_play
+                && let Ok(_) = video_play
+            {
                 self.playback_state.set(PlaybackState::Playing);
             }
         }
-        
+
         Ok(())
     }
 
@@ -93,11 +92,15 @@ impl PlayerState {
         let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
-        if self.playback_state.get() == PlaybackState::Loading || self.playback_state.get() == PlaybackState::Paused {
+        if self.playback_state.get() == PlaybackState::Loading
+            || self.playback_state.get() == PlaybackState::Paused
+        {
             if is_webkit() {
                 let video_play = video.play();
                 let audio_play = audio.play();
-                if let Ok(_) = audio_play && let Ok(_) = video_play {
+                if let Ok(_) = audio_play
+                    && let Ok(_) = video_play
+                {
                     self.playback_state.set(PlaybackState::Playing);
                 }
             } else {
@@ -105,7 +108,9 @@ impl PlayerState {
                 let video_play = video.play();
                 audio.set_current_time(video.current_time());
                 let audio_play = audio.play();
-                if let Ok(_) = audio_play && let Ok(_) = video_play {
+                if let Ok(_) = audio_play
+                    && let Ok(_) = video_play
+                {
                     self.playback_state.set(PlaybackState::Playing);
                 }
             }
@@ -118,7 +123,9 @@ impl PlayerState {
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
         let video_pause = video.pause();
         let audio_pause = audio.pause();
-        if let Ok(_) = video_pause && let Ok(_) = audio_pause {
+        if let Ok(_) = video_pause
+            && let Ok(_) = audio_pause
+        {
             self.playback_state.set(PlaybackState::Paused);
         }
         Ok(())
@@ -154,8 +161,8 @@ impl PlayerState {
 
         let audio_time = audio.current_time();
 
-
-        if video.current_time() > audio_time + 0.5f64 || video.current_time() < audio_time - 0.5f64 {
+        if video.current_time() > audio_time + 0.5f64 || video.current_time() < audio_time - 0.5f64
+        {
             video.set_current_time(audio.current_time());
         }
         Ok(())
@@ -180,7 +187,8 @@ impl PlayerState {
             self.playback_state.set(PlaybackState::Loading);
             video.set_current_time(audio.current_time());
             self.current_time.set(time);
-            self.current_time_str.set(utils::unix_to_hours_secs_mins(audio.current_time()));
+            self.current_time_str
+                .set(utils::unix_to_hours_secs_mins(audio.current_time()));
         }
         Ok(())
     }
@@ -192,17 +200,20 @@ impl PlayerState {
         let total_time = video.duration();
         self.current_time.set(current_time);
         self.duration.set(total_time);
-        self.current_time_str.set(utils::unix_to_hours_secs_mins(current_time));
-        self.duration_str.set(utils::unix_to_hours_secs_mins(total_time));
+        self.current_time_str
+            .set(utils::unix_to_hours_secs_mins(current_time));
+        self.duration_str
+            .set(utils::unix_to_hours_secs_mins(total_time));
         Ok(())
     }
 
-    pub async fn change_quality(&self, format: VideoFormat) -> Result<(), RustyTubeError> {
+    pub fn change_format(&self, format: Format) -> Result<(), RustyTubeError> {
         let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
         let current_time = video.current_time();
-        video.set_src(&format.url);
+        video.set_src(&format.video_url().unwrap_or_default());
+        audio.set_src(&format.audio_url().unwrap_or_default());
         self.pause()?;
         self.set_video_ready(false);
         self.playback_state.set(PlaybackState::Loading);
@@ -215,17 +226,17 @@ impl PlayerState {
 
 #[derive(Clone, Copy)]
 pub struct VideoTime {
-	pub current: RwSignal<String>,
-	pub total: RwSignal<String>,
-	pub current_ms: RwSignal<f64>,
-	pub total_ms: RwSignal<f64>
+    pub current: RwSignal<String>,
+    pub total: RwSignal<String>,
+    pub current_ms: RwSignal<f64>,
+    pub total_ms: RwSignal<f64>,
 }
 
 #[derive(Clone, Copy)]
 pub struct PlayerStyle {
     pub controls_visible: RwSignal<bool>,
     pub full_window: RwSignal<bool>,
-    pub fullscreen: RwSignal<bool>
+    pub fullscreen: RwSignal<bool>,
 }
 
 impl PlayerStyle {
@@ -234,122 +245,11 @@ impl PlayerStyle {
         let full_window = create_rw_signal(false);
         let fullscreen = create_rw_signal(false);
 
-        Self { controls_visible, full_window, fullscreen }
+        Self {
+            controls_visible,
+            full_window,
+            fullscreen,
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

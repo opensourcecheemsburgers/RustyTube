@@ -199,9 +199,27 @@ impl RustyTubeError {
         Self { title, description }
     }
 
-    pub fn no_dash_format_available() -> Self {
-        let title = String::from("Playlist Error");
-        let description = String::from("Unable to parse playlist(s) from chosen file.");
+    pub fn no_dash_video_format_available() -> Self {
+        let title = String::from("DASH error");
+        let description = String::from("No DASH video format available.");
+        Self { title, description }
+    }
+
+    pub fn format_not_available() -> Self {
+        let title = String::from("Format Error");
+        let description = String::from("There is no format available.");
+        Self { title, description }
+    }
+
+    pub fn no_legacy_format_available() -> Self {
+        let title = String::from("Legacy Format Error");
+        let description = String::from("No legacy video format available.");
+        Self { title, description }
+    }
+
+    pub fn no_audio_format_available() -> Self {
+        let title = String::from("Audio Format error");
+        let description = String::from("No audio format available.");
         Self { title, description }
     }
 
@@ -214,6 +232,18 @@ impl RustyTubeError {
     pub fn search_url_parse() -> Self {
         let title = String::from("Search Url Parse Error");
         let description = format!("Unable to parse search url.");
+        Self { title, description }
+    }
+
+    pub fn no_video_url_avaiable() -> Self {
+        let title = String::from("Video Url Error");
+        let description = format!("Could not find a video url on the selected format.");
+        Self { title, description }
+    }
+
+    pub fn no_audio_url_avaiable() -> Self {
+        let title = String::from("Audio Url Error");
+        let description = format!("Could not find an audio url on the selected format.");
         Self { title, description }
     }
 }

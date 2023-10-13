@@ -2,7 +2,7 @@ mod tests;
 
 use crate::RememberPosition::VideosOnly;
 use gloo::storage::{LocalStorage, Storage};
-use invidious::QualityLabel;
+use invidious::{AudioQuality, QualityLabel};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use utils::save_to_browser_storage;
@@ -27,7 +27,8 @@ pub struct UiConfig {
 pub struct PlayerConfig {
     pub auto_play: bool,
     pub fast_forward_interval: u8,
-    pub default_quality: QualityLabel,
+    pub default_video_quality: QualityLabel,
+    pub default_audio_quality: AudioQuality,
     pub remember_position: RememberPosition,
     pub volume: f64,
 }
@@ -97,7 +98,8 @@ impl Default for PlayerConfig {
     fn default() -> Self {
         let auto_play = true;
         let fast_forward_interval = 10u8;
-        let default_quality = QualityLabel::_1080p;
+        let default_video_quality = QualityLabel::_1080p;
+        let default_audio_quality = AudioQuality::Medium;
         let remember_position = VideosOnly;
         let volume = 0.5f64;
 
@@ -105,7 +107,8 @@ impl Default for PlayerConfig {
             auto_play,
             volume,
             fast_forward_interval,
-            default_quality,
+            default_video_quality,
+            default_audio_quality,
             remember_position,
         }
     }

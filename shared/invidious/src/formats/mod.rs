@@ -1,13 +1,16 @@
 mod adaptive;
-mod video;
 mod audio;
-mod legacy;
+mod dash;
 mod format;
 mod items;
+mod legacy;
+mod video;
 
 pub use adaptive::*;
-pub use video::*;
 pub use audio::*;
-pub use legacy::*;
+pub use dash::*;
 pub use format::*;
 pub use items::*;
+pub use legacy::*;
+pub use video::*;
+

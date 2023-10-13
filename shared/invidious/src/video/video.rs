@@ -76,22 +76,18 @@ pub struct Video {
 }
 
 impl Video {
-    fn url(server: &str, id: &str) -> String {
-        format!("{server}/api/v1/videos/{id}/")
-    }
-
     pub async fn fetch_video(server: &str, id: &str) -> Result<Self, RustyTubeError> {
-        let video_url: String = Self::url(server, id);
-        let video_json: String = fetch(&video_url).await?;
-        let video: Self = serde_json::from_str(&video_json)?;
+        let video_url = format!("{server}/api/v1/videos/{id}/");
+        let video_json = fetch(&video_url).await?;
+        let video = serde_json::from_str(&video_json)?;
         Ok(video)
     }
 }
 
 impl PartialEq for Video {
     fn eq(&self, other: &Self) -> bool {
-        *&self.id.eq(&other.id) &&
-            *&self.title.eq(&other.title) &&
-            *&self.author_id.eq(&other.author_id)
+        *&self.id.eq(&other.id)
     }
 }
+
+

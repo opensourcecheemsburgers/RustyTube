@@ -1,23 +1,17 @@
-use invidious::{AudioFormat, Container};
+use invidious::{AudioFormat, Container, Format, Formats};
 use leptos::{html::audio, *};
 
 use crate::{
-    contexts::{PlayerState, AUDIO_PLAYER_ID},
+    contexts::{PlayerConfigCtx, PlayerState, AUDIO_PLAYER_ID},
     utils::is_webkit,
 };
 
 #[component]
-pub fn AudioStream(formats: Vec<AudioFormat>) -> impl IntoView {
+pub fn AudioStream() -> impl IntoView {
     let state = expect_context::<PlayerState>();
 
-    // let sources = filter_mp4_only(&formats)
-    //     .into_iter()
-    //     .map(|format| view! { <source src=format.url.clone()/> })
-    //     .collect_view();
-
-    let source = filter_mp4_only(&formats)
-        .first()
-        .map(|format| format.url.clone());
+    let format: RwSignal<Option<Format>> = expect_context::<RwSignal<Option<Format>>>();
+    let source = move || format.get().map(|format| format.audio_url()).flatten();
 
     view! {
         <audio
@@ -43,19 +37,5 @@ pub fn AudioStream(formats: Vec<AudioFormat>) -> impl IntoView {
             src=source
         ></audio>
     }
-}
-
-fn filter_mp4_only(formats: &Vec<AudioFormat>) -> Vec<AudioFormat> {
-    let formats = formats.clone();
-    formats
-        .into_iter()
-        .filter_map(|format| {
-            format
-                .clone()
-                .container
-                .map(|container| container.eq(&Container::M4A).then(|| format))
-                .flatten()
-        })
-        .collect::<Vec<AudioFormat>>()
 }
 
