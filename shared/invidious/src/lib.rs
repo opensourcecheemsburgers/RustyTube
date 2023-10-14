@@ -1,23 +1,26 @@
 #![feature(let_chains)]
 
-mod fetch;
-mod hidden;
-mod video;
-mod common;
 mod channel;
-mod universal;
-mod tests;
-mod subs;
-mod instance;
+mod common;
+mod dislikes;
+mod fetch;
 mod formats;
+mod hidden;
+mod instance;
+mod subs;
+mod tests;
+mod universal;
+mod video;
 
-pub use fetch::*;
-pub use hidden::*;
-pub use video::*;
-pub use common::*;
 pub use channel::*;
-pub use universal::*;
-pub use tests::*;
-pub use subs::*;
-pub use instance::*;
+pub use common::*;
+pub use dislikes::*;
+pub use fetch::*;
 pub use formats::*;
+pub use hidden::*;
+pub use instance::*;
+pub use subs::*;
+pub use tests::*;
+pub use universal::*;
+pub use video::*;
+
