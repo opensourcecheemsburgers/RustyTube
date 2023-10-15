@@ -14,7 +14,7 @@ use leptos_router::*;
 use crate::{
     components::{Page, Sidebar},
     contexts::{provide_config_context_slices, provide_user_contexts, provide_user_resources},
-    pages::{PopularSection, SearchSection, SubscriptionsSection, TrendingSection, VideoPage},
+    pages::{PopularSection, SearchSection, SubscriptionsSection, TrendingSection, VideoPage, ChannelPage},
 };
 use config::Config;
 
@@ -33,7 +33,7 @@ fn App() -> impl IntoView {
                 <Route path="" view=move || view! { <Page/> }>
                     <Route path="/" view=move || view! { <TrendingSection/> }/>
                     <Route path="/player" view=move || view! { <VideoPage/> }/>
-                    <Route path="/channel" view=view/>
+                    <Route path="/channel" view=move || view! { <ChannelPage/> }/>
                     <Route path="/subscriptions" view=move || view! { <SubscriptionsSection/> }/>
                     <Route path="/trending" view=move || view! { <TrendingSection/> }/>
                     <Route path="/popular" view=move || view! { <PopularSection/> }/>

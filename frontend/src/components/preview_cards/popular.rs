@@ -6,21 +6,11 @@ use crate::icons::VerifiedIcon;
 
 #[component]
 pub fn PopularPreviewCard(video: PopularItem) -> impl IntoView {
-    let id = video.clone().id;
-    let open_video = move |_| {
-        let navigate = leptos_router::use_navigate();
-        let id = id.clone();
-        request_animation_frame(move || {
-            _ = navigate(&format!("/player?id={}", id), Default::default());
-        })
-    };
-
     view! {
         <div
-            on:click=open_video
             class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden"
         >
-            <Thumbnail url=video.thumbnails.get(3).map(|thumb| thumb.url.clone())/>
+            <Thumbnail video_id=video.clone().id url=video.thumbnails.get(3).map(|thumb| thumb.url.clone())/>
             <Info video=video/>
         </div>
     }
@@ -48,7 +38,7 @@ pub fn Info(video: PopularItem) -> impl IntoView {
 }
 
 #[component]
-pub fn Thumbnail(url: Option<String>) -> impl IntoView {
+pub fn Thumbnail(video_id: String, url: Option<String>) -> impl IntoView {
     let img_loaded = create_rw_signal(false);
     let image_classes = move || match img_loaded.get() {
         true => {
@@ -57,8 +47,16 @@ pub fn Thumbnail(url: Option<String>) -> impl IntoView {
         false => "animate-pulse w-full aspect-video bg-base-content rounded-xl".to_string(),
     };
 
+    let open_video = move |_| {
+        let navigate = leptos_router::use_navigate();
+        let id = video_id.clone();
+        request_animation_frame(move || {
+            _ = navigate(&format!("/player?id={}", id), Default::default());
+        })
+    };
+
     view! {
-        <div class="w-full max-w-full overflow-hidden rounded-xl">
+        <div on:click=open_video class="w-full max-w-full overflow-hidden rounded-xl">
             <img decoding="sync" on:load=move |_| img_loaded.set(true) src=url class=image_classes/>
         </div>
     }

@@ -78,8 +78,17 @@ pub fn SidebarHeader() -> impl IntoView {
 pub fn ChannelButton(channel: Channel) -> impl IntoView {
     let expanded = expect_context::<RwSignal<String>>();
 
+    let id = channel.id;
+    let go_to_channel_page = move |_| {
+        let navigate = leptos_router::use_navigate();
+        let id = id.clone();
+        request_animation_frame(move || {
+            _ = navigate(&format!("/channel?id={}", id), Default::default());
+        })
+    };
+
     view! {
-        <button data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
+        <button on:click=go_to_channel_page data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
             <img src=channel.thumbnails.first().unwrap().url.clone() class="w-6 h-6 rounded-full"/>
             <p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
                 {channel.name}

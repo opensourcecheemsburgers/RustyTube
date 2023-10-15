@@ -1,4 +1,4 @@
-use crate::{fetch, CommonThumbnail, CommonVideo};
+use crate::{fetch, CommonThumbnail, CommonVideo, ChannelVideos};
 use gloo::net::http::{Method, Request};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
@@ -9,7 +9,7 @@ impl Feed {
 	pub async fn fetch_videos_from_feed(
 		server: &str,
 		id: &str,
-	) -> Result<Vec<CommonVideo>, RustyTubeError> {
+	) -> Result<ChannelVideos, RustyTubeError> {
 		let playlist_id = id.replace("UC", "UULF");
 		let url = format!("{}/feed/playlist/{}/", server, playlist_id);
 		let response = fetch(&url).await?;
@@ -90,13 +90,13 @@ pub struct Statistics {
 	pub views: u64,
 }
 
-impl Into<Vec<CommonVideo>> for Feed {
-	fn into(self) -> Vec<CommonVideo> {
+impl Into<ChannelVideos> for Feed {
+	fn into(self) -> ChannelVideos {
 		let mut videos = Vec::new();
 		self.entries.into_iter().for_each(|entry| {
 			videos.push(entry.into());
 		});
-		videos
+		ChannelVideos { videos, continuation: None }
 	}
 }
 

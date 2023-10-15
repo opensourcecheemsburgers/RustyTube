@@ -1,4 +1,4 @@
-use crate::{CommonVideo, ChannelVideos, Feed, YoutubeSubscriptions, NewpipeSubscriptions, CommonChannel, Channel};
+use crate::{CommonVideo, Feed, YoutubeSubscriptions, NewpipeSubscriptions, CommonChannel, Channel, ChannelVideos};
 use gloo::storage::{LocalStorage, Storage};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
@@ -18,9 +18,15 @@ pub struct Subscription {
     pub name: String
 }
 
+impl Subscription {
+    pub fn new(id: &str, name: &str) -> Self {
+        Self { id: id.to_owned(), name: name.to_owned() }
+    }
+}
+
 pub const SUBS_KEY: &'static str = "subscriptions";
 
-pub type SubscriptionVideos = Result<Vec<CommonVideo>, RustyTubeError>;
+pub type SubscriptionVideos = Result<ChannelVideos, RustyTubeError>;
 pub type SubscriptionsVideos = Vec<SubscriptionVideos>;
 pub type SubscriptionsFetch = Result<SubscriptionsVideos, RustyTubeError>;
 
@@ -64,12 +70,13 @@ impl Subscriptions {
             let future = async move {
                 match rss {
                     true => Feed::fetch_videos_from_feed(server, &id).await,
-                    false => ChannelVideos::fetch_channel_videos(server, &id).await,
+                    false => Channel::fetch_channel_videos(server, &id, None).await,
                 }
             };
             futures.push(future)
         }
         let subs_videos = join_all(futures).await;
+
         Ok(subs_videos)
     }
 
@@ -98,5 +105,9 @@ async fn read_newpipe(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
     let newpipe_subs = NewpipeSubscriptions::read_subs_from_file(&json_str)?;
     Ok(newpipe_subs.into())
 }
+
+
+
+
 
 

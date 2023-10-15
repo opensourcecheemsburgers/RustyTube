@@ -36,7 +36,7 @@ pub fn Thumbnail(url: Option<String>) -> impl IntoView {
 #[component]
 pub fn Info(video: VideoShort) -> impl IntoView {
     view! {
-        <div class="flex flex-col w-[70%]">
+        <div class="flex flex-col w-[70%] overflow-hidden">
             <p class="text-sm">{video.title}</p>
             <div class="flex flex-row flex-wrap items-center mt-2 space-x-1 text-sm">
                 <p>{video.author}</p>

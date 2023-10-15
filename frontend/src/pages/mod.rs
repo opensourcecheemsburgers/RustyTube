@@ -1,3 +1,4 @@
+mod channel;
 mod popular;
 mod search;
 mod subscriptions;
@@ -9,4 +10,5 @@ pub use search::SearchSection;
 pub use subscriptions::SubscriptionsSection;
 pub use trending::TrendingSection;
 pub use video::VideoPage;
+pub use channel::ChannelPage;
 
