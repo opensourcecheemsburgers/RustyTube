@@ -1,16 +1,17 @@
 mod utils {
     use chrono::{DateTime, Utc};
     use gloo::storage::{LocalStorage, Storage};
+    use gloo::utils::document;
     use humantime::format_duration;
     use rustytube_error::RustyTubeError;
     use serde_json::Value;
     use std::collections::HashMap;
     use std::time::Duration;
-    use gloo::utils::document;
     use wasm_bindgen::JsCast;
 
     pub fn get_element_by_id<T>(id: &str) -> Result<T, RustyTubeError>
-        where T: JsCast
+    where
+        T: JsCast,
     {
         let element = document()
             .get_element_by_id(id)
@@ -57,6 +58,20 @@ mod utils {
         format_duration(diff_duration).to_string()
     }
 
+    pub fn get_time_until(time: u64) -> String {
+        let window = web_sys::window().expect("should have a window in this context");
+        let performance = window
+            .performance()
+            .expect("performance should be available");
+        let current_perf = performance.now();
+
+        let current_time = (current_perf as u64) / 1_000;
+        let diff = time - current_time;
+
+        let diff_duration = Duration::from_millis(diff);
+        format_duration(diff_duration).to_string()
+    }
+
     pub fn get_current_time() -> u64 {
         let window = web_sys::window().expect("should have a window in this context");
         let performance = window
@@ -85,3 +100,4 @@ mod utils {
 }
 
 pub use utils::*;
+
