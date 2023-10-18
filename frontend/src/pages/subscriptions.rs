@@ -17,7 +17,7 @@ pub fn SubscriptionsSection() -> impl IntoView {
 	view! {
 		<div class="w-full flex justify-center mt-4">
 			<div class="w-[90%] flex flex-col gap-y-8">
-				<h1 class="pl-4 font-semibold text-2xl">{"Subscriptions"}</h1>
+				<h1 class="font-semibold text-2xl">{"Subscriptions"}</h1>
 				<Suspense fallback=move || {
 					view! { <PlaceholderCardArray/> }
 				}>
@@ -51,7 +51,7 @@ pub fn SubscriptionsVideos(subs_videos: SubscriptionsVideos) -> impl IntoView {
 
 	subs_videos.into_iter().for_each(|sub| {
 		match sub {
-			Ok(sub_videos) => videos.push(sub_videos),
+			Ok(sub_videos) => videos.push(sub_videos.videos),
 			Err(error) => fails.push(error)
 		}
 	});
@@ -87,7 +87,7 @@ pub fn SubscriptionsVideos(subs_videos: SubscriptionsVideos) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-auto scroll-smooth">
+		<div class="-ml-4 flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-auto scroll-smooth">
 			<div class="flex flex-row flex-wrap gap-y-8 justify-between">{videos_view}</div>
 			{view_more_btn}
 		</div>
@@ -139,7 +139,7 @@ pub fn ImportSubscriptionsBtn() -> impl IntoView {
 
 	view! {
 		<>
-			<label class="btn btn-lg btn-outline btn-primary" for="subs_upload">
+			<label class="btn btn-lg btn-primary" for="subs_upload">
 				{"Import Subscriptions"}
 			</label>
 			<input
@@ -172,6 +172,8 @@ fn load_more_videos(visible_videos: RwSignal<Vec<CommonVideo>>, total_videos: Ve
 			visible.extend_from_slice(next_slice);
 		});
 }
+
+
 
 
 

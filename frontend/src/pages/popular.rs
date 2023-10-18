@@ -15,7 +15,7 @@ pub fn PopularSection() -> impl IntoView {
     view! {
         <div class="w-full flex justify-center mt-4">
             <div class="w-[90%] flex flex-col gap-y-8">
-                <h1 class="pl-4 font-semibold text-2xl">{"Popular"}</h1>
+                <h1 class="font-semibold text-2xl">{"Popular"}</h1>
                 <Suspense fallback=move || {
                     view! { <PlaceholderCardArray/> }
                 }>
@@ -43,7 +43,7 @@ pub fn PopularVideos(popular: Popular) -> impl IntoView {
     let popular_videos_view = popular.items.into_iter().map(|video| view! { <PopularPreviewCard video=video/> }).collect_view();
 
     view! {
-        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-11.75rem)] pb-12 overflow-y-auto scroll-smooth">
+        <div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-11.75rem)] pb-12 overflow-y-auto scroll-smooth">
             {popular_videos_view}
         </div>
     }

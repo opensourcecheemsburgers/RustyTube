@@ -3,7 +3,7 @@ use leptos::*;
 #[component]
 pub fn PlaceholderCardArray() -> impl IntoView {
     view! {
-        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-13rem)] overflow-y-scroll">
+        <div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-13rem)] overflow-y-scroll">
             {(0..50).map(|_| view! { <PlaceholderCard/> }).collect_view()}
         </div>
     }

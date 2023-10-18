@@ -26,7 +26,7 @@ pub fn TrendingSection() -> impl IntoView {
     view! {
         <div class="w-full flex justify-center mt-4">
             <div class="w-[90%] flex flex-col gap-y-8">
-                <h1 class="pl-4 font-semibold text-2xl">{"Trending"}</h1>
+                <h1 class="font-semibold text-2xl">{"Trending"}</h1>
                 <TrendingHeader category=category/>
                 <Suspense fallback=move || {
                     view! { <PlaceholderCardArray/> }
@@ -54,7 +54,7 @@ pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
     let header_btn_classes = "btn btn-sm btn-outline font-normal normal-case rounded-lg";
 
     view! {
-        <div class="pl-4 flex flex-row gap-x-3">
+        <div class="flex flex-row gap-x-3">
             <button on:click=move |_| category.set(Default) class=header_btn_classes>
                 All
             </button>
@@ -76,7 +76,7 @@ pub fn TrendingVideos(trending: Trending) -> impl IntoView {
     let trending_videos_view = trending.videos.into_iter().map(|video| view! { <VideoPreviewCard video=video/> }).collect_view();
 
     view! {
-        <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-auto scroll-smooth">
+        <div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-auto scroll-smooth">
             {trending_videos_view}
         </div>
     }
