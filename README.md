@@ -1,6 +1,6 @@
+[![Donations Received][liberapay-donations-received-url]][liberapay-link]
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
-[![Donations Received][liberapay-donations-received-url]][liberapay-link]
 [![Issues][issues-shield]][issues-url]
 [![Forks][forks-shield]][forks-url]
 [![AGPL-3.0 License][license-shield]][license-url]
@@ -50,7 +50,7 @@ It's totally safe and not a virus; I'm 10 billion percent sure - trust me bro.
 
 ## Donations
 
-RustyTube is a free and open-source project with over *300 hours* in development time.
+RustyTube is a free and open-source project with over *500 hours* in development time.
 
 Support the project and its further development via donations.
 
@@ -85,11 +85,9 @@ Anyone is welcome to contribute to RustyTube.
 RustyTube is still in early development. There are things missing and stuff that I would like to add.
 
 - Desktop Integration
-- History Section
-- SponsorBlock API
-- Return Youtube Dislike API
+- Full SponsorBlock API Support
 - Full Playlist Support
-- Mobile UI (Significant donations/support required for this)
+- Mobile UI and Mobile App (Significant donations/support required for this)
 
 
 [website-url]: https://rustytube.rs
