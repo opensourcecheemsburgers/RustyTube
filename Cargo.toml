@@ -4,15 +4,25 @@ members = ["src-tauri", "frontend", "shared/*"]
 [workspace.package]
 version = "0.1.0"
 authors = ["Stephen Power"]
-description = "A cross-platform Youtube frontend built with Tauri, Yew. Designed with Tailwind."
+description = "A cross-platform Youtube frontend. Built with Leptos and Tauri; Designed with DaisyUI and Tailwind"
 license = "GPL"
 edition = "2021"
 
 [profile.release]
 panic = "abort"
 codegen-units = 1
-lto = true
+lto = "fat"
 opt-level = "z"
+strip = true
+
+[profile.dev]
+opt-level = 0
+codegen-units = 256
+lto = "off"
+
+[workspace.target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/mold"]
 
 [workspace.dependencies]
 wasm-bindgen = "0.2.87"
@@ -40,7 +50,7 @@ version = "0.5.2"
 features = ["csr", "nightly"]
 
 [workspace.dependencies.leptos-use]
-version = "0.8.1"
+version = "0.9.0"
 
 [workspace.dependencies.leptos_router]
 version = "0.5.2"
