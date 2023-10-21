@@ -1,8 +1,8 @@
 {
   "build": {
-    "beforeBuildCommand": "",
-    "beforeDevCommand": "cd frontend; trunk serve;",
-    "devPath": "http://127.0.0.1:8080",
+    "beforeBuildCommand": "cd frontend; trunk build;",
+    "beforeDevCommand": "cd frontend && trunk serve",
+    "devPath": "http://127.0.0.1:42069",
     "distDir": "../frontend/dist"
   },
   "package": {
@@ -11,7 +11,10 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "shell": {
+        "open": true
+      }
     },
     "bundle": {
       "active": true,
@@ -55,10 +58,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 1000,
         "resizable": true,
         "title": "RustyTube",
-        "width": 800
+        "width": 1200
       }
     ]
   }
