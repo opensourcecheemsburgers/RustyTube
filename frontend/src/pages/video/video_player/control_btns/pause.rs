@@ -1,11 +1,8 @@
 use leptos::*;
-use utils::get_element_by_id;
-use web_sys::HtmlAudioElement;
 
 use crate::{
-    contexts::{PlaybackState, PlayerState, AUDIO_PLAYER_ID},
-    icons::{PauseIcon, PlayIcon},
-    utils::is_webkit,
+    contexts::{PlaybackState, PlayerState},
+    icons::{PauseIcon, PlayIcon}
 };
 
 #[component]

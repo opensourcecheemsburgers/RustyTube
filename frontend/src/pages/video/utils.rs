@@ -1,14 +1,10 @@
 use invidious::{
-    AdaptiveFormat, AudioFormat, Container, DashFormat, Format, Formats, LegacyFormat, Video,
-    VideoFormat,
+    AudioFormat, Container, DashFormat, Format, Formats, LegacyFormat, VideoFormat
 };
 use leptos::*;
 use rustytube_error::RustyTubeError;
 
-use crate::contexts::{
-    PlaybackState, PlayerConfigCtx, PlayerState, PlayerStyle, ServerCtx, AUDIO_PLAYER_ID,
-    VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
-};
+use crate::contexts::PlayerConfigCtx;
 use crate::utils::is_webkit;
 
 pub fn get_format(formats: &Formats) -> Result<Format, RustyTubeError> {

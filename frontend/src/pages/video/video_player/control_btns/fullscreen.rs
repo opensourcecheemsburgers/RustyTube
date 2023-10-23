@@ -1,6 +1,5 @@
 use leptos::*;
 use utils::get_element_by_id;
-use wasm_bindgen::JsCast;
 use web_sys::HtmlDivElement;
 
 use crate::{

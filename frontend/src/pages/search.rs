@@ -1,10 +1,8 @@
 use std::str::FromStr;
 
-use gloo::console::debug;
-use gloo::net::http::QueryParams;
-use invidious::{Trending, TrendingCategory, TrendingCategory::*, CountryCode, SearchResults, SearchArgs, SearchResult, CommonVideo, CommonPlaylist, CommonChannel, TimeSpan, Duration, Sort, ResponseType, Feature};
+use invidious::{SearchResults, SearchArgs, SearchResult, TimeSpan, Duration, Sort, ResponseType, Feature};
 use leptos::*;
-use leptos_router::{create_query_signal, use_query, use_query_map, ParamsMap};
+use leptos_router::{use_query_map, ParamsMap};
 use rustytube_error::RustyTubeError;
 
 use crate::components::{VideoPreviewCard, PlaceholderCardArray, FerrisError, ChannelPreviewCard, PlaylistPreviewCard};

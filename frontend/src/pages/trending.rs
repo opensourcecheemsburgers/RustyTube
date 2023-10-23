@@ -1,6 +1,5 @@
 use invidious::{Trending, TrendingCategory, TrendingCategory::*, CountryCode};
 use leptos::*;
-use rustytube_error::RustyTubeError;
 
 use crate::components::{VideoPreviewCard, PlaceholderCardArray, FerrisError};
 use crate::contexts::ServerCtx;

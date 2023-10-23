@@ -1,8 +1,8 @@
-use crate::{CommonVideo, Feed, YoutubeSubscriptions, NewpipeSubscriptions, CommonChannel, Channel, ChannelVideos};
+use crate::{Feed, YoutubeSubscriptions, NewpipeSubscriptions, Channel, ChannelVideos};
 use gloo::storage::{LocalStorage, Storage};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use futures::future::{join_all};
+use futures::future::join_all;
 use gloo::file::Blob;
 use gloo::file::futures::{read_as_bytes, read_as_text};
 use utils::save_to_browser_storage;

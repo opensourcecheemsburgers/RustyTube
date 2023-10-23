@@ -1,6 +1,5 @@
-use invidious::{Channel, CommonVideo, CommonPlaylist, ChannelVideos, Comments, CommonPlaylistVideo, ChannelShorts, ChannelLivestreams, ChannelPlaylists};
-use leptos::{*, html::Section};
-use leptos::ev::click;
+use invidious::{Channel, CommonVideo, CommonPlaylist, ChannelVideos, ChannelShorts, ChannelLivestreams, ChannelPlaylists};
+use leptos::*;
 use leptos_router::create_query_signal;
 use rustytube_error::RustyTubeError;
 

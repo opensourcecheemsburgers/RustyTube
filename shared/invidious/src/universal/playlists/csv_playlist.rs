@@ -1,4 +1,4 @@
-use csv::{Reader, StringRecord};
+use csv::StringRecord;
 use serde::{Deserialize, Serialize};
 use rustytube_error::RustyTubeError;
 use utils::get_current_time;

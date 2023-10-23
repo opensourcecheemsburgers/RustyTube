@@ -6,7 +6,7 @@ use gloo::file::Blob;
 use wasm_bindgen::JsCast;
 
 use crate::components::{VideoPreviewCard, FerrisError, PlaceholderCardArray};
-use crate::contexts::{ServerCtx, SubscriptionsCtx, SubsVideosCtx};
+use crate::contexts::{SubscriptionsCtx, SubsVideosCtx};
 use crate::icons::FerrisWaveIcon;
 
 #[component]

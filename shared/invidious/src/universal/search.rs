@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
-use crate::hidden::{CountryCode, SearchResult};
+use crate::hidden::SearchResult;
 use std::str::FromStr;
-use std::{fmt, default};
-use std::fmt::{Display, Formatter};
 use rustytube_error::RustyTubeError;
 use crate::fetch::fetch;
 

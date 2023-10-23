@@ -1,13 +1,9 @@
 use crate::{contexts::VolumeCtx, utils::is_webkit};
-use gloo::console::debug;
-use invidious::{Format, VideoFormat};
-use leptos::{
-    html::{Audio, Video},
-    *,
-};
+
+use leptos::*;
+use invidious::Format;
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
-use wasm_bindgen_futures::JsFuture;
 use web_sys::{HtmlAudioElement, HtmlVideoElement};
 
 pub const VIDEO_CONTAINER_ID: &'static str = "video_container";

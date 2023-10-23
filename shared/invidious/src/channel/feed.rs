@@ -1,8 +1,6 @@
 use crate::{fetch, CommonThumbnail, CommonVideo, ChannelVideos};
-use gloo::net::http::{Method, Request};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use web_sys::RequestMode;
 
 /// Fetching feeds via RSS is currently broken due to CORS restrictions in regular browsers.
 impl Feed {

@@ -1,4 +1,4 @@
-use invidious::{Caption, Formats, VideoFormat};
+use invidious::Caption;
 use leptos::*;
 use std::time::Duration;
 

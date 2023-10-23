@@ -1,13 +1,11 @@
-use gloo::console::debug;
-use invidious::{fetch_instance_info, Instance, InstanceInfo, SearchArgs};
+use invidious::{Instance, InstanceInfo, SearchArgs};
 use leptos::html::Input;
 use leptos::*;
-use wasm_bindgen::JsCast;
-use web_sys::{Event, HtmlInputElement, InputEvent, KeyboardEvent, SubmitEvent};
+use web_sys::KeyboardEvent;
 
 use crate::components::{Tooltip, TooltipPosition};
 use crate::contexts::{InstancesCtx, ServerCtx, ThemeCtx};
-use crate::icons::{FerrisIcon, PaletteIcon, ServerIcon};
+use crate::icons::{PaletteIcon, ServerIcon};
 
 #[component]
 pub fn Header() -> impl IntoView {

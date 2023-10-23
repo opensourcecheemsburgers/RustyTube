@@ -1,8 +1,7 @@
-use invidious::{CommonVideo, PopularItem};
+use invidious::PopularItem;
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
 
-use crate::icons::VerifiedIcon;
 
 #[component]
 pub fn PopularPreviewCard(video: PopularItem) -> impl IntoView {

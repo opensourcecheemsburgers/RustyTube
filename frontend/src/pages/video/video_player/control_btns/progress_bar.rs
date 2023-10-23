@@ -1,7 +1,6 @@
 use leptos::*;
-use utils::get_element_by_id;
 use wasm_bindgen::JsCast;
-use web_sys::{DragEvent, HtmlAudioElement, HtmlProgressElement, HtmlVideoElement, MouseEvent};
+use web_sys::{DragEvent, HtmlProgressElement, MouseEvent};
 
 use crate::contexts::{PlayerState, PlayerStyle};
 

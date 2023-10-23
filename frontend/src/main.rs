@@ -12,7 +12,7 @@ use leptos::*;
 use leptos_router::*;
 
 use crate::{
-    components::{Page, Sidebar},
+    components::Page,
     contexts::{provide_config_context_slices, provide_user_contexts, provide_user_resources},
     pages::{PopularSection, SearchSection, SubscriptionsSection, TrendingSection, VideoPage, ChannelPage},
 };

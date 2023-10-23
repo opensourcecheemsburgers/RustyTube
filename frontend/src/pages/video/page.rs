@@ -1,13 +1,12 @@
 use leptos::*;
-use leptos_router::{ParamsMap, use_params, use_params_map};
-use invidious::{Comments, Video};
+use invidious::Video;
 use rustytube_error::RustyTubeError;
 
-use crate::{components::Header, contexts::{PlayerStyle, PlayerState}};
-use crate::contexts::{ServerCtx};
+use crate::contexts::{PlayerStyle, PlayerState};
+use crate::contexts::ServerCtx;
 use crate::utils::get_current_video_query_signal;
 
-use super::{video_player::{VideoContainer, VideoPlaceholder}, info::{VideoInfo, VideoInfoPlaceholder}, comments::{CommentsSection, CommentsSectionPlaceholder}, recommended::{RecommendedSection, RecommendedSectionPlaceholder}};
+use super::{video_player::VideoContainer, info::VideoInfo, comments::CommentsSection, recommended::RecommendedSection};
 
 #[component]
 pub fn VideoPage() -> impl IntoView {

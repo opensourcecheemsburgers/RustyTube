@@ -1,12 +1,8 @@
 use crate::components::donate_modal::{DonateModal, DONATE_MODAL_ID};
-use crate::contexts::{ChannelsCtx, ServerCtx, SubscriptionsCtx, ThemeCtx, UiConfigCtx};
-use crate::icons::{
-    CogIcon, FerrisIcon, HamburgerIcon, HeartIcon, PopularIcon, SettingsIcon, SubscriptionsIcon,
-    TrendingIcon,
-};
+use crate::contexts::{ChannelsCtx, UiConfigCtx};
+use crate::icons::*;
 use config::HomepageCategory;
-use invidious::{Channel, Subscription, Subscriptions};
-use leptos::svg::view;
+use invidious::{Channel, Subscriptions};
 use leptos::*;
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;

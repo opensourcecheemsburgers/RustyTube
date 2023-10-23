@@ -1,10 +1,8 @@
-use config::Config;
-use invidious::{AudioFormat, Container, Format, Formats, Video, VideoFormat};
-use leptos::{html::audio, *};
-use rustytube_error::RustyTubeError;
+use invidious::{Format, Video};
+use leptos::*;
 
 use crate::{
-    contexts::{PlayerState, PlayerStyle, ServerCtx, AUDIO_PLAYER_ID, VIDEO_PLAYER_ID},
+    contexts::{PlayerState, PlayerStyle, ServerCtx, VIDEO_PLAYER_ID},
     utils::is_webkit,
 };
 

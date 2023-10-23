@@ -2,7 +2,7 @@
 use serde::{Deserialize, Serialize};
 use rustytube_error::RustyTubeError;
 use crate::common::CommonImage;
-use crate::{Comments, fetch};
+use crate::fetch;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Comment {

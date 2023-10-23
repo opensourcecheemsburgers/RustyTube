@@ -1,6 +1,6 @@
 use crate::utils::get_current_video_query_signal;
 use crate::{components::FerrisError, pages::video::page::VideoResource};
-use invidious::{Video, VideoShort};
+use invidious::VideoShort;
 use leptos::*;
 
 #[component]

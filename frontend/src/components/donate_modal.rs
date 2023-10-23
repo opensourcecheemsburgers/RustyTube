@@ -1,8 +1,4 @@
-use crate::components::{Header, Sidebar};
 use leptos::*;
-use leptos_router::Outlet;
-
-use crate::contexts::ThemeCtx;
 
 pub const DONATE_MODAL_ID: &'static str = "contribution_modal";
 

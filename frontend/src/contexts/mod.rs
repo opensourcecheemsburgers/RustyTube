@@ -3,8 +3,8 @@ mod player;
 mod user;
 
 pub use config::{
-    provide_config_context_slices, HomepageCategoryCtx, NetworkConfigCtx, PlayerConfigCtx,
-    PrivacyConfigCtx, ServerCtx, ThemeCtx, UiConfigCtx, VolumeCtx, THEMES,
+    provide_config_context_slices, PlayerConfigCtx,
+    ServerCtx, ThemeCtx, UiConfigCtx, VolumeCtx
 };
 
 pub use user::{
@@ -13,7 +13,7 @@ pub use user::{
 };
 
 pub use player::{
-    PlaybackState, PlayerState, PlayerStyle, VideoTime, AUDIO_PLAYER_ID, VIDEO_CONTAINER_ID,
+    PlaybackState, PlayerState, PlayerStyle, AUDIO_PLAYER_ID, VIDEO_CONTAINER_ID,
     VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
 };
 

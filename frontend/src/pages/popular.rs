@@ -1,6 +1,6 @@
 use crate::components::{PlaceholderCardArray, FerrisError, PopularPreviewCard};
 use crate::contexts::ServerCtx;
-use invidious::{Popular, TrendingCategory::*};
+use invidious::Popular;
 use leptos::*;
 
 #[component]

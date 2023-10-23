@@ -1,7 +1,7 @@
 use invidious::Caption;
 use leptos::*;
 use wasm_bindgen::JsCast;
-use web_sys::{HtmlVideoElement, MouseEvent, TextTrack, TextTrackMode};
+use web_sys::{HtmlVideoElement, MouseEvent, TextTrackMode};
 
 use crate::{contexts::VIDEO_PLAYER_ID, icons::CaptionsIcon};
 

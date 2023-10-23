@@ -1,13 +1,11 @@
 
 use crate::components::FerrisError;
-use crate::contexts::{ServerCtx};
+use crate::contexts::ServerCtx;
 use crate::icons::{LikeIcon, RepliesIcon};
-use invidious::{Comment, Comments, Replies, RepliesInfo};
-use leptos::ev::load;
+use invidious::{Comment, Comments, Replies};
+
 use leptos::*;
-use leptos_router::{use_params, use_params_map};
 use num_format::{Locale, ToFormattedString};
-use web_sys::HtmlDivElement;
 use crate::utils::{get_current_video_query_signal, VideoQuerySignal};
 
 #[component]

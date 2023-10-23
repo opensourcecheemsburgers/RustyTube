@@ -1,7 +1,5 @@
-use gloo::storage::LocalStorage;
-use invidious::{Channel, CommonVideo, fetch_instance_info, Instances, Subscriptions, SubscriptionsFetch, Subscription};
+use invidious::{Channel, fetch_instance_info, Instances, Subscriptions, SubscriptionsFetch, Subscription};
 use leptos::*;
-use wasm_bindgen_futures::spawn_local;
 use rustytube_error::RustyTubeError;
 use crate::contexts::ServerCtx;
 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter, Result};
-use std::{default, fmt};
+use std::fmt;
 
 impl Display for CountryCode {
     fn fmt(&self, f: &mut Formatter) -> Result {

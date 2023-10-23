@@ -1,15 +1,15 @@
 #[cfg(test)]
 mod tests {
     use wasm_bindgen_test::{console_log, wasm_bindgen_test, wasm_bindgen_test_configure};
-    use gloo::file::{Blob};
+    use gloo::file::Blob;
     use crate::channel::Channel;
     use crate::{Comments, Replies, SearchResults};
     use crate::fetch::fetch;
     use crate::formats::{Formats, VideoFormat, AudioFormat, LegacyFormat, AdaptiveFormat, QualityLabel, Resolution, Container};
     use crate::hidden::CountryCode;
-    use crate::instance::{fetch_instance_info, Instances};
+    use crate::instance::fetch_instance_info;
     use crate::subs::{NewpipeSubscriptions, Subscriptions, YoutubeSubscriptions};
-    use crate::universal::{Duration, Feature, Playlist, Popular, ResponseType, SearchArgs, Sort, TimeSpan, Trending, LocalPlaylist, CsvPlaylist, read_playlist_csv, read_libretube_playlists, read_freetube_playlists};
+    use crate::universal::{Playlist, Popular, SearchArgs, Trending, LocalPlaylist, read_playlist_csv, read_libretube_playlists, read_freetube_playlists};
     use crate::universal::TrendingCategory::{Default, Gaming, Movies, Music};
     use crate::video::Video;
 

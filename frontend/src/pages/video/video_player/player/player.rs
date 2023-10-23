@@ -1,29 +1,19 @@
-use config::Config;
-use gloo::console::debug;
-use gloo::timers::future::TimeoutFuture;
 use invidious::{
-    AdaptiveFormat, AudioFormat, Container, DashFormat, Format, Formats, LegacyFormat, Video,
+    Format, Formats, Video,
     VideoFormat,
 };
 use leptos::leptos_dom::helpers::TimeoutHandle;
 use leptos::*;
-use rustytube_error::RustyTubeError;
 use std::time::Duration;
 use utils::get_element_by_id;
 use wasm_bindgen::JsCast;
-use web_sys::{Element, Event, HtmlAudioElement, HtmlDivElement, HtmlVideoElement, NodeList};
+use web_sys::{Element, HtmlDivElement};
 
 use crate::components::FerrisError;
 use crate::contexts::{
-    PlaybackState, PlayerConfigCtx, PlayerState, PlayerStyle, ServerCtx, AUDIO_PLAYER_ID,
-    VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,
+    PlaybackState, PlayerState, PlayerStyle, VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID,
 };
-use crate::pages::video::page::VideoResource;
-use crate::pages::video::utils::get_format;
-use crate::pages::video::video_player::player::audio::AudioStream;
-use crate::pages::video::video_player::player::video::VideoStream;
-use crate::pages::video::video_player::VideoPlayerControls;
-use crate::utils::is_webkit;
+use crate::pages::video::{page::VideoResource, utils::get_format, video_player::player::audio::AudioStream, video_player::player::video::VideoStream, video_player::VideoPlayerControls};
 
 #[component]
 pub fn VideoContainer(video_resource: VideoResource) -> impl IntoView {

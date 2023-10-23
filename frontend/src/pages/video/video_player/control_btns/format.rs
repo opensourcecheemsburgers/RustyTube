@@ -1,6 +1,5 @@
 use crate::{contexts::PlayerState, pages::video::utils::find_audio_format};
-use gloo::console::debug;
-use invidious::{AudioFormat, Container, DashFormat, Format, Formats, LegacyFormat, VideoFormat};
+use invidious::{DashFormat, Format, Formats};
 use leptos::*;
 
 use crate::icons::CogIcon;

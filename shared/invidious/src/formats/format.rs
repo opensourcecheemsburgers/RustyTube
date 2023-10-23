@@ -1,5 +1,3 @@
-use rustytube_error::RustyTubeError;
-
 use crate::formats::audio::AudioFormat;
 use crate::formats::legacy::LegacyFormat;
 use crate::formats::video::VideoFormat;
