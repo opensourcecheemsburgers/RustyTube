@@ -89,35 +89,3 @@ pub struct HomepageCategoryCtx(pub (Signal<HomepageCategory>, SignalSetter<Homep
 #[derive(Copy, Clone)]
 pub struct VolumeCtx(pub (Signal<f64>, SignalSetter<f64>));
 
-pub const THEMES: &'static [&'static str] = &[
-    "dracula",
-    "winter",
-    "night",
-    "synthwave",
-    "aqua",
-    "retro",
-    "cyberpunk",
-    "valentine",
-    "halloween",
-    "light",
-    "garden",
-    "forest",
-    "dark",
-    "black",
-    "lofi",
-    "pastel",
-    "fantasy",
-    "wireframe",
-    "luxury",
-    "cmyk",
-    "autumn",
-    "business",
-    "acid",
-    "lemonade",
-    "coffee",
-    "cupcake",
-    "bumblebee",
-    "emerald",
-    "corporate",
-];
-

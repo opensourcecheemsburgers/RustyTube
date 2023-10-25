@@ -5,8 +5,8 @@
     "description": "",
     "devDependencies": {
         "@tailwindcss/typography": "^0.5.10",
-        "daisyui": "^3.9.4",
-        "tailwindcss": "^3.3.5",
+        "daisyui": "^4.4.20",
+        "tailwindcss": "^3.4.0",
         "tailwindcss-animate": "^1.0.7"
     },
     "dependencies": {

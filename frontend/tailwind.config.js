@@ -26,7 +26,8 @@ module.exports = {
             "black", "luxury", "dracula",
             "cmyk", "autumn", "business",
             "acid", "lemonade", "night",
-            "coffee", "winter", {
+            "coffee", "winter", "dim",
+            "nord", "sunset", {
                 rustytube: {
                     "primary": "#0072ff",
                     "primary-content": "#F4F5F6",
