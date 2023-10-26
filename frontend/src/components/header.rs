@@ -1,91 +1,168 @@
-use invidious::{Instance, InstanceInfo, SearchArgs};
+use invidious::{Instance, InstanceInfo, SearchArgs, Suggestions};
 use leptos::html::Input;
-use leptos::*;
+use leptos::{window, *};
+use rustytube_error::RustyTubeError;
 use web_sys::KeyboardEvent;
 
-use crate::components::{Tooltip, TooltipPosition};
+use crate::components::{Tooltip, TooltipPosition, FerrisError};
 use crate::contexts::{InstancesCtx, ServerCtx, ThemeCtx};
-use crate::icons::{PaletteIcon, ServerIcon};
+use crate::icons::{BackIcon, ForwardIcon, PaletteIcon, ReloadIcon, ServerIcon};
 
 #[component]
-pub fn Header() -> impl IntoView {
+pub fn Header() -> impl IntoView {           
     view! {
         <div class="navbar bg-base-100">
-            <div class="navbar-start"></div>
+            <div class="navbar-start">
+                <BackBtn/>
+                <ForwardBtn/>
+                <ReloadBtn/>
+            </div>
             <div class="navbar-center">
                 <Search/>
             </div>
             <div class="navbar-end">
                 <InstanceSelectDropdown/>
                 <ThemeSelectDropdown/>
-                <button class="btn btn-square btn-ghost">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        class="inline-block w-5 h-5 stroke-current"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-                        ></path>
-                    </svg>
-                </button>
             </div>
         </div>
     }
 }
 
 #[component]
+pub fn BackBtn() -> impl IntoView {
+    view! {
+        <button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
+            <BackIcon/>
+        </button>
+    }
+}
+
+fn back() -> Result<(), RustyTubeError> {
+    Ok(window().history()?.back()?)
+}
+
+#[component]
+pub fn ForwardBtn() -> impl IntoView {
+    view! {
+        <button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
+            <ForwardIcon/>
+        </button>
+    }
+}
+
+fn forward() -> Result<(), RustyTubeError> {
+    Ok(window().history()?.forward()?)
+}
+
+#[component]
+pub fn ReloadBtn() -> impl IntoView {
+    view! {
+        <button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
+            <ReloadIcon/>
+        </button>
+    }
+}
+
+fn reload() -> Result<(), RustyTubeError> {
+    Ok(window().location().reload_with_forceget(true)?)
+}
+
+#[component]
 pub fn Search() -> impl IntoView {
     let search_bar = create_node_ref::<Input>();
 
-    let search = move |_| {
-        let search_str = search_bar.get().unwrap().value();
-        let search_args = SearchArgs::from_str(search_str);
-
-        let navigate = leptos_router::use_navigate();
-        request_animation_frame(move || {
-            _ = navigate(
-                &format!("/search{}", search_args.to_url()),
-                Default::default(),
-            );
-        })
+    let on_search = move |_| {
+        let query = search_bar.get().unwrap().value();
+        search(query);
     };
 
     let check_for_enter_key = move |keyboard_event: KeyboardEvent| {
         if keyboard_event.key_code() == 13 {
-            let search_str = search_bar.get().unwrap().value();
-            let search_args = SearchArgs::from_str(search_str);
-
-            let navigate = leptos_router::use_navigate();
-            request_animation_frame(move || {
-                _ = navigate(
-                    &format!("/search{}", search_args.to_url()),
-                    Default::default(),
-                );
-            })
+            let query = search_bar.get().unwrap().value();
+            search(query);
         }
     };
 
+    let server = expect_context::<ServerCtx>().0 .0;
+    let query = RwSignal::new(String::default());
+    let set_query = move |_| query.set(search_bar.get().unwrap().value());
+
+    let suggestions = create_resource(move || (query.get(), server.get()), |(query, server)| async move {
+        Suggestions::fetch_suggestions(&query, &server).await
+    });
+
+    let suggestions_view = move || suggestions.get().map(|suggestions| 
+        match suggestions {
+            Ok(suggestions) => {
+                suggestions.suggestions.into_iter().map(|suggestion| {
+                    let query = suggestion.clone();
+                    let on_click = move |_| search(query.clone());
+                    view! {
+                        <li>
+                            <button on:click=on_click>{suggestion}</button>
+                        </li>
+                    }
+                }).collect_view()
+            },
+            Err(err) => view! { <FerrisError error=err/> },
+        }
+    );
+
     view! {
-        <div class="join">
-            <input
-                on:keydown=check_for_enter_key
-                _ref=search_bar
-                id="search"
-                type="text"
-                placeholder="Type your search here..."
-                class="input input-bordered input-primary w-auto md:w-96 join-item"
-            />
-            <button class="btn btn-primary join-item" on:click=search>
-                Search
-            </button>
+        <div class="dropdown dropdown-bottom dropdown-end z-20">
+            <div class="join">
+                <input
+                    on:input=set_query
+                    on:keydown=check_for_enter_key
+                    _ref=search_bar
+                    tabindex="0"
+                    id="search"
+                    type="text"
+                    placeholder="Type your search here..."
+                    class="input input-bordered input-primary w-96 join-item "
+                />
+                <button class="btn btn-primary join-item" on:click=on_search>
+                    Search
+                </button>
+            </div>
+            <ul
+                tabindex="0"
+                class="dropdown-content menu w-full rounded-b-lg bg-base-200 p-2 shadow-dropdown"
+            >
+                {suggestions_view}
+            </ul>
         </div>
     }
 }
+
+fn search(query: String) {
+    let search_args = SearchArgs::from_str(query);
+
+    let navigate = leptos_router::use_navigate();
+    request_animation_frame(move || {
+        _ = navigate(
+            &format!("/search{}", search_args.to_url()),
+            Default::default(),
+        );
+    })
+}
+
+
+// #[component]
+// pub fn SearchSuggestions(suggestions: RwSignal<Suggestions>) -> impl IntoView {
+//     view! {
+//         <div class="dropdown dropdown-bottom dropdown-end z-20">
+//             <div tabindex="0" role="button" class="btn btn-circle btn-outline btn-accent">
+//                 <ShareIcon/>
+//             </div>
+
+//             <ul
+//                 tabindex="0"
+//                 class="dropdown-content menu z-[1] h-max w-max space-y-4 rounded-b-lg bg-base-200 p-2 shadow-dropdown"
+//             ></ul>
+//         </div>
+//     }
+// }
 
 #[component]
 pub fn InstanceSelectDropdown() -> impl IntoView {
@@ -278,5 +355,13 @@ pub const THEMES: &'static [&'static str] = &[
     "bumblebee",
     "emerald",
     "corporate",
+    "dim",
+    "nord",
+    "sunset"
 ];
+
+
+
+
+
 

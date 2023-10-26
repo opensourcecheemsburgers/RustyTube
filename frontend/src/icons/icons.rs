@@ -300,6 +300,38 @@ pub fn ShareIcon() -> impl IntoView {
 }
 
 #[component]
+pub fn BackIcon() -> impl IntoView {
+    view! {
+        <Svg class=LARGE_ICON>
+            <path d="m12 19-7-7 7-7"></path>
+            <path d="M19 12H5"></path>
+        </Svg>
+    }
+}
+
+#[component]
+pub fn ForwardIcon() -> impl IntoView {
+    view! {
+        <Svg class=LARGE_ICON>
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+        </Svg>
+    }
+}
+
+#[component]
+pub fn ReloadIcon() -> impl IntoView {
+    view! {
+        <Svg class=LARGE_ICON>
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+            <path d="M16 16h5v5"></path>
+        </Svg>
+    }
+}
+
+#[component]
 pub fn PlaylistAddIcon() -> impl IntoView {
     view! {
         <Svg class=LARGE_ICON>
