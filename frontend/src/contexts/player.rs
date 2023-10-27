@@ -1,7 +1,8 @@
 use crate::{contexts::VolumeCtx, utils::is_webkit};
 
-use leptos::*;
+use gloo::console::debug;
 use invidious::Format;
+use leptos::*;
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
 use web_sys::{HtmlAudioElement, HtmlVideoElement};
@@ -60,8 +61,12 @@ impl PlayerState {
     pub fn ready(&self) -> Result<bool, RustyTubeError> {
         let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
+        
+        let ready = match is_webkit() {
+            true => video.ready_state() >= 3 && audio.ready_state() >= 3,
+            false => self.video_ready.get() && self.audio_ready.get() && video.ready_state() >= 3 && audio.ready_state() >= 3,
+        };
 
-        let ready = self.audio_ready.get() && self.video_ready.get();
         Ok(ready)
     }
 
@@ -137,55 +142,66 @@ impl PlayerState {
         Ok(())
     }
 
-    pub fn set_video_ready(&self, ready: bool) {
+    pub fn set_video_ready(&self, ready: bool) -> Result<(), RustyTubeError> {
         self.video_ready.set(ready);
-        if ready && self.audio_ready.get() && self.playback_state.get() != PlaybackState::Initial {
-            self.resume();
+        if self.ready()? && self.playback_state.get() != PlaybackState::Initial {
+            self.resume()?;
         }
+        Ok(())
     }
 
-    pub fn set_audio_ready(&self, ready: bool) {
+    pub fn set_audio_ready(&self, ready: bool) -> Result<(), RustyTubeError> {
         self.audio_ready.set(ready);
-        if ready && self.video_ready.get() && self.playback_state.get() != PlaybackState::Initial {
-            self.resume();
+        if self.ready()? && self.playback_state.get() != PlaybackState::Initial {
+            self.resume()?;
         }
+        Ok(())
     }
 
     pub fn sync(&self) -> Result<(), RustyTubeError> {
         let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
+        let video_time = video.current_time();
         let audio_time = audio.current_time();
 
-        if video.current_time() > audio_time + 0.5f64 || video.current_time() < audio_time - 0.5f64
-        {
+        let initial_start = video_time < 3.0 || audio_time < 3.0;
+        let out_of_sync = video_time > audio_time + 0.175 || video_time + 0.175 < audio_time;
+        if !initial_start && out_of_sync {
             video.set_current_time(audio.current_time());
         }
+
         Ok(())
     }
 
     pub fn seek(&self, time: f64) -> Result<(), RustyTubeError> {
         let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
-
-        let fast_seek_video = video.fast_seek(time);
-        let fast_seek_audio = audio.fast_seek(time);
-
-        if fast_seek_audio.is_err() || fast_seek_video.is_err() {
-            video.set_current_time(time);
-            audio.set_current_time(time);
+        
+        self.pause()?;
+        self.set_video_ready(false)?;
+        self.playback_state.set(PlaybackState::Loading);
+        
+        match is_webkit() {
+            true => {
+                video.set_current_time(time);
+                audio.set_current_time(time);
+            },
+            false => {
+                self.set_audio_ready(false)?;
+                let fast_seek_video = video.fast_seek(time);
+                let fast_seek_audio = audio.fast_seek(time);
+                if fast_seek_audio.is_err() || fast_seek_video.is_err() {
+                    video.set_current_time(time);
+                    audio.set_current_time(time);
+                }
+            },
         }
-
-        if !is_webkit() {
-            self.pause()?;
-            self.set_video_ready(false);
-            self.set_audio_ready(false);
-            self.playback_state.set(PlaybackState::Loading);
-            video.set_current_time(audio.current_time());
-            self.current_time.set(time);
-            self.current_time_str
-                .set(utils::unix_to_hours_secs_mins(audio.current_time()));
-        }
+        
+        self.current_time.set(time);
+        self.current_time_str.set(utils::unix_to_hours_secs_mins(time));
+        self.pause()?;
+        self.play()?;        
         Ok(())
     }
 
@@ -211,11 +227,13 @@ impl PlayerState {
         video.set_src(&format.video_url().unwrap_or_default());
         audio.set_src(&format.audio_url().unwrap_or_default());
         self.pause()?;
-        self.set_video_ready(false);
+        self.set_video_ready(false)?;
         self.playback_state.set(PlaybackState::Loading);
         self.format.set(Some(format));
         video.set_current_time(current_time);
         audio.set_current_time(current_time);
+        self.current_time.set(current_time);
+        self.current_time_str.set(utils::unix_to_hours_secs_mins(current_time));
         Ok(())
     }
 }

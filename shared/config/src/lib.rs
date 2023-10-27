@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use utils::save_to_browser_storage;
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub struct NetworkConfig {
     pub server: String,
     pub custom_servers: Option<Vec<String>>,
@@ -16,6 +17,7 @@ pub struct NetworkConfig {
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub struct UiConfig {
     pub theme: String,
     pub font_scale: u8,
@@ -24,6 +26,7 @@ pub struct UiConfig {
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub struct PlayerConfig {
     pub auto_play: bool,
     pub fast_forward_interval: u8,
@@ -34,11 +37,13 @@ pub struct PlayerConfig {
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub struct PrivacyConfig {
     pub keep_history: bool,
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub struct Config {
     pub network: NetworkConfig,
     pub ui: UiConfig,
@@ -47,7 +52,7 @@ pub struct Config {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "snake_case")]
 pub enum RememberPosition {
     Always,
     VideosOnly,
@@ -55,7 +60,7 @@ pub enum RememberPosition {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "snake_case")]
 pub enum HomepageCategory {
     Trending,
     Popular,

@@ -38,7 +38,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
     let views = video.views.to_formatted_string(&Locale::en);
     let likes = video.likes.to_formatted_string(&Locale::en);
     let author = video.author;
-    let author_id = video.author_id;
+    let author_id = video.author_id.clone();
     let author_url = video.author_url;
     let author_thumb_url = video
         .author_thumbnails
@@ -68,6 +68,15 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
                     <p>{dislikes.unwrap_or_default()}</p>
                 </div>
             }.into_view()
+        })
+    };
+
+    let channel_id = video.author_id.clone();
+    let go_to_channel_page = move |_| {
+        let navigate = leptos_router::use_navigate();
+        let channel_id = channel_id.clone();
+        request_animation_frame(move || {
+            _ = navigate(&format!("/channel?id={}", channel_id), Default::default());
         })
     };
 
@@ -106,6 +115,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
                 <div class="mt-2 flex w-full flex-row items-center justify-between space-x-4">
                     <div class="flex flex-row space-x-4">
                         <img
+                            on:click=go_to_channel_page
                             on:load=move |_| img_loaded.set(true)
                             src=author_thumb_url
                             class=image_classes
@@ -129,12 +139,12 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 pub fn DownloadsDropdown(formats: Formats, title: String) -> impl IntoView {
     view! {
         <div class="dropdown dropdown-bottom dropdown-end z-20">
-            <div tabindex="0" role="button" class="btn btn-circle btn-secondary btn-outline">
+            <div tabindex="0" role="button" class="btn btn-circle btn-accent btn-outline">
                 <DownloadIcon/>
             </div>
             <ul
                 tabindex="0"
-                class="menu dropdown-content mt-2 px-1.5 py-3 shadow bg-neutral rounded-xl w-max h-max"
+                class="menu dropdown-content mt-2 px-1.5 py-3 shadow-dropdown bg-base-200 rounded-xl w-max h-max"
             >
                 <DownloadsDropdownList formats=formats title=title/>
             </ul>
@@ -220,7 +230,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
     };
 
     view! {
-        <div class="flex h-max w-max flex-row space-x-4 rounded-lg bg-neutral p-2">
+        <div class="flex h-max w-max flex-row space-x-4 rounded-lg bg-base-200 p-2">
             <div class="flex flex-col items-center">
                 <h1>Audio</h1>
                 <div class="my-4 flex flex-col h-64 overflow-y-scroll">{audio_formats_view}</div>
@@ -274,18 +284,18 @@ pub fn ShareDropdown() -> impl IntoView {
 
     view! {
         <div class="dropdown dropdown-bottom dropdown-end z-20">
-            <div tabindex="0" role="button" class="btn btn-circle btn-outline btn-secondary">
+            <div tabindex="0" role="button" class="btn btn-circle btn-outline btn-accent">
                 <ShareIcon />
             </div>
 
-            <div tabindex="0" class="dropdown-content h-max w-max mt-2 space-y-4 rounded-lg bg-neutral p-4">
+            <div tabindex="0" class="dropdown-content h-max w-max mt-2 space-y-4 rounded-lg bg-base-200 p-4 shadow-dropdown">
                 <div tabindex="0" class="flex flex-row gap-2">
-                    <button on:click=set_rt_link_type class="btn btn-outline btn-sm">RustyTube Link</button>
-                    <button on:click=set_yt_link_type class="btn btn-outline btn-sm">YouTube Link</button>
+                    <button on:click=set_rt_link_type class="btn btn-outline btn-accent btn-sm">RustyTube Link</button>
+                    <button on:click=set_yt_link_type class="btn btn-outline btn-accent btn-sm">YouTube Link</button>
                 </div>
 
-                <div tabindex="0" class="flex h-max w-full flex-row items-center space-x-1 rounded-lg bg-base-200 px-3 py-1">
-                    <p class="font-mono text-xs">
+                <div tabindex="0" class="flex h-max w-full flex-row items-center space-x-1 rounded-lg btn-accent px-3 py-1">
+                    <p class="font-mono text-xs text-accent-content">
                         {link_text}
                     </p>
                 </div>
@@ -298,7 +308,7 @@ pub fn ShareDropdown() -> impl IntoView {
                             _ref=timestamp_input
                             type="checkbox"
                             checked=include_timestamp
-                            class="checkbox"
+                            class="checkbox checkbox-accent"
                         />
                     </label>
                 </div>
