@@ -31,9 +31,11 @@ pub fn Header() -> impl IntoView {
 #[component]
 pub fn BackBtn() -> impl IntoView {
     view! {
-        <button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
-            <BackIcon/>
-        </button>
+        <Tooltip tip="Back" position=TooltipPosition::Bottom>
+            <button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
+                <BackIcon/>
+            </button>
+        </Tooltip>
     }
 }
 
@@ -44,9 +46,11 @@ fn back() -> Result<(), RustyTubeError> {
 #[component]
 pub fn ForwardBtn() -> impl IntoView {
     view! {
-        <button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
-            <ForwardIcon/>
-        </button>
+        <Tooltip tip="Forward" position=TooltipPosition::Bottom>
+            <button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
+                <ForwardIcon/>
+            </button>
+        </Tooltip>
     }
 }
 
@@ -57,9 +61,11 @@ fn forward() -> Result<(), RustyTubeError> {
 #[component]
 pub fn ReloadBtn() -> impl IntoView {
     view! {
-        <button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
-            <ReloadIcon/>
-        </button>
+        <Tooltip tip="Force reload" position=TooltipPosition::Bottom>
+            <button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
+                <ReloadIcon/>
+            </button>
+        </Tooltip>
     }
 }
 
@@ -109,7 +115,7 @@ pub fn Search() -> impl IntoView {
     );
 
     view! {
-        <div class="dropdown dropdown-bottom dropdown-end z-20">
+        <div class="z-20 dropdown dropdown-bottom dropdown-end">
             <div class="join">
                 <input
                     on:input=set_query
@@ -127,7 +133,7 @@ pub fn Search() -> impl IntoView {
             </div>
             <ul
                 tabindex="0"
-                class="dropdown-content menu w-full rounded-b-lg bg-base-200 p-2 shadow-dropdown"
+                class="w-full p-2 rounded-b-lg dropdown-content menu bg-base-200 shadow-dropdown"
             >
                 {suggestions_view}
             </ul>
@@ -151,7 +157,7 @@ fn search(query: String) {
 // #[component]
 // pub fn SearchSuggestions(suggestions: RwSignal<Suggestions>) -> impl IntoView {
 //     view! {
-//         <div class="dropdown dropdown-bottom dropdown-end z-20">
+//         <div class="z-20 dropdown dropdown-bottom dropdown-end">
 //             <div tabindex="0" role="button" class="btn btn-circle btn-outline btn-accent">
 //                 <ShareIcon/>
 //             </div>
@@ -183,7 +189,7 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
                             tabindex="0"
                             class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
                         >
-                            <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
+                            <div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
 
                                 {instances
                                     .unwrap()
@@ -232,7 +238,7 @@ pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
                         class="p-3 rounded-lg bg-base-100"
                         on:click=move |_| server.1.set(uri.clone())
                     >
-                        <a class="text-base-content font-sans">{flag} {" "} {instance_name}</a>
+                        <a class="font-sans text-base-content">{flag} {" "} {instance_name}</a>
                     </div>
                 }
             }
@@ -240,10 +246,10 @@ pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
                 let uri = uri.clone();
                 view! {
                     <div
-                        class="p-3 rounded-lg bg-base-100 border-2 border-primary"
+                        class="p-3 border-2 rounded-lg bg-base-100 border-primary"
                         on:click=move |_| server.1.set(uri.clone())
                     >
-                        <a class="text-base-content font-sans">{flag} {" "} {instance_name}</a>
+                        <a class="font-sans text-base-content">{flag} {" "} {instance_name}</a>
                     </div>
                 }
             }
@@ -260,11 +266,11 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
         true => view! {
             <div
                 data-theme=name
-                class="p-3 rounded-lg bg-base-100 border-2 border-primary"
+                class="p-3 border-2 rounded-lg bg-base-100 border-primary"
                 on:click=move |_| theme_ctx.1.set(name.to_string())
             >
-                <a class="capitalize text-base-content font-sans">
-                    <div class="flex flex-row justify-between w-full items-center rounded-lg">
+                <a class="font-sans capitalize text-base-content">
+                    <div class="flex flex-row items-center justify-between w-full rounded-lg">
                         {name} <div class="flex flex-row gap-1">
                             <div data-theme=name class="w-4 h-4 rounded-full bg-primary"></div>
                             <div data-theme=name class="w-4 h-4 rounded-full bg-secondary"></div>
@@ -281,8 +287,8 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
                 class="p-3 rounded-lg bg-base-100"
                 on:click=move |_| theme_ctx.1.set(name.to_string())
             >
-                <a class="capitalize text-base-content font-sans">
-                    <div class="flex flex-row justify-between w-full items-center rounded-lg">
+                <a class="font-sans capitalize text-base-content">
+                    <div class="flex flex-row items-center justify-between w-full rounded-lg">
                         {name} <div class="flex flex-row gap-1">
                             <div data-theme=name class="w-4 h-4 rounded-full bg-primary"></div>
                             <div data-theme=name class="w-4 h-4 rounded-full bg-secondary"></div>
@@ -311,7 +317,7 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
                 tabindex="0"
                 class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
             >
-                <div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
+                <div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
 
                     {THEMES
                         .into_iter()
@@ -359,6 +365,7 @@ pub const THEMES: &'static [&'static str] = &[
     "nord",
     "sunset"
 ];
+
 
 
 
