@@ -149,11 +149,14 @@ RustyTube is still in early development. There are things missing and stuff that
 
 ### Mobile
 
-
-
 [Newpipe][newpipe-github-url] - A libre lightweight streaming front-end for Android. 
+
 [Libretube][libretube-github-url] - An alternative frontend for YouTube, for Android.
+
 [Clipious][clipious-github-url] - Android client application for invidious, the privacy focused youtube front end.
+
+
+
 
 [website-url]: https://rustytube.rs
 
