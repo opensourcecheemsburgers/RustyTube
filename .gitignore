@@ -7,3 +7,4 @@ package-lock.json
 frontend/css/output.css
 todo.md
 .vscode/
+.cargo
