@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=RustyTube
+Comment=A Youtube frontend client written in Rust.
+Exec=rustytube %u
+Icon=/usr/share/icons/hicolor/scalable/apps/rustytube.svg
+Terminal=false
+Type=Application
+Categories=AudioVideo; Player; Networking;
+Keywords=youtube; yt; video;
+Actions=new-window;
+
+X-Desktop-File-Install-Version=0.1.0
+
+[Desktop Action new-window]
+Name=Open another RustyTube window
+Exec=rustdesk %u
