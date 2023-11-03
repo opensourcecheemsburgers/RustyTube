@@ -19,7 +19,7 @@ pub fn Page() -> impl IntoView {
             <Sidebar/>
             <div data-expanded=expanded class=PAGE_CLASSES>
                 <Header/>
-                <div class="min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] min-w-screen max-w-screen bg-base-100 overflow-y-scroll">
+                <div class="min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] min-w-screen max-w-screen bg-base-100 overflow-y-auto">
                     <Outlet/>
                 </div>
             </div>
