@@ -39,7 +39,7 @@ mod utils {
         let hours = (duration.as_secs() / 60) / 60;
 
         match hours > 0 {
-            true => format!("{:0>1}:{:0>1}:{:0>2}", hours, minutes, seconds),
+            true => format!("{:0>1}:{:0>2}:{:0>2}", hours, minutes, seconds),
             false => format!("{:0>1}:{:0>2}", minutes, seconds),
         }
     }
