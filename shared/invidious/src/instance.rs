@@ -31,53 +31,53 @@ pub struct InstanceInfo {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Stats {
-	pub version: String,
-	pub software: Software,
-	pub open_registrations: bool,
-	pub usage: Usage,
-	pub metadata: Metadata,
+	pub version: Option<String>,
+	pub software: Option<Software>,
+	pub open_registrations: Option<bool>,
+	pub usage: Option<Usage>,
+	pub metadata: Option<Metadata>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Software {
-	pub name: String,
-	pub version: String,
-	pub branch: String,
+	pub name: Option<String>,
+	pub version: Option<String>,
+	pub branch: Option<String>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Usage {
-	pub users: Users,
+	pub users: Option<Users>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Users {
-	pub total: i64,
+	pub total: Option<i64>,
 	#[serde(rename = "activeHalfyear")]
-	pub active_half_year: i64,
-	pub active_month: i64,
+	pub active_half_year: Option<i64>,
+	pub active_month: Option<i64>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Metadata {
-	pub updated_at: i64,
-	pub last_channel_refreshed_at: i64,
+	pub updated_at: Option<i64>,
+	pub last_channel_refreshed_at: Option<i64>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Monitor {
-	pub monitor_id: i64,
-	pub created_at: i64,
-	pub status_class: String,
-	pub name: String,
-	pub url: Value,
+	pub monitor_id: Option<i64>,
+	pub created_at: Option<i64>,
+	pub status_class: Option<String>,
+	pub name: Option<String>,
+	pub url: Option<Value>,
 	#[serde(rename = "type")]
-	pub type_field: String,
+	pub type_field: Option<String>,
 	pub daily_ratios: Vec<DailyRatio>,
 	#[serde(rename = "90dRatio")]
 	pub quarterly_ratio: QuarterlyRatio,
@@ -88,20 +88,20 @@ pub struct Monitor {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DailyRatio {
-	pub ratio: String,
-	pub label: String,
+	pub ratio: Option<String>,
+	pub label: Option<String>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct QuarterlyRatio {
-	pub ratio: String,
-	pub label: String,
+	pub ratio: Option<String>,
+	pub label: Option<String>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MonthlyRatio {
-	pub ratio: String,
-	pub label: String,
+	pub ratio: Option<String>,
+	pub label: Option<String>,
 }
