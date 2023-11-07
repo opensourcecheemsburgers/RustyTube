@@ -57,9 +57,9 @@ pub fn Thumbnail(playlist_id: String, url: String) -> impl IntoView {
     let img_loaded = create_rw_signal(false);
     let image_classes = move || match img_loaded.get() {
         true => {
-            "w-full aspect-video object-center object-cover bg-base-content rounded-xl".to_string()
+            "w-full aspect-video object-center object-cover bg-neutral rounded-xl".to_string()
         }
-        false => "animate-pulse w-full aspect-video bg-base-content rounded-xl".to_string(),
+        false => "animate-pulse w-full aspect-video bg-neutral rounded-xl".to_string(),
     };
 
     let open_playlist = move |_| {

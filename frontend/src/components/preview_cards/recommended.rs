@@ -25,9 +25,9 @@ pub fn Thumbnail(url: Option<String>) -> impl IntoView {
     let img_loaded = create_rw_signal(false);
     let image_classes = move || match img_loaded.get() {
         true => {
-            "w-[30%] aspect-video object-center object-cover bg-base-content rounded-lg".to_string()
+            "w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string()
         }
-        false => "animate-pulse w-[30%] aspect-video bg-base-content rounded-lg".to_string(),
+        false => "animate-pulse w-[30%] aspect-video bg-neutral rounded-lg".to_string(),
     };
 
     view! { <img decoding="async" on:load=move |_| img_loaded.set(true) src=url class=image_classes/> }
