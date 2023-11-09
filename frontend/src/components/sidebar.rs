@@ -1,7 +1,8 @@
 use crate::components::donate_modal::{DonateModal, DONATE_MODAL_ID};
-use crate::contexts::ChannelsCtx;
+use crate::components::FerrisError;
+use crate::contexts::ChannelThumbsCtx;
 use crate::icons::*;
-use invidious::{Channel, Subscriptions, Subscription};
+use invidious::{Channel, ChannelThumb, Subscription, Subscriptions};
 use leptos::*;
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
@@ -70,7 +71,7 @@ fn SubscriptionsButton() -> impl IntoView {
     view! {
         <div data-expanded=expanded data-tip="Subscriptions" class=SIDEBAR_TOOLTIP_CLASSES>
             <button on:click=go_to_subs data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
-                <SubscriptionsIcon />
+                <SubscriptionsIcon/>
                 <p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
                     Subscriptions
                 </p>
@@ -128,25 +129,30 @@ fn PopularButton() -> impl IntoView {
 #[component]
 fn Subs() -> impl IntoView {
     let expanded = expect_context::<ExpandedCtx>().0;
-    let channels = expect_context::<ChannelsCtx>().0;
-    let channels_view = move || match channels.get() {
-        Some(results) => view! { <SubsInner results=results/> }.into_view(),
-        None => view! { <SubsPlaceholders/> }.into_view(),
-    };
-
+    let channel_thumbs_ctx = expect_context::<ChannelThumbsCtx>().0;
     view! {
-        <div data-expanded=expanded class=SIDEBAR_SUBS_CLASSES>
-            {channels_view}
-        </div>
+        <Suspense fallback=move || view! { <SubsPlaceholders/> }>
+            <div data-expanded=expanded class=SIDEBAR_SUBS_CLASSES>
+                {move || {
+                    channel_thumbs_ctx
+                        .get()
+                        .map(|channel_thumbs| match channel_thumbs {
+                            Ok(channel_thumbs) => view! { <SubsInner results=channel_thumbs/> },
+                            Err(err) => view! { <FerrisError error=err/> },
+                        })
+                }}
+
+            </div>
+        </Suspense>
     }
 }
 
 #[component]
-pub fn SubsInner(results: Vec<Result<Channel, RustyTubeError>>) -> impl IntoView {
+pub fn SubsInner(results: Vec<Result<ChannelThumb, RustyTubeError>>) -> impl IntoView {
     let mut channels = results
         .into_iter()
         .filter_map(|res| res.ok())
-        .collect::<Vec<Channel>>();
+        .collect::<Vec<ChannelThumb>>();
     channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
 
     channels
@@ -164,13 +170,13 @@ fn SubsPlaceholders() -> impl IntoView {
     subscriptions
         .into_iter()
         .map(|sub| {
-            view! {<ChannelButtonPlaceholder sub=sub/>}
+            view! { <ChannelButtonPlaceholder sub=sub/> }
         })
         .collect_view()
 }
 
 #[component]
-pub fn ChannelButton(channel: Channel) -> impl IntoView {
+pub fn ChannelButton(channel: ChannelThumb) -> impl IntoView {
     let expanded = expect_context::<ExpandedCtx>().0;
     let thumb_url = channel.thumbnails.first().map(|thumb| thumb.url.clone());
 
@@ -181,7 +187,6 @@ pub fn ChannelButton(channel: Channel) -> impl IntoView {
             _ = navigate(&format!("/channel?id={}", author_id), Default::default());
         })
     };
- 
 
     view! {
         <button on:click=go_to_channel_page data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>

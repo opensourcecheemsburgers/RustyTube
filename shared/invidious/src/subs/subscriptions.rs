@@ -1,4 +1,4 @@
-use crate::{Feed, YoutubeSubscriptions, NewpipeSubscriptions, Channel, ChannelVideos};
+use crate::{Feed, YoutubeSubscriptions, NewpipeSubscriptions, Channel, ChannelVideos, ChannelThumb};
 use gloo::storage::{LocalStorage, Storage};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
@@ -91,6 +91,18 @@ impl Subscriptions {
         let channels = join_all(futures).await;
         Ok(channels)
     }
+
+    pub async fn fetch_channel_thumbs(&self, server: &str) -> Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError> {
+        let mut futures = Vec::new();
+
+        for channel in self.channels.clone() {
+            let id = channel.id.clone();
+            let future = async move { Channel::fetch_channel_thumb(server, &id).await};
+            futures.push(future)
+        }
+        let thumbs = join_all(futures).await;
+        Ok(thumbs)
+    }
 }
 
 async fn read_youtube(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
@@ -105,6 +117,9 @@ async fn read_newpipe(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
     let newpipe_subs = NewpipeSubscriptions::read_subs_from_file(&json_str)?;
     Ok(newpipe_subs.into())
 }
+
+
+
 
 
 

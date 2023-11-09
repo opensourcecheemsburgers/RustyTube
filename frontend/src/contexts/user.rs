@@ -1,4 +1,4 @@
-use invidious::{Channel, fetch_instance_info, Instances, Subscriptions, SubscriptionsFetch, Subscription};
+use invidious::{fetch_instance_info, Instances, Subscriptions, SubscriptionsFetch, Subscription, ChannelThumb};
 use leptos::*;
 use rustytube_error::RustyTubeError;
 use crate::contexts::ServerCtx;
@@ -23,7 +23,7 @@ impl SubscriptionsCtx {
 }
 
 #[derive(Copy, Clone)]
-pub struct ChannelsCtx(pub Resource<(String, Subscriptions), Vec<Result<Channel, RustyTubeError>>>);
+pub struct ChannelThumbsCtx(pub Resource<(String, Subscriptions), Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError>>);
 
 #[derive(Copy, Clone)]
 pub struct SubsVideosCtx(pub Resource<(String, Subscriptions), SubscriptionsFetch>);
@@ -46,26 +46,33 @@ pub fn provide_user_resources() {
 			subs.fetch_videos(&server, false).await
 		},
 	);
+	subs_ctx.refetch();
 	let instances_ctx = create_resource(
 		move || (),
 		|_| async move {
 			fetch_instance_info().await
 		},
 	);
-	let channels_ctx = create_resource(
+	let channel_thumbs_ctx = create_resource(
 		move || (server.get(), subs.get()),
 		|(server, subs)| async move {
-			subs.fetch_channels(&server).await.unwrap()
+			subs.fetch_channel_thumbs(&server).await
 		},
 	);
 
-	create_effect(move |_| {
-		subs.track();
-		subs_ctx.refetch();
-		channels_ctx.refetch();
-	});
-
 	provide_context(SubsVideosCtx(subs_ctx));
 	provide_context(InstancesCtx(instances_ctx));
-	provide_context(ChannelsCtx(channels_ctx));
+	provide_context(ChannelThumbsCtx(channel_thumbs_ctx));
 }
+
+
+
+
+
+
+
+
+
+
+
+
