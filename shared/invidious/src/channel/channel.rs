@@ -52,6 +52,13 @@ impl Channel {
         Ok(channel)
     }
 
+    pub async fn fetch_channel_thumbnails(server: &str, id: &str) -> Result<Vec<CommonImage>, RustyTubeError> {
+        let thumbnails_url = format!("{}/api/v1/channels/{}?fields=authorThumbnails", server, id);
+        let thumbnails_json = fetch(&thumbnails_url).await?;
+        let thumbnails = serde_json::from_str(&thumbnails_json)?;
+        Ok(thumbnails)
+    }
+
     pub async fn fetch_channel_thumb(server: &str, id: &str) -> Result<ChannelThumb, RustyTubeError> {
         let thumbnails_url = format!("{}/api/v1/channels/{}?fields=author,authorId,authorThumbnails", server, id);
         let thumbnails_json = fetch(&thumbnails_url).await?;
@@ -135,6 +142,7 @@ pub struct ChannelPlaylists {
     pub playlists: Vec<CommonPlaylist>,
     pub continuation: Option<String>
 }
+
 
 
 
