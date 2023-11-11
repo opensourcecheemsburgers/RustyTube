@@ -41,10 +41,8 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 
     let img_loaded = create_rw_signal(false);
     let image_classes = move || match img_loaded.get() {
-        true => {
-            "w-[30%] aspect-video object-center object-cover bg-base-content rounded-lg".to_string()
-        }
-        false => "animate-pulse w-[30%] aspect-video bg-base-content rounded-lg".to_string(),
+        true => "w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string(),
+        false => "animate-pulse w-[30%] aspect-video bg-neutral rounded-lg".to_string(),
     };
 
     view! {
@@ -70,21 +68,21 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 #[component]
 pub fn RecommendedVideoPlaceholder() -> impl IntoView {
     view! {
-        <div class="bg-base-200 flex w-[45vw] flex-col rounded-lg p-4">
+        <div class="bg-base-200 flex flex-col rounded-lg p-4">
             <div class="flex flex-col space-y-4 rounded-lg pr-4">
                 <div class="flex flex-row space-x-6">
-                    <div class="bg-base-content aspect-video w-[45%] animate-pulse rounded-xl object-cover object-center"></div>
+                    <div class="bg-neutral aspect-video w-[45%] animate-pulse rounded-xl object-cover object-center"></div>
                     <div class="flex w-[55%] flex-col space-y-4">
                         <div class="flex flex-col space-y-2">
-                            <div class="bg-base-content h-3 w-full animate-pulse rounded-xl"></div>
-                            <div class="bg-base-content h-3 w-[60%] animate-pulse rounded-xl"></div>
+                            <div class="bg-neutral h-3 w-full animate-pulse rounded-xl"></div>
+                            <div class="bg-neutral h-3 w-[60%] animate-pulse rounded-xl"></div>
                         </div>
                         <div class="flex flex-row items-center space-x-2">
-                            <div class="bg-base-content h-2 w-[40%] animate-pulse rounded-xl"></div>
-                            <div class="bg-base-content h-1 w-1 animate-pulse rounded-full"></div>
-                            <div class="bg-base-content h-2 w-[25%] animate-pulse rounded-xl"></div>
-                            <div class="bg-base-content h-1 w-1 animate-pulse rounded-full"></div>
-                            <div class="bg-base-content h-2 w-[20%] animate-pulse rounded-xl"></div>
+                            <div class="bg-neutral h-2 w-[40%] animate-pulse rounded-xl"></div>
+                            <div class="bg-neutral h-1 w-1 animate-pulse rounded-full"></div>
+                            <div class="bg-neutral h-2 w-[25%] animate-pulse rounded-xl"></div>
+                            <div class="bg-neutral h-1 w-1 animate-pulse rounded-full"></div>
+                            <div class="bg-neutral h-2 w-[20%] animate-pulse rounded-xl"></div>
                         </div>
                     </div>
                 </div>
