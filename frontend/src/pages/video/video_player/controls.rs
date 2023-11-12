@@ -23,10 +23,10 @@ pub fn VideoPlayerControls(captions: Vec<Caption>) -> impl IntoView {
             <div
                 id=VIDEO_CONTROLS_ID
                 on:mouseover=show_controls
-                class="video-controls absolute bottom-0 left-0 flex flex-col w-full group/controls"
+                class="absolute bottom-0 left-0 flex flex-col w-full group/controls"
             >
                 <ProgressBar/>
-                <div class=VIDEO_CONTROLS>
+                <div class="w-full bg-base-300 flex flex-row items-center justify-between rounded-b bg-opacity-50">
                     <div class="flex flex-row">
                         <PauseBtn/>
                         <VolumeKnob/>
@@ -42,7 +42,4 @@ pub fn VideoPlayerControls(captions: Vec<Caption>) -> impl IntoView {
         </AnimatedShow>
     }
 }
-
-const VIDEO_CONTROLS: &'static str =
-    "w-full bg-base-300 flex flex-row items-center justify-between rounded-b bg-opacity-50";
 
