@@ -40,6 +40,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
     let author = video.author;
     let author_id = video.author_id.clone();
     let author_url = video.author_url;
+    let sub_count_text = video.sub_count_text;
     let author_thumb_url = video
         .author_thumbnails
         .first()
@@ -122,12 +123,16 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
                         />
                         <div class="flex flex-col space-y-2">
                             <p class="text-xl font-semibold">{author.clone()}</p>
-                            <SubscribeBtn author=author author_id=author_id/>
+                            <SubscribeBtn
+                                author=author
+                                author_id=author_id
+                                sub_count_text=sub_count_text
+                            />
                         </div>
                     </div>
                     <div class="flex flex-row items-end justify-center space-x-2">
                         <DownloadsDropdown formats=formats title=title.clone()/>
-                        <ShareDropdown />
+                        <ShareDropdown/>
                     </div>
                 </div>
             </div>
@@ -285,19 +290,27 @@ pub fn ShareDropdown() -> impl IntoView {
     view! {
         <div class="dropdown dropdown-bottom dropdown-end z-20">
             <div tabindex="0" role="button" class="btn btn-circle btn-outline btn-accent">
-                <ShareIcon />
+                <ShareIcon/>
             </div>
 
-            <div tabindex="0" class="dropdown-content h-max w-max mt-2 space-y-4 rounded-lg bg-base-200 p-4 shadow-dropdown">
+            <div
+                tabindex="0"
+                class="dropdown-content h-max w-max mt-2 space-y-4 rounded-lg bg-base-200 p-4 shadow-dropdown"
+            >
                 <div tabindex="0" class="flex flex-row gap-2">
-                    <button on:click=set_rt_link_type class="btn btn-outline btn-accent btn-sm">RustyTube Link</button>
-                    <button on:click=set_yt_link_type class="btn btn-outline btn-accent btn-sm">YouTube Link</button>
+                    <button on:click=set_rt_link_type class="btn btn-outline btn-accent btn-sm">
+                        RustyTube Link
+                    </button>
+                    <button on:click=set_yt_link_type class="btn btn-outline btn-accent btn-sm">
+                        YouTube Link
+                    </button>
                 </div>
 
-                <div tabindex="0" class="flex h-max w-full flex-row items-center space-x-1 rounded-lg btn-accent px-3 py-1">
-                    <p class="font-mono text-xs text-accent-content">
-                        {link_text}
-                    </p>
+                <div
+                    tabindex="0"
+                    class="flex h-max w-full flex-row items-center space-x-1 rounded-lg btn-accent px-3 py-1"
+                >
+                    <p class="font-mono text-xs text-accent-content">{link_text}</p>
                 </div>
 
                 <div tabindex="0" class="form-control">
@@ -323,8 +336,11 @@ pub fn ShareDropdown() -> impl IntoView {
 
 
 #[component]
-pub fn SubscribeBtn(author: String, author_id: String) -> impl IntoView {
+pub fn SubscribeBtn(author: String, author_id: String, sub_count_text: String) -> impl IntoView {
     let subscriptions_ctx = expect_context::<SubscriptionsCtx>();
+
+    let author = StoredValue::new(author);
+    let author_id = StoredValue::new(author_id);
 
     let add_sub = create_action(|args: &(String, String, SubscriptionsCtx)| {
         let name = args.0.clone();
@@ -343,9 +359,8 @@ pub fn SubscribeBtn(author: String, author_id: String) -> impl IntoView {
         }
     });
 
-    let author_id_clone = author_id.clone();
     let is_subscribed = move || {
-        subscriptions_ctx.0.get().channels.into_iter().find(|sub| sub.id.eq_ignore_ascii_case(&author_id_clone)).is_some()
+        subscriptions_ctx.0.get().channels.into_iter().find(|sub| sub.id.eq_ignore_ascii_case(&author_id.get_value())).is_some()
     };
 
     let btn_text = move || match is_subscribed() {
@@ -353,23 +368,23 @@ pub fn SubscribeBtn(author: String, author_id: String) -> impl IntoView {
         false => "Subscribe",
     };
 
-    let author_id_clone = author_id.clone();
     let is_subscribed = move || {
-        subscriptions_ctx.0.get().channels.into_iter().find(|sub| sub.id.eq_ignore_ascii_case(&author_id_clone)).is_some()
+        subscriptions_ctx.0.get().channels.into_iter().find(|sub| sub.id.eq_ignore_ascii_case(&author_id.get_value())).is_some()
     };
 
-    let author = author.clone();
-    let author_id = author_id.clone();
     let on_click = move |_| {
         match is_subscribed() {
-            true => remove_sub.dispatch((author_id.clone(), subscriptions_ctx)),
-            false => add_sub.dispatch((author.clone(), author_id.clone(), subscriptions_ctx)),
+            true => remove_sub.dispatch((author_id.get_value(), subscriptions_ctx)),
+            false => add_sub.dispatch((author.get_value(), author_id.get_value(), subscriptions_ctx)),
         }    
     };
 
     view! {
         <button on:click=on_click class="btn btn-primary btn-xs">
-            {btn_text}
+            <div class="flex flex-row justify-between w-full">
+                <p>{btn_text}</p>
+                <p>{sub_count_text}</p>
+            </div>
         </button>
     }
 
@@ -388,6 +403,14 @@ pub fn VideoInfoPlaceholder() -> impl IntoView {
         </div>
     }
 }
+
+
+
+
+
+
+
+
 
 
 
