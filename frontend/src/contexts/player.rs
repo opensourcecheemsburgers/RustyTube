@@ -61,10 +61,15 @@ impl PlayerState {
     pub fn ready(&self) -> Result<bool, RustyTubeError> {
         let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
-        
+
         let ready = match is_webkit() {
             true => video.ready_state() >= 3 && audio.ready_state() >= 3,
-            false => self.video_ready.get() && self.audio_ready.get() && video.ready_state() >= 3 && audio.ready_state() >= 3,
+            false => {
+                self.video_ready.get()
+                    && self.audio_ready.get()
+                    && video.ready_state() >= 3
+                    && audio.ready_state() >= 3
+            }
         };
 
         Ok(ready)
@@ -165,11 +170,18 @@ impl PlayerState {
         let video_time = video.current_time();
         let audio_time = audio.current_time();
 
+        debug!("A: {} V: {}", audio_time, video_time);
+
         let initial_start = video_time < 3.0 || audio_time < 3.0;
-        let out_of_sync = video_time > audio_time + 0.175 || video_time + 0.175 < audio_time;
+        let out_of_sync = video_time > audio_time + 0.085 || video_time + 0.085 < audio_time;
         if !initial_start && out_of_sync {
-            video.set_current_time(audio.current_time());
+            video.set_current_time(audio_time);
         }
+
+        let video_time = video.current_time();
+        let audio_time = audio.current_time();
+
+        debug!("A: {} V: {}", audio_time, video_time);
 
         Ok(())
     }
@@ -177,16 +189,16 @@ impl PlayerState {
     pub fn seek(&self, time: f64) -> Result<(), RustyTubeError> {
         let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
         let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
-        
+
         self.pause()?;
         self.set_video_ready(false)?;
         self.playback_state.set(PlaybackState::Loading);
-        
+
         match is_webkit() {
             true => {
                 video.set_current_time(time);
                 audio.set_current_time(time);
-            },
+            }
             false => {
                 self.set_audio_ready(false)?;
                 let fast_seek_video = video.fast_seek(time);
@@ -195,13 +207,14 @@ impl PlayerState {
                     video.set_current_time(time);
                     audio.set_current_time(time);
                 }
-            },
+            }
         }
-        
+
         self.current_time.set(time);
-        self.current_time_str.set(utils::unix_to_hours_secs_mins(time));
+        self.current_time_str
+            .set(utils::unix_to_hours_secs_mins(time));
         self.pause()?;
-        self.play()?;        
+        self.play()?;
         Ok(())
     }
 
@@ -233,7 +246,8 @@ impl PlayerState {
         video.set_current_time(current_time);
         audio.set_current_time(current_time);
         self.current_time.set(current_time);
-        self.current_time_str.set(utils::unix_to_hours_secs_mins(current_time));
+        self.current_time_str
+            .set(utils::unix_to_hours_secs_mins(current_time));
         Ok(())
     }
 }
