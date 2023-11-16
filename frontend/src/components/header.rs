@@ -7,6 +7,7 @@ use web_sys::KeyboardEvent;
 use crate::components::{Tooltip, TooltipPosition, FerrisError};
 use crate::contexts::{InstancesCtx, ServerCtx, ThemeCtx};
 use crate::icons::{BackIcon, ForwardIcon, PaletteIcon, ReloadIcon, ServerIcon};
+use crate::themes::*;
 
 #[component]
 pub fn Header() -> impl IntoView {           
@@ -306,6 +307,16 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
 
 #[component]
 pub fn ThemeSelectDropdown() -> impl IntoView {
+    let dark_themes_view = DARK_THEMES
+        .into_iter()
+        .map(|theme| view! { <ThemeDropdownListItem name=theme/> })
+        .collect_view();
+
+    let light_themes_view = DARK_THEMES
+        .into_iter()
+        .map(|theme| view! { <ThemeDropdownListItem name=theme/> })
+        .collect_view();
+
     view! {
         <div class="dropdown dropdown-end">
             <Tooltip tip="Themes" position=TooltipPosition::Bottom>
@@ -318,53 +329,19 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
                 class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
             >
                 <div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
-
-                    {THEMES
-                        .into_iter()
-                        .map(|theme| view! { <ThemeDropdownListItem name=theme/> })
-                        .collect_view()}
-
+                    <h1>Dark Themes</h1>
+                    {dark_themes_view}
+                    <h1>Light Themes</h1>
+                    {light_themes_view}
                 </div>
             </ul>
         </div>
     }
 }
 
-pub const THEMES: &'static [&'static str] = &[
-    "rustytube",
-    "dracula",
-    "winter",
-    "night",
-    "synthwave",
-    "aqua",
-    "retro",
-    "cyberpunk",
-    "valentine",
-    "halloween",
-    "light",
-    "garden",
-    "forest",
-    "dark",
-    "black",
-    "lofi",
-    "pastel",
-    "fantasy",
-    "wireframe",
-    "luxury",
-    "cmyk",
-    "autumn",
-    "business",
-    "acid",
-    "lemonade",
-    "coffee",
-    "cupcake",
-    "bumblebee",
-    "emerald",
-    "corporate",
-    "dim",
-    "nord",
-    "sunset"
-];
+
+
+
 
 
 
