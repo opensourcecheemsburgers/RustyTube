@@ -308,7 +308,7 @@ pub fn ShareDropdown() -> impl IntoView {
 
                 <div
                     tabindex="0"
-                    class="flex h-max w-full flex-row items-center space-x-1 rounded-lg btn-accent px-3 py-1"
+                    class="flex h-max w-full flex-row items-center space-x-1 rounded-lg btn-accent px-3 py-1 bg-accent"
                 >
                     <p class="font-mono text-xs text-accent-content">{link_text}</p>
                 </div>
@@ -403,6 +403,8 @@ pub fn VideoInfoPlaceholder() -> impl IntoView {
         </div>
     }
 }
+
+
 
 
 
