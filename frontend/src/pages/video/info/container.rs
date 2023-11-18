@@ -109,7 +109,10 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
                     </div>
 
                     <div class="collapse-content pl-0">
-                        <div class="flex flex-col gap-y-4" inner_html=description></div>
+                        <div
+                            class="flex flex-col gap-y-4 [&_a]:link [&_a]:link-info [&_a]:no-underline"
+                            inner_html=description
+                        ></div>
                     </div>
                 </div>
 
@@ -403,6 +406,10 @@ pub fn VideoInfoPlaceholder() -> impl IntoView {
         </div>
     }
 }
+
+
+
+
 
 
 
