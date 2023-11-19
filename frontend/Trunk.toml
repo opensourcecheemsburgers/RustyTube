@@ -19,7 +19,6 @@ dist = "dist"
 cargo = false
 
 [tools]
-sass = "1.54.9"
 wasm_bindgen = "0.2.90"
 wasm_opt = "version_116"
 tailwindcss = "3.4.1"
