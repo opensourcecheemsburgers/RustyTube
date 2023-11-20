@@ -312,7 +312,7 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
         .map(|theme| view! { <ThemeDropdownListItem name=theme/> })
         .collect_view();
 
-    let light_themes_view = DARK_THEMES
+    let light_themes_view = LIGHT_THEMES
         .into_iter()
         .map(|theme| view! { <ThemeDropdownListItem name=theme/> })
         .collect_view();
@@ -338,14 +338,4 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
         </div>
     }
 }
-
-
-
-
-
-
-
-
-
-
 
