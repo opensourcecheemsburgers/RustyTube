@@ -131,8 +131,10 @@ fn Subs() -> impl IntoView {
     let expanded = expect_context::<ExpandedCtx>().0;
     let channel_thumbs_ctx = expect_context::<ChannelThumbsCtx>().0;
     view! {
-        <Suspense fallback=move || view! { <SubsPlaceholders/> }>
-            <div data-expanded=expanded class=SIDEBAR_SUBS_CLASSES>
+        <div data-expanded=expanded class=SIDEBAR_SUBS_CLASSES>
+            <Suspense fallback=move || {
+                view! { <SubsPlaceholders/> }
+            }>
                 {move || {
                     channel_thumbs_ctx
                         .get()
@@ -142,8 +144,8 @@ fn Subs() -> impl IntoView {
                         })
                 }}
 
-            </div>
-        </Suspense>
+            </Suspense>
+        </div>
     }
 }
 
