@@ -14,7 +14,15 @@
       "all": false,
       "shell": {
         "open": true
-      }
+      },
+      "dialog": {
+        "all": false,
+        "save": true
+      },
+      "fs": {
+        "all": false,
+        "writeFile": true
+      }    
     },
     "bundle": {
       "active": true,

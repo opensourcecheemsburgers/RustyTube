@@ -1,185 +1,142 @@
-use leptos::*;
-use invidious::{Subscriptions, CommonVideo, SubscriptionsVideos};
-use rustytube_error::RustyTubeError;
-use web_sys::{HtmlInputElement, Event};
 use gloo::file::Blob;
+use invidious::{CommonVideo, Subscriptions, SubscriptionsVideos};
+use leptos::*;
+use rustytube_error::RustyTubeError;
 use wasm_bindgen::JsCast;
+use web_sys::{Event, HtmlInputElement};
 
-use crate::components::{VideoPreviewCard, FerrisError, PlaceholderCardArray};
-use crate::contexts::{SubscriptionsCtx, SubsVideosCtx};
+use crate::components::{FerrisError, PlaceholderCardArray, VideoPreviewCard};
+use crate::contexts::{SubsVideosCtx, SubscriptionsCtx};
 use crate::icons::FerrisWaveIcon;
+use crate::pages::settings::ImportSubsButton;
 
 #[component]
 pub fn SubscriptionsSection() -> impl IntoView {
-	let subs = expect_context::<SubscriptionsCtx>().0;
+    let subs = expect_context::<SubscriptionsCtx>().0;
 
     let subs_view = move || match subs.get().channels.len() == 0 {
         true => view! { <ImportSubscriptions/> },
         false => view! { <SubscriptionsVideos/> },
     };
 
-	view! {
-    <div class="flex justify-center w-full mt-4">
-        <div class="w-[90%] flex flex-col gap-y-8">
-            <h1 class="text-2xl font-semibold">{"Subscriptions"}</h1>
-            {subs_view}
+    view! {
+        <div class="flex justify-center w-full mt-4">
+            <div class="w-[90%] flex flex-col gap-y-8">
+                <h1 class="text-2xl font-semibold">{"Subscriptions"}</h1>
+                {subs_view}
+            </div>
         </div>
-    </div>
-}
+    }
 }
 
 #[component]
 pub fn SubscriptionsVideos() -> impl IntoView {
-	let subs_videos_resource = expect_context::<SubsVideosCtx>().0;
+    let subs_videos_resource = expect_context::<SubsVideosCtx>().0;
 
-	view! {
-    <Suspense fallback=move || {
-        view! { <PlaceholderCardArray/> }
-    }>
-        {move || {
-            subs_videos_resource
-                .get()
-                .map(|subs_videos_res| {
-                    match subs_videos_res {
-                        Ok(subs_videos) => {
-                            view! { <SubscriptionsVideosInner subs_videos=subs_videos/> }
+    view! {
+        <Suspense fallback=move || {
+            view! { <PlaceholderCardArray/> }
+        }>
+            {move || {
+                subs_videos_resource
+                    .get()
+                    .map(|subs_videos_res| {
+                        match subs_videos_res {
+                            Ok(subs_videos) => {
+                                view! { <SubscriptionsVideosInner subs_videos=subs_videos/> }
+                            }
+                            Err(err) => view! { <FerrisError error=err/> },
                         }
-                        Err(err) => view! { <FerrisError error=err/> },
-                    }
-                })
-        }}
+                    })
+            }}
 
-    </Suspense>
-}
+        </Suspense>
+    }
 }
 
 #[component]
 pub fn SubscriptionsVideosInner(subs_videos: SubscriptionsVideos) -> impl IntoView {
-	let mut videos: Vec<Vec<CommonVideo>> = Vec::new();
-	let mut fails: Vec<RustyTubeError> = Vec::new();
+    let mut videos: Vec<Vec<CommonVideo>> = Vec::new();
+    let mut fails: Vec<RustyTubeError> = Vec::new();
 
-	subs_videos.into_iter().for_each(|sub| {
-		match sub {
-			Ok(sub_videos) => videos.push(sub_videos.videos),
-			Err(error) => fails.push(error)
-		}
-	});
+    subs_videos.into_iter().for_each(|sub| match sub {
+        Ok(sub_videos) => videos.push(sub_videos.videos),
+        Err(error) => fails.push(error),
+    });
 
-	let mut total_videos: Vec<CommonVideo> = videos.into_iter().flatten().collect();
-	total_videos.sort_by(|a, b| b.published.cmp(&a.published));
+    let mut total_videos: Vec<CommonVideo> = videos.into_iter().flatten().collect();
+    total_videos.sort_by(|a, b| b.published.cmp(&a.published));
 
-	let total_videos_len = total_videos.len();
+    let total_videos_len = total_videos.len();
 
-	let initial_len = match total_videos_len > 100 {
-		true => 100,
-		false => total_videos_len
-	};
-	let initial_videos = Vec::from(&total_videos[0..initial_len]);
-	let visible_videos = create_rw_signal(initial_videos);
+    let initial_len = match total_videos_len > 100 {
+        true => 100,
+        false => total_videos_len,
+    };
+    let initial_videos = Vec::from(&total_videos[0..initial_len]);
+    let visible_videos = create_rw_signal(initial_videos);
 
-	let videos_view = move || {
-		visible_videos.get().into_iter().map(|video| view! { <VideoPreviewCard video=video/> }
-		).collect_view()
-	};
+    let videos_view = move || {
+        visible_videos
+            .get()
+            .into_iter()
+            .map(|video| view! { <VideoPreviewCard video=video/> })
+            .collect_view()
+    };
 
-	let load_more = move |_| { load_more_videos(visible_videos, total_videos.clone()) };
+    let load_more = move |_| load_more_videos(visible_videos, total_videos.clone());
 
-	let view_more_btn = match visible_videos.get().len() == total_videos_len {
-		true => view! { <div></div> }.into_view(),
-		false => view! {
-    <div class="flex justify-center">
-        <button on:click=load_more class="btn btn-lg btn-primary btn-outline">
-            {"Load More"}
-        </button>
-    </div>
-}.into_view()
-	};
+    let view_more_btn = match visible_videos.get().len() == total_videos_len {
+        true => view! { <div></div> }.into_view(),
+        false => view! {
+            <div class="flex justify-center">
+                <button on:click=load_more class="btn btn-lg btn-primary btn-outline">
+                    {"Load More"}
+                </button>
+            </div>
+        }
+        .into_view(),
+    };
 
-	view! {
-    <div class="-ml-4 flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-auto scroll-smooth">
-        <div class="flex flex-row flex-wrap justify-between gap-y-8">{videos_view}</div>
-        {view_more_btn}
-    </div>
-}
+    view! {
+        <div class="-ml-4 flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-auto scroll-smooth">
+            <div class="flex flex-row flex-wrap justify-between gap-y-8">{videos_view}</div>
+            {view_more_btn}
+        </div>
+    }
 }
 
 #[component]
 pub fn ImportSubscriptions() -> impl IntoView {
-	view! {
-    <div class="min-h-full hero">
-        <div class="flex flex-col space-y-8">
-            <FerrisWaveIcon width=96/>
-            <div class="flex flex-row space-x-4">
-                <ImportSubscriptionsTutorial/>
-                <ImportSubscriptionsBtn/>
+    view! {
+        <div class="min-h-full hero">
+            <div class="flex flex-col space-y-8">
+                <FerrisWaveIcon width=96/>
+                <div class="flex flex-row justify-center space-x-4">
+                    <ImportSubscriptionsTutorial/>
+                    <ImportSubsButton/>
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
 }
 
 #[component]
 pub fn ImportSubscriptionsTutorial() -> impl IntoView {
-	view! {
-    <a
-        target="_blank"
-        class="btn btn-lg btn-outline btn-info"
-        href="https://docs.invidious.io/export-youtube-subscriptions/"
-    >
-        {"Tutorial"}
-    </a>
-}
-}
-
-#[component]
-pub fn ImportSubscriptionsBtn() -> impl IntoView {
-	let subs = expect_context::<SubscriptionsCtx>().0.write_only();
-
-	let parse_subs_file = create_action(|input: &(WriteSignal<Subscriptions>, Event)| {
-		let subs = input.0.clone();
-		let event = input.1.clone();
-
-		get_subs_from_file(subs, event)
-	});
-
-	let on_file_upload = move |event: Event| {
-		parse_subs_file.dispatch((subs, event));
-	};
-
-	view! {
-    <>
-        <label class="btn btn-lg btn-primary" for="subs_upload">
-            {"Import Subscriptions"}
-        </label>
-        <input
-            id="subs_upload"
-            type="file"
-            accept=".ron,.json,.csv"
-            multiple=false
-            on:change=on_file_upload
-            class="hidden"
-        />
-    </>
-}
-}
-
-async fn get_subs_from_file(subs: WriteSignal<Subscriptions>, event: Event) -> Result<(), RustyTubeError> {
-	let input: HtmlInputElement = event.target().unwrap().dyn_into().unwrap();
-	let filelist = input.files().ok_or(RustyTubeError::no_file_selected())?;
-	let file = filelist.get(0).ok_or(RustyTubeError::no_file_selected())?;
-	let blob: Blob = file.into();
-	let mut subscriptions = Subscriptions::read_subs(blob).await?;
-	subscriptions.save().await?;
-	subs.update(|existing_subscriptions| existing_subscriptions.channels.append(&mut subscriptions.channels));
-    
-	Ok(())
+    view! {
+        <a
+            target="_blank"
+            class="btn btn-lg btn-outline btn-info"
+            href="https://docs.invidious.io/export-youtube-subscriptions/"
+        >
+            {"Tutorial"}
+        </a>
+    }
 }
 
 fn load_more_videos(visible_videos: RwSignal<Vec<CommonVideo>>, total_videos: Vec<CommonVideo>) {
-	visible_videos
-		.update(|visible| {
-			let next_slice = &total_videos[(visible.len())..(visible.len() + 100)];
-			visible.extend_from_slice(next_slice);
-		});
+    visible_videos.update(|visible| {
+        let next_slice = &total_videos[(visible.len())..(visible.len() + 100)];
+        visible.extend_from_slice(next_slice);
+    });
 }
-
