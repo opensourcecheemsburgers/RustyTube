@@ -7,6 +7,8 @@ use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
 use web_sys::{HtmlAudioElement, HtmlVideoElement};
 
+use super::PlayerConfigCtx;
+
 pub const VIDEO_CONTAINER_ID: &'static str = "video_container";
 pub const VIDEO_PLAYER_ID: &'static str = "video_player";
 pub const VIDEO_CONTROLS_ID: &'static str = "video_controls";
@@ -170,18 +172,11 @@ impl PlayerState {
         let video_time = video.current_time();
         let audio_time = audio.current_time();
 
-        debug!("A: {} V: {}", audio_time, video_time);
-
         let initial_start = video_time < 3.0 || audio_time < 3.0;
-        let out_of_sync = video_time > audio_time + 0.085 || video_time + 0.085 < audio_time;
+        let out_of_sync = video_time > audio_time + 0.125 || video_time + 0.125 < audio_time;
         if !initial_start && out_of_sync {
             video.set_current_time(audio_time);
         }
-
-        let video_time = video.current_time();
-        let audio_time = audio.current_time();
-
-        debug!("A: {} V: {}", audio_time, video_time);
 
         Ok(())
     }
@@ -250,6 +245,18 @@ impl PlayerState {
             .set(utils::unix_to_hours_secs_mins(current_time));
         Ok(())
     }
+
+    pub fn set_volume(&self, volume: f64) -> Result<(), RustyTubeError> {
+        let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+        let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
+
+        video.set_volume(volume);
+        audio.set_volume(volume);
+        self.volume.set(volume);
+        expect_context::<VolumeCtx>().0 .1.set(volume);
+
+        Ok(())
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -280,4 +287,3 @@ impl PlayerStyle {
         }
     }
 }
-
