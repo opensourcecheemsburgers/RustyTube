@@ -1,4 +1,4 @@
-use crate::{Feed, YoutubeSubscriptions, NewpipeSubscriptions, Channel, ChannelVideos, ChannelThumb};
+use crate::{Feed, YoutubeSubscriptions, NewpipeSubscriptions, Channel, ChannelVideos, ChannelThumb, YoutubeSubscription, NewpipeSubscription};
 use gloo::storage::{LocalStorage, Storage};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
@@ -48,6 +48,10 @@ impl Subscriptions {
                 }
             }
         }
+    }
+
+    pub fn to_ron_string(&self) -> Result<String, RustyTubeError> {
+        Ok(ron::to_string(&self)?)
     }
 
     pub async fn save(&self) -> Result<(), RustyTubeError> {
@@ -118,11 +122,38 @@ async fn read_newpipe(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
     Ok(newpipe_subs.into())
 }
 
+impl Into<NewpipeSubscriptions> for Subscriptions {
+    fn into(self) -> NewpipeSubscriptions {
+        let subscriptions = self.channels.into_iter().map(|yt_sub| yt_sub.into()).collect::<Vec<NewpipeSubscription>>();
+        
+        NewpipeSubscriptions { app_version: "0.0.0".to_string(), app_version_int: 0, subscriptions  }
+    }  
+}
 
+impl Into<NewpipeSubscription> for Subscription {
+    fn into(self) -> NewpipeSubscription {
+        let service_id = 0;
+        let name = self.name;
+        let url = format!("https:://youtube.com/channel/{}", self.id);
+        
+        NewpipeSubscription { service_id, name, url }
+    }
+}
 
+impl Into<YoutubeSubscriptions> for Subscriptions {
+    fn into(self) -> YoutubeSubscriptions {
+        let subscriptions = self.channels.into_iter().map(|yt_sub| yt_sub.into()).collect::<Vec<YoutubeSubscription>>();
+        
+        YoutubeSubscriptions { subscriptions }
+    }  
+}
 
-
-
-
-
-
+impl Into<YoutubeSubscription> for Subscription {
+    fn into(self) -> YoutubeSubscription {
+        let channel_id = self.id.clone();
+        let channel_url = format!("https:://youtube.com/channel/{}", self.id);
+        let channel_title = self.name;
+    
+        YoutubeSubscription { channel_id, channel_url, channel_title }
+    }
+}
