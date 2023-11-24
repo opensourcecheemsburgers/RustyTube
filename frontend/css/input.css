@@ -49,20 +49,6 @@
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
   }
-
-  ::-webkit-scrollbar {
-    width: 4px !important;
-    cursor: grab !important;
-  }
-
-  ::-webkit-scrollbar-track {}
-
-  ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--bc)) !important;
-    border-radius: 6px !important;
-    border: 4px hsl(var(--bc)) solid !important;
-    background-clip: padding-box !important;
-  }
 }
 
 @layer base {
