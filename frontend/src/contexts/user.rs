@@ -1,6 +1,9 @@
-use invidious::{fetch_instance_info, Instances, Subscriptions, SubscriptionsFetch, Subscription, ChannelThumb};
+use invidious::{
+	fetch_instance_info, ChannelThumb, Instances, Subscription, Subscriptions, SubscriptionsFetch,
+};
 use leptos::*;
 use rustytube_error::RustyTubeError;
+
 use crate::contexts::ServerCtx;
 
 #[derive(Copy, Clone)]
@@ -9,8 +12,8 @@ pub struct SubscriptionsCtx(pub RwSignal<Subscriptions>);
 impl SubscriptionsCtx {
 	pub async fn add_subscription(&self, id: &str, name: &str) -> Result<(), RustyTubeError> {
 		self.0.update(|subs| {
-				let sub = Subscription::new(id, name);
-				subs.channels.push(sub);
+			let sub = Subscription::new(id, name);
+			subs.channels.push(sub);
 		});
 		self.0.get().save().await?;
 		Ok(())
@@ -23,7 +26,12 @@ impl SubscriptionsCtx {
 }
 
 #[derive(Copy, Clone)]
-pub struct ChannelThumbsCtx(pub Resource<(String, Subscriptions), Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError>>);
+pub struct ChannelThumbsCtx(
+	pub  Resource<
+		(String, Subscriptions),
+		Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError>,
+	>,
+);
 
 #[derive(Copy, Clone)]
 pub struct SubsVideosCtx(pub Resource<(String, Subscriptions), SubscriptionsFetch>);
@@ -38,41 +46,20 @@ pub fn provide_user_contexts() {
 
 pub fn provide_user_resources() {
 	let subs = expect_context::<SubscriptionsCtx>().0;
-	let server = expect_context::<ServerCtx>().0.0;
+	let server = expect_context::<ServerCtx>().0 .0;
 
 	let subs_ctx = create_resource(
 		move || (server.get(), subs.get()),
-		|(server, subs)| async move {
-			subs.fetch_videos(&server, false).await
-		},
+		|(server, subs)| async move { subs.fetch_videos(&server, false).await },
 	);
 	subs_ctx.refetch();
-	let instances_ctx = create_resource(
-		move || (),
-		|_| async move {
-			fetch_instance_info().await
-		},
-	);
+	let instances_ctx = create_resource(move || (), |_| async move { fetch_instance_info().await });
 	let channel_thumbs_ctx = create_resource(
 		move || (server.get(), subs.get()),
-		|(server, subs)| async move {
-			subs.fetch_channel_thumbs(&server).await
-		},
+		|(server, subs)| async move { subs.fetch_channel_thumbs(&server).await },
 	);
 
 	provide_context(SubsVideosCtx(subs_ctx));
 	provide_context(InstancesCtx(instances_ctx));
 	provide_context(ChannelThumbsCtx(channel_thumbs_ctx));
 }
-
-
-
-
-
-
-
-
-
-
-
-

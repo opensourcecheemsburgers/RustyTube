@@ -10,9 +10,8 @@ pub use error::*;
 pub use header::Header;
 pub use page::Page;
 pub use preview_cards::{
-    ChannelPreviewCard, PlaceholderCardArray, PlaylistPreviewCard, PopularPreviewCard,
-    VideoPreviewCard,
+	ChannelPreviewCard, PlaceholderCardArray, PlaylistPreviewCard, PopularPreviewCard,
+	VideoPreviewCard,
 };
 pub use sidebar::*;
 pub use tooltip::{Tooltip, TooltipPosition};
-

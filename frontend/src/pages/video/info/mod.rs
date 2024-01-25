@@ -1,3 +1,3 @@
 mod container;
 
-pub use container::{VideoInfo, VideoInfoPlaceholder};
+pub use container::VideoInfo;

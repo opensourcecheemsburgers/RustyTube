@@ -157,7 +157,6 @@ RustyTube is still in early development. There are things missing and stuff that
 
 
 
-
 [website-url]: https://rustytube.rs
 
 [sweet-theme-url]: https://github.com/EliverLara/Sweet/tree/Ambar-Blue

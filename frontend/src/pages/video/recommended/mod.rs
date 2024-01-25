@@ -1,4 +1,3 @@
 mod section;
 
-pub use section::{RecommendedSection, RecommendedSectionPlaceholder};
-
+pub use section::RecommendedSection;

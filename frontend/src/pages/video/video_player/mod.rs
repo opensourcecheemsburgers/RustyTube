@@ -3,5 +3,4 @@ mod controls;
 mod player;
 
 pub use controls::VideoPlayerControls;
-pub use player::{VideoContainer, VideoPlaceholder};
-
+pub use player::VideoContainer;

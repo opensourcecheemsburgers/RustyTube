@@ -6,4 +6,3 @@ mod utils;
 mod video_player;
 
 pub use page::VideoPage;
-

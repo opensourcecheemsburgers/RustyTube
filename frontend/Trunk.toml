@@ -1,5 +1,5 @@
 [build]
-release = true
+release = false
 dist = "dist"
 public_url = "/"
 filehash = true
