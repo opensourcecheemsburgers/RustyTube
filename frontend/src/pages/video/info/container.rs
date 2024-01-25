@@ -383,8 +383,8 @@ pub fn SubscribeBtn(author: String, author_id: String, sub_count_text: String) -
 	};
 
 	view! {
-		<button on:click=on_click class="btn btn-primary btn-xs">
-			<div class="flex flex-row justify-between w-full">
+		<button on:click=on_click class="btn btn-primary btn-xs w-32">
+			<div class="flex flex-row justify-between gap-3">
 				<p>{btn_text}</p>
 				<p>{sub_count_text}</p>
 			</div>
