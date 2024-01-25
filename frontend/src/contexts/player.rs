@@ -62,12 +62,26 @@ impl PlayerState {
 		let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
 		let ready = match is_webkit() {
-			true => video.ready_state() >= 3 && audio.ready_state() >= 3,
+			true => {
+				if self.format.get().map_or(false, |format| format.is_audio_only()) {
+					audio.ready_state() >= 3
+				} else if self.format.get().map_or(false, |format| format.is_legacy()) {
+					video.ready_state() >= 3
+				} else {
+					video.ready_state() >= 3 && audio.ready_state() >= 3
+				}
+			}
 			false => {
-				self.video_ready.get()
-					&& self.audio_ready.get()
-					&& video.ready_state() >= 3
-					&& audio.ready_state() >= 3
+				if self.format.get().map_or(false, |format| format.is_audio_only()) {
+					self.audio_ready.get() && audio.ready_state() >= 3
+				} else if self.format.get().map_or(false, |format| format.is_legacy()) {
+					self.video_ready.get() && video.ready_state() >= 3
+				} else {
+					self.video_ready.get()
+						&& self.audio_ready.get()
+						&& video.ready_state() >= 3
+						&& audio.ready_state() >= 3
+				}
 			}
 		};
 
@@ -163,16 +177,21 @@ impl PlayerState {
 	}
 
 	pub fn sync(&self) -> Result<(), RustyTubeError> {
-		let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
-		let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
+		if let Some(Some(format)) = self.format.try_get() {
+			if !format.is_audio_only() && !format.is_legacy() {
+				let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+				let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
-		let video_time = video.current_time();
-		let audio_time = audio.current_time();
+				let video_time = video.current_time();
+				let audio_time = audio.current_time();
 
-		let initial_start = video_time < 3.0 || audio_time < 3.0;
-		let out_of_sync = video_time > audio_time + 0.125 || video_time + 0.125 < audio_time;
-		if !initial_start && out_of_sync {
-			video.set_current_time(audio_time);
+				let initial_start = video_time < 3.0 || audio_time < 3.0;
+				let out_of_sync =
+					video_time > audio_time + 0.125 || video_time + 0.125 < audio_time;
+				if !initial_start && out_of_sync {
+					video.set_current_time(audio_time);
+				}
+			}
 		}
 
 		Ok(())
