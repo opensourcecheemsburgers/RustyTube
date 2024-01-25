@@ -58,7 +58,7 @@
       }
     },
     "security": {
-      "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'wasm-unsafe-eval' 'self'; script-src blob: data: filesystem: ws: wss: http: https: tauri: 'wasm-unsafe-eval' 'self'"
+      "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'wasm-unsafe-eval' 'self'; style-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-inline' 'wasm-unsafe-eval' 'self'; script-src blob: data: filesystem: ws: wss: http: https: tauri: 'wasm-unsafe-eval' 'self'"
   },
     "updater": {
       "active": false
