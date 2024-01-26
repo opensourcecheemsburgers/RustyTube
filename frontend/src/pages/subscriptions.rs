@@ -98,7 +98,7 @@ pub fn SubscriptionsVideosInner(subs_videos: SubscriptionsVideos) -> impl IntoVi
 	};
 
 	view! {
-		<div class="-ml-4 flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-auto scroll-smooth">
+		<div class="-ml-4 flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
 			<div class="flex flex-row flex-wrap justify-between gap-y-8">{videos_view}</div>
 			{view_more_btn}
 		</div>

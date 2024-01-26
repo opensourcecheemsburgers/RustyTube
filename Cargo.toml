@@ -24,6 +24,9 @@ lto = "off"
 linker = "clang"
 rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/mold"]
 
+[workspace.target.x86_64-pc-windows-msvc]
+linker = "C:/Program Files/LLVM/bin/lld-link.exe"
+
 [workspace.dependencies]
 wasm-bindgen = "0.2.90"
 wasm-bindgen-cli = "0.2.90"

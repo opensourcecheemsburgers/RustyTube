@@ -81,7 +81,7 @@ pub fn TrendingVideos(trending: Trending) -> impl IntoView {
 		.collect_view();
 
 	view! {
-		<div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-auto scroll-smooth">
+		<div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
 			{trending_videos_view}
 		</div>
 	}

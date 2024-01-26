@@ -221,7 +221,7 @@ fn Content() -> impl IntoView {
 #[component]
 fn ContentContainer(children: Children) -> impl IntoView {
 	view! {
-		<div class="-ml-4 flex flex-row flex-wrap gap-y-12 pb-12 overflow-y-auto scroll-smooth">
+		<div class="-ml-4 flex flex-row flex-wrap gap-y-12 pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
 			{children()}
 		</div>
 	}

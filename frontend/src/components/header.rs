@@ -155,22 +155,6 @@ fn search(query: String) {
 	})
 }
 
-// #[component]
-// pub fn SearchSuggestions(suggestions: RwSignal<Suggestions>) -> impl IntoView {
-//     view! {
-//         <div class="z-20 dropdown dropdown-bottom dropdown-end">
-//             <div tabindex="0" role="button" class="btn btn-circle btn-outline btn-accent">
-//                 <ShareIcon/>
-//             </div>
-
-//             <ul
-//                 tabindex="0"
-//                 class="dropdown-content menu z-[1] h-max w-max space-y-4 rounded-b-lg bg-base-200
-// p-2 shadow-dropdown"             ></ul>
-//         </div>
-//     }
-// }
-
 #[component]
 pub fn InstanceSelectDropdown() -> impl IntoView {
 	let instances = expect_context::<InstancesCtx>().0;

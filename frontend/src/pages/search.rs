@@ -101,7 +101,7 @@ pub fn SearchResults(search_results: SearchResults, search_args: SearchArgs) -> 
 	};
 
 	view! {
-		<div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-auto scroll-smooth">
+		<div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
 			{search_results_view}
 			<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_results>
 				{"Load more"}

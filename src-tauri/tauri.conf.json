@@ -1,6 +1,6 @@
 {
   "build": {
-    "beforeBuildCommand": "cd frontend; trunk build;",
+    "beforeBuildCommand": "cd frontend && trunk build",
     "beforeDevCommand": "cd frontend && trunk serve",
     "devPath": "http://127.0.0.1:42069",
     "distDir": "../frontend/dist"
@@ -26,7 +26,7 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
+      "category": "Entertainment",
       "copyright": "",
       "deb": {
         "depends": []
@@ -54,7 +54,10 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "nsis": {
+          "installerIcon": "icons/icon.ico"
+        }
       }
     },
     "security": {

@@ -49,6 +49,23 @@
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
   }
+
+  ::-webkit-scrollbar {
+    @apply w-2.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral;
+    @apply rounded-md;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral/60;
+  }
 }
 
 @layer base {

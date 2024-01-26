@@ -28,6 +28,6 @@ build() {
 package() {
 	cd $srcdir/${pkgname}-${pkgver}
 	install -Dm755 target/x86_64-unknown-linux-gnu/release/${pkgname} -t ${pkgdir}/usr/bin
-	install -Dm644 src-tauri/icons/${pkgname}.svg ${pkgdir}/usr/share/icons/hicolor/scalable/apps/${pkgname}.svg
+	install -Dm644 src-tauri/icons/icon.svg ${pkgdir}/usr/share/icons/hicolor/scalable/apps/${pkgname}.svg
 	install -Dm644 ${srcdir}/${pkgname}.desktop -t ${pkgdir}/usr/share/applications
 }

@@ -328,8 +328,10 @@ data-[expanded=true]:transition-opacity
 data-[expanded=true]:duration-1000
 ";
 pub const SIDEBAR_SUBS_CLASSES: &'static str = "
-min-h-[calc(100vh-19.25rem)] max-h-[calc(100vh-19.25rem)] overflow-y-auto overflow-x-hidden \
-                                                scroll-smooth
+min-h-[calc(100vh-19.25rem)] max-h-[calc(100vh-19.25rem)] scroll-smooth
+
+overflow-y-hidden hover:overflow-y-scroll
+overflow-x-hidden
 
 data-[expanded=false]:w-16
 data-[expanded=true]:w-64

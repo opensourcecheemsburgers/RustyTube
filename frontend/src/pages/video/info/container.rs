@@ -37,7 +37,6 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 	let likes = video.likes.to_formatted_string(&Locale::en);
 	let author = video.author;
 	let author_id = video.author_id.clone();
-	let author_url = video.author_url;
 	let sub_count_text = video.sub_count_text;
 	let author_thumb_url = video.author_thumbnails.first().cloned().map(|thumb| thumb.url);
 	let description = video.description_html;
