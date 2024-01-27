@@ -166,12 +166,12 @@ RustyTube is still in early development. There are things missing and stuff that
 [daisyui-url]: https://daisyui.com
 [tauri-url]: https://tauri.app
 
-[linux-x86_64-generic-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0/rustytube_0.1.0.tar.gz
-[linux-x86_64-appimage-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0/rustytube_0.1.0_amd64.AppImage
+[linux-x86_64-generic-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0-alpha/rustytube_0.1.0.tar.gz
+[linux-x86_64-appimage-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0-alpha/rustytube_0.1.0_amd64.AppImage
 [aur-package-url]: https://aur.archlinux.org/packages/rustytube
-[debian-package-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0/rustytube_0.1.0_amd64.deb
-[windows-exe-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0/rustytube_0.1.0_x64-setup.exe
-[windows-msi-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0/rustytube_0.1.0_x64_en-US.msi
+[debian-package-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0-alpha/rustytube_0.1.0_amd64.deb
+[windows-exe-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0-alpha/rustytube_0.1.0_x64-setup.exe
+[windows-msi-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.0-alpha/rustytube_0.1.0_x64_en-US.msi
 
 [liberapay-link]: https://liberapay.com/opensourcecheemsburgers/donate
 [liberapay-donate-button-url]: https://liberapay.com/assets/widgets/donate.svg
