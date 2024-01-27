@@ -49,11 +49,11 @@ A desktop Youtube client written in Rust. Built with Leptos and Tauri; designed 
 | Platform         | Link                                                        |
 |------------------|-------------------------------------------------------------|
 | Web              | [rustytube.rs][website-url]                                 |
-| Linux (generic)  | [rustytube_0.1.0.tar.gz][linux-x86_64-generic-url]          |
-| Linux (appimage) | [rustytube_0.1.0_amd64.AppImage][linux-x86_64-appimage-url] |
+| Linux (generic)  | [RustyTube_0.1.0.tar.gz][linux-x86_64-generic-url]          |
+| Linux (appimage) | [RustyTube_0.1.0_amd64.AppImage][linux-x86_64-appimage-url] |
 | Arch             | [AUR package][aur-package-url]                              |
-| Debian           | [rustytube_0.1.0_amd64.deb][debian-package-url]             |
-| Windows (exe)    | [rustytube_0.1.0_x64-setup.exe][windows-exe-url]            |
+| Debian           | [RustyTube_0.1.0_amd64.deb][debian-package-url]             |
+| Windows (exe)    | [RustyTube_0.1.0_x64-setup.exe][windows-exe-url]            |
 | Mac              | [rustytube.rs][website-url]                                 |
 
 
