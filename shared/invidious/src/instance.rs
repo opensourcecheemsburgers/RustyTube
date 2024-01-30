@@ -78,11 +78,11 @@ pub struct Monitor {
 	pub url: Option<Value>,
 	#[serde(rename = "type")]
 	pub type_field: Option<String>,
-	pub daily_ratios: Vec<DailyRatio>,
+	pub daily_ratios: Option<Vec<DailyRatio>>,
 	#[serde(rename = "90dRatio")]
-	pub quarterly_ratio: QuarterlyRatio,
+	pub quarterly_ratio: Option<QuarterlyRatio>,
 	#[serde(rename = "30dRatio")]
-	pub monthly_ratio: MonthlyRatio,
+	pub monthly_ratio: Option<MonthlyRatio>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
