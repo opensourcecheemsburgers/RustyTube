@@ -1,6 +1,6 @@
 [package]
 name = "frontend"
-version = "0.0.0"
+version = "0.1.1"
 edition = "2021"
 
 #[dev-dependencies]

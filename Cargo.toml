@@ -2,7 +2,7 @@
 members = ["src-tauri", "frontend", "shared/*"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Stephen Power"]
 description = "A cross-platform Youtube frontend. Built with Leptos and Tauri; Designed with DaisyUI and Tailwind"
 license = "GPL"
@@ -24,8 +24,7 @@ lto = "off"
 linker = "clang"
 rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/mold"]
 
-[workspace.target.x86_64-pc-windows-msvc]
-linker = "C:/Program Files/LLVM/bin/lld-link.exe"
+
 
 [workspace.dependencies]
 wasm-bindgen = "0.2.90"

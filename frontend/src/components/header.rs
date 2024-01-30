@@ -81,13 +81,17 @@ pub fn Search() -> impl IntoView {
 
 	let on_search = move |_| {
 		let query = search_bar.get().unwrap().value();
-		search(query);
+		if !query.is_empty() {
+			search(query);
+		}
 	};
 
 	let check_for_enter_key = move |keyboard_event: KeyboardEvent| {
 		if keyboard_event.key_code() == 13 {
 			let query = search_bar.get().unwrap().value();
-			search(query);
+			if !query.is_empty() {
+				search(query);
+			}
 		}
 	};
 
