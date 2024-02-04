@@ -1,0 +1,72 @@
+[general]
+load_more = "Load more"
+
+[header]
+back = "Back"
+forward = "Forward"
+force_reload = "Force reload"
+search_placeholder = "Type your search here..."
+search = "Search"
+instances = "Instances"
+themes = "Themes"
+dark_themes = "Dark themes"
+light_themes = "Light themes"
+
+[sidebar]
+subscriptions = "Subscriptions"
+trending = "Trending"
+popular = "Popular"
+settings = "Settings"
+donate = "Donate"
+
+[subscriptions]
+import_subscriptions = "Import subscriptions"
+tutorial = "Tutorial"
+
+[trending]
+trending = "Trending"
+all = "All"
+music = "Music"
+gaming = "Gaming"
+movies = "Movies"
+
+[settings]
+subscriptions = "Subscriptions"
+manage = "Manage"
+import = "Import"
+delete_all = "Delete all"
+export = "Export"
+locale = "Locale"
+language = "Language"
+trending_region = "Trending region"
+themes = "Themes"
+
+[video]
+loading = "Loading..."
+
+[video.controls]
+play = "Play"
+pause = "Pause"
+volume = "Volume"
+formats = "Formats"
+full_window = "Full window"
+fullscreen = "Fullscreen"
+playback_speed = "Playback speed"
+captions = "Captions"
+
+[video.info]
+share = "Share"
+download = "Download"
+recommended = "Recommended"
+views = "%{view_count} views"
+
+[channel]
+subscribe = "Subscribe"
+subscribed = "Subscribed"
+videos = "Videos"
+playlists = "Playlists"
+shorts = "Shorts"
+livestreams = "Livestreams"
+
+[playlist]
+videos = "%{video_count} videos"

@@ -7,19 +7,20 @@ use super::{
 	video_player::VideoContainer,
 };
 use crate::{
-	contexts::{PlayerState, PlayerStyle, ServerCtx},
+	contexts::{LocaleCtx, PlayerState, PlayerStyle, ServerCtx},
 	utils::get_current_video_query_signal,
 };
 
 #[component]
 pub fn VideoPage() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id = get_current_video_query_signal().0;
 
 	let video_resource: VideoResource = create_resource(
-		move || (server.get(), id.get().unwrap_or_default()),
-		|(server, id)| async move {
-			let video = Video::fetch_video(&server, &id).await;
+		move || (server.get(), id.get().unwrap_or_default(), locale.get().to_invidious_lang()),
+		|(server, id, lang)| async move {
+			let video = Video::fetch_video(&server, &id, &lang).await;
 			video
 		},
 	);
@@ -47,4 +48,4 @@ pub fn VideoPage() -> impl IntoView {
 	}
 }
 
-pub type VideoResource = Resource<(String, String), Result<Video, RustyTubeError>>;
+pub type VideoResource = Resource<(String, String, String), Result<Video, RustyTubeError>>;

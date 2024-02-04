@@ -2,7 +2,10 @@ mod config;
 mod player;
 mod user;
 
-pub use config::{provide_config_context_slices, PlayerConfigCtx, ServerCtx, ThemeCtx, VolumeCtx};
+pub use config::{
+	provide_config_context_slices, LocaleCtx, PlayerConfigCtx, ServerCtx, ThemeCtx,
+	TrendingRegionCtx, VolumeCtx,
+};
 pub use player::{
 	PlaybackState, PlayerState, PlayerStyle, AUDIO_PLAYER_ID, VIDEO_CONTAINER_ID,
 	VIDEO_CONTROLS_ID, VIDEO_PLAYER_ID,

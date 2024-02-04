@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_router::NavigateOptions;
 use num_format::{Locale, ToFormattedString};
 
-use crate::icons::VerifiedIcon;
+use crate::{contexts::LocaleCtx, icons::VerifiedIcon};
 
 #[component]
 pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
@@ -20,6 +20,8 @@ pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
 
 #[component]
 pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let name = playlist.title;
 	let author = playlist.author;
 	let author_id = playlist.author_id;
@@ -43,7 +45,16 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 				</h2>
 				{verified_check}
 				<p>{"•"}</p>
-				<p>{video_count} {r#" videos"#}</p>
+				<p>
+					{move || {
+						t!(
+							"playlist.videos", video_count = playlist.video_count
+							.to_formatted_string(& locale.get().to_num_fmt()), locale = locale.get()
+							.id()
+						)
+					}}
+
+				</p>
 			</div>
 		</div>
 	}

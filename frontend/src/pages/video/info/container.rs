@@ -4,7 +4,7 @@ use num_format::{Locale, ToFormattedString};
 
 use crate::{
 	components::FerrisError,
-	contexts::{PlayerState, SubscriptionsCtx},
+	contexts::{LocaleCtx, PlayerState, SubscriptionsCtx},
 	icons::{CalendarIcon, DislikeIcon, DownloadIcon, LikeIcon, ShareIcon, ViewsIcon},
 	pages::video::page::VideoResource,
 	utils::get_current_video_query_signal,
@@ -31,10 +31,12 @@ pub fn VideoInfo(video_resource: VideoResource) -> impl IntoView {
 
 #[component]
 pub fn VideoInfoContent(video: Video) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let title = video.title;
 	let published = video.published_text;
-	let views = video.views.to_formatted_string(&Locale::en);
-	let likes = video.likes.to_formatted_string(&Locale::en);
+	let views = move || video.views.to_formatted_string(&locale.get().to_num_fmt());
+	let likes = move || video.likes.to_formatted_string(&locale.get().to_num_fmt());
 	let author = video.author;
 	let author_id = video.author_id.clone();
 	let sub_count_text = video.sub_count_text;
@@ -59,7 +61,11 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 			view! {
 				<div class="flex flex-row items-center gap-1">
 					<DislikeIcon/>
-					<p>{dislikes.unwrap_or_default()}</p>
+					<p>
+						{dislikes
+							.unwrap_or_default()
+							.to_formatted_string(&locale.get().to_num_fmt())}
+					</p>
 				</div>
 			}
 			.into_view()

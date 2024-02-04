@@ -1,7 +1,7 @@
 use invidious::VideoShort;
 use leptos::*;
 
-use crate::utils::get_current_video_query_signal;
+use crate::{contexts::LocaleCtx, utils::get_current_video_query_signal};
 
 #[component]
 pub fn RecommendedPreviewCard(video: VideoShort) -> impl IntoView {
@@ -33,13 +33,23 @@ pub fn Thumbnail(url: Option<String>) -> impl IntoView {
 
 #[component]
 pub fn Info(video: VideoShort) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	view! {
 		<div class="flex flex-col w-[70%] overflow-hidden">
 			<p class="text-sm">{video.title}</p>
 			<div class="flex flex-row flex-wrap items-center mt-2 space-x-1 text-sm">
 				<p>{video.author}</p>
 				<p>{"•"}</p>
-				<p>{video.views_text} views</p>
+				<p>
+					{move || {
+						t!(
+							"video.info.views", view_count = video.views_text, locale = & locale
+							.get().id()
+						)
+					}}
+
+				</p>
 			</div>
 		</div>
 	}

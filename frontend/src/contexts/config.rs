@@ -1,5 +1,7 @@
 use config::{Config, HomepageCategory, NetworkConfig, PlayerConfig, PrivacyConfig, UiConfig};
+use isocountry::CountryCode;
 use leptos::*;
+use locales::RustyTubeLocale;
 
 pub fn provide_config_context_slices(config: Config) {
 	let config = create_rw_signal(config);
@@ -42,6 +44,18 @@ pub fn provide_config_context_slices(config: Config) {
 		|config, privacy| config.privacy = privacy,
 	);
 
+	let locale_slice = create_slice(
+		config,
+		|config| config.region.locale.clone(),
+		|config, locale| config.region.locale = locale,
+	);
+
+	let trending_region_slice = create_slice(
+		config,
+		|config| config.region.trending_region.clone(),
+		|config, trending_region| config.region.trending_region = trending_region,
+	);
+
 	let server_ctx = ServerCtx(server_slice);
 	let theme_ctx = ThemeCtx(theme_slice);
 	let network_ctx = NetworkConfigCtx(network_slice);
@@ -50,6 +64,8 @@ pub fn provide_config_context_slices(config: Config) {
 	let privacy_ctx = PrivacyConfigCtx(privacy_slice);
 	let homepage_category_ctx = HomepageCategoryCtx(homepage_category_slice);
 	let volume_ctx = VolumeCtx(volume_slice);
+	let locale_ctx = LocaleCtx(locale_slice);
+	let trending_region_ctx = TrendingRegionCtx(trending_region_slice);
 
 	provide_context(config);
 	provide_context(server_ctx);
@@ -60,6 +76,8 @@ pub fn provide_config_context_slices(config: Config) {
 	provide_context(privacy_ctx);
 	provide_context(homepage_category_ctx);
 	provide_context(volume_ctx);
+	provide_context(locale_ctx);
+	provide_context(trending_region_ctx);
 }
 
 #[derive(Copy, Clone)]
@@ -84,3 +102,9 @@ pub struct HomepageCategoryCtx(pub (Signal<HomepageCategory>, SignalSetter<Homep
 
 #[derive(Copy, Clone)]
 pub struct VolumeCtx(pub (Signal<f64>, SignalSetter<f64>));
+
+#[derive(Copy, Clone)]
+pub struct LocaleCtx(pub (Signal<RustyTubeLocale>, SignalSetter<RustyTubeLocale>));
+
+#[derive(Copy, Clone)]
+pub struct TrendingRegionCtx(pub (Signal<CountryCode>, SignalSetter<CountryCode>));

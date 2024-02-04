@@ -1,5 +1,10 @@
 #![feature(let_chains)]
 
+#[macro_use]
+extern crate rust_i18n;
+
+i18n!("locales", fallback = "en-US");
+
 mod components;
 mod contexts;
 mod icons;
@@ -7,10 +12,13 @@ mod pages;
 mod themes;
 mod utils;
 
+use std::fmt::Debug;
+
 use config::Config;
 use console_error_panic_hook;
 use leptos::*;
 use leptos_router::*;
+use num_format::Format;
 pub use themes::*;
 
 use crate::{

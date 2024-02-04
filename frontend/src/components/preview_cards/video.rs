@@ -2,7 +2,7 @@ use invidious::CommonVideo;
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
 
-use crate::icons::VerifiedIcon;
+use crate::{contexts::LocaleCtx, icons::VerifiedIcon};
 
 #[component]
 pub fn VideoPreviewCard(video: CommonVideo) -> impl IntoView {
@@ -19,8 +19,9 @@ pub fn VideoPreviewCard(video: CommonVideo) -> impl IntoView {
 
 #[component]
 pub fn Info(video: CommonVideo) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let title = video.title;
-	let view_count = video.views.to_formatted_string(&Locale::en);
 	let author = video.author;
 	let author_id = video.author_id;
 
@@ -48,7 +49,15 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 				</h2>
 				{verified_check}
 				<p>{"•"}</p>
-				<p>{view_count} {r#" views"#}</p>
+				<p>
+					{move || {
+						t!(
+							"video.info.views", view_count = video.views.to_formatted_string(&
+							locale.get().to_num_fmt()), locale = & locale.get().id()
+						)
+					}}
+
+				</p>
 				<p>{"•"}</p>
 				<p>{published}</p>
 			</div>

@@ -4,20 +4,22 @@ use num_format::{Locale, ToFormattedString};
 
 use crate::{
 	components::FerrisError,
-	contexts::ServerCtx,
+	contexts::{LocaleCtx, ServerCtx},
 	icons::{LikeIcon, RepliesIcon},
 	utils::{get_current_video_query_signal, VideoQuerySignal},
 };
 
 #[component]
 pub fn CommentsSection() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let server = expect_context::<ServerCtx>().0 .0;
-
 	let video_id = get_current_video_query_signal();
 
 	let comments_resource = create_resource(
-		move || (server.get(), video_id.0.get().unwrap_or_default()),
-		|(server, id)| async move { Comments::fetch_comments(&server, &id, None).await },
+		move || {
+			(server.get(), video_id.0.get().unwrap_or_default(), locale.get().to_invidious_lang())
+		},
+		|(server, id, lang)| async move { Comments::fetch_comments(&server, &id, None, &lang).await },
 	);
 
 	view! {
@@ -41,6 +43,8 @@ pub fn CommentsSection() -> impl IntoView {
 
 #[component]
 pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let server = expect_context::<ServerCtx>().0 .0;
 	let comments_vec = create_rw_signal(comments.comments);
 	let continuation = create_rw_signal(comments.continuation);
@@ -54,8 +58,10 @@ pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
 		}
 	});
 
+	let lang = StoredValue::new(locale.get().to_invidious_lang());
+
 	let comment_fetch_args =
-		CommentFetchArgs { comments_vec, video_id, continuation, server, fetch_comments };
+		CommentFetchArgs { comments_vec, video_id, continuation, server, lang, fetch_comments };
 
 	let fetch_comments =
 		move |_| comment_fetch_args.fetch_comments.dispatch(comment_fetch_args.clone());
@@ -65,7 +71,7 @@ pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
 			&& comment_fetch_args.continuation.get().is_some())
 		.then_some(view! {
 			<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_comments>
-				{"Load more"}
+				{move || t!("general.load_more", locale = & locale.get().id())}
 			</button>
 		})
 		.into_view()
@@ -90,11 +96,13 @@ pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
 
 #[component]
 pub fn Comment(comment: Comment) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let content = comment.content_html;
 	let author = comment.author;
 	let author_thumb_url = comment.author_thumbnails.first().cloned().map(|thumb| thumb.url);
 	let published = comment.published_text;
-	let likes = comment.likes.to_formatted_string(&Locale::en);
+	let likes = move || comment.likes.to_formatted_string(&locale.get().to_num_fmt());
 	let reply_count = comment.replies_info.clone().map_or(0, |replies| replies.replies);
 	let reply_continuation = comment.replies_info.clone().map(|replies| replies.continuation);
 
@@ -112,6 +120,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 		continuation: create_rw_signal(reply_continuation),
 		replies_vec,
 		server: expect_context::<ServerCtx>().0 .0,
+		lang: StoredValue::new(locale.get().to_invidious_lang()),
 		video_id: get_current_video_query_signal(),
 		fetch_replies: fetch_replies_action,
 	};
@@ -284,6 +293,7 @@ async fn fetch_comments(args: CommentFetchArgs) {
 			args.server.get().as_str(),
 			args.video_id.0.get().unwrap().as_str(),
 			Some(token.as_str()),
+			&args.lang.get_value(),
 		)
 		.await
 		.unwrap();
@@ -300,6 +310,7 @@ async fn fetch_replies(args: ReplyFetchArgs) {
 			token.as_str(),
 			args.server.get().as_str(),
 			args.video_id.0.get().unwrap().as_str(),
+			&args.lang.get_value(),
 		)
 		.await
 		.unwrap();
@@ -315,6 +326,7 @@ pub struct CommentFetchArgs {
 	pub continuation: RwSignal<Option<String>>,
 	pub comments_vec: RwSignal<Vec<Comment>>,
 	pub server: Signal<String>,
+	pub lang: StoredValue<String>,
 	pub video_id: VideoQuerySignal,
 	pub fetch_comments: Action<Self, ()>,
 }
@@ -325,6 +337,7 @@ pub struct ReplyFetchArgs {
 	pub continuation: RwSignal<Option<String>>,
 	pub replies_vec: RwSignal<Vec<Comment>>,
 	pub server: Signal<String>,
+	pub lang: StoredValue<String>,
 	pub video_id: VideoQuerySignal,
 	pub fetch_replies: Action<Self, ()>,
 }

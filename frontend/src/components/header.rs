@@ -5,7 +5,7 @@ use web_sys::KeyboardEvent;
 
 use crate::{
 	components::{FerrisError, Tooltip, TooltipPosition},
-	contexts::{InstancesCtx, ServerCtx, ThemeCtx},
+	contexts::{InstancesCtx, LocaleCtx, ServerCtx, ThemeCtx},
 	icons::{BackIcon, ForwardIcon, PaletteIcon, ReloadIcon, ServerIcon},
 	themes::*,
 };
@@ -32,12 +32,17 @@ pub fn Header() -> impl IntoView {
 
 #[component]
 pub fn BackBtn() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	view! {
-		<Tooltip tip="Back" position=TooltipPosition::Bottom>
+		<div
+			class="tooltip tooltip-bottom tooltip-info"
+			data-tip=move || t!("header.back", locale = & locale.get().id())
+		>
 			<button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
 				<BackIcon/>
 			</button>
-		</Tooltip>
+		</div>
 	}
 }
 
@@ -47,12 +52,17 @@ fn back() -> Result<(), RustyTubeError> {
 
 #[component]
 pub fn ForwardBtn() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	view! {
-		<Tooltip tip="Forward" position=TooltipPosition::Bottom>
+		<div
+			class="tooltip tooltip-bottom tooltip-info"
+			data-tip=move || t!("header.forward", locale = & locale.get().id())
+		>
 			<button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
 				<ForwardIcon/>
 			</button>
-		</Tooltip>
+		</div>
 	}
 }
 
@@ -62,12 +72,17 @@ fn forward() -> Result<(), RustyTubeError> {
 
 #[component]
 pub fn ReloadBtn() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	view! {
-		<Tooltip tip="Force reload" position=TooltipPosition::Bottom>
+		<div
+			class="tooltip tooltip-bottom tooltip-info"
+			data-tip=move || t!("header.force_reload", locale = & locale.get().id())
+		>
 			<button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
 				<ReloadIcon/>
 			</button>
-		</Tooltip>
+		</div>
 	}
 }
 
@@ -77,6 +92,8 @@ fn reload() -> Result<(), RustyTubeError> {
 
 #[component]
 pub fn Search() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let search_bar = create_node_ref::<Input>();
 
 	let on_search = move |_| {
@@ -96,8 +113,10 @@ pub fn Search() -> impl IntoView {
 	let set_query = move |_| query.set(search_bar.get().unwrap().value());
 
 	let suggestions = create_resource(
-		move || (query.get(), server.get()),
-		|(query, server)| async move { Suggestions::fetch_suggestions(&query, &server).await },
+		move || (query.get(), server.get(), locale.get().to_invidious_lang()),
+		|(query, server, lang)| async move {
+			Suggestions::fetch_suggestions(&query, &server, &lang).await
+		},
 	);
 
 	let suggestions_view = move || {
@@ -129,11 +148,14 @@ pub fn Search() -> impl IntoView {
 					tabindex="0"
 					id="search"
 					type="text"
-					placeholder="Type your search here..."
+					placeholder=move || {
+						t!("header.search_placeholder", locale = & locale.get().id())
+					}
+
 					class="input input-bordered input-primary w-96 join-item "
 				/>
 				<button class="btn btn-primary join-item" on:click=on_search>
-					Search
+					{move || t!("header.search", locale = & locale.get().id())}
 				</button>
 			</div>
 			<ul
@@ -157,6 +179,8 @@ fn search(query: String) {
 
 #[component]
 pub fn InstanceSelectDropdown() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let instances = expect_context::<InstancesCtx>().0;
 
 	view! {
@@ -165,11 +189,15 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 			Some(instances) => {
 				view! {
 					<div class="dropdown dropdown-end">
-						<Tooltip tip="Instances" position=TooltipPosition::Bottom>
+						<div
+							class="tooltip tooltip-bottom tooltip-info"
+							data-tip=move || t!("header.instances", locale = & locale.get().id())
+						>
+
 							<label tabindex="0" class="btn btn-ghost rounded-btn">
 								<ServerIcon/>
 							</label>
-						</Tooltip>
+						</div>
 						<ul
 							tabindex="0"
 							class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
@@ -291,6 +319,8 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
 
 #[component]
 pub fn ThemeSelectDropdown() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let dark_themes_view = DARK_THEMES
 		.into_iter()
 		.map(|theme| view! { <ThemeDropdownListItem name=theme/> })
@@ -303,19 +333,23 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 
 	view! {
 		<div class="dropdown dropdown-end">
-			<Tooltip tip="Themes" position=TooltipPosition::Bottom>
+			<div
+				class="tooltip tooltip-bottom tooltip-info"
+				data-tip=move || t!("header.themes", locale = & locale.get().id())
+			>
+
 				<label tabindex="0" class="btn btn-ghost rounded-btn">
 					<PaletteIcon/>
 				</label>
-			</Tooltip>
+			</div>
 			<ul
 				tabindex="0"
 				class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
 			>
 				<div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
-					<h1>Dark Themes</h1>
+					<h1>{move || t!("header.dark_themes", locale = & locale.get().id())}</h1>
 					{dark_themes_view}
-					<h1>Light Themes</h1>
+					<h1>{move || t!("header.light_themes", locale = & locale.get().id())}</h1>
 					{light_themes_view}
 				</div>
 			</ul>

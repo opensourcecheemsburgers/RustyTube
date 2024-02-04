@@ -8,7 +8,7 @@ use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, PlaylistPreviewCard, VideoPreviewCard},
-	contexts::{ServerCtx, SubscriptionsCtx},
+	contexts::{LocaleCtx, ServerCtx, SubscriptionsCtx},
 };
 
 #[derive(Clone)]
@@ -21,12 +21,16 @@ enum ContentCategory {
 
 #[component]
 pub fn ChannelPage() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let channel = create_resource(
-		move || (server.get(), id_query.get().unwrap_or_default()),
-		|(server, id)| async move { Channel::fetch_channel(&server, &id).await },
+		move || {
+			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
+		},
+		|(server, id, lang)| async move { Channel::fetch_channel(&server, &id, &lang).await },
 	);
 
 	view! {
@@ -229,12 +233,17 @@ fn ContentContainer(children: Children) -> impl IntoView {
 
 #[component]
 fn Videos() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let videos = create_resource(
-		move || (server.get(), id_query.get().unwrap_or_default()),
-		|(server, id)| async move { Channel::fetch_channel_videos(&server, &id, None).await },
+		move || {
+			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
+		},
+		|(server, id, lang)| async move {
+			Channel::fetch_channel_videos(&server, &id, None, &lang).await
+		},
 	);
 
 	view! {
@@ -256,6 +265,7 @@ fn Videos() -> impl IntoView {
 
 #[component]
 fn VideosInner(videos: ChannelVideos) -> impl IntoView {
+	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(videos.continuation);
@@ -263,7 +273,7 @@ fn VideosInner(videos: ChannelVideos) -> impl IntoView {
 	let fetch_more_videos = create_action(|args: &VideosFetchArgs| fetch_more_videos(*args));
 
 	let video_fetch_args =
-		VideosFetchArgs::new(videos_vec, server, id, continuation, fetch_more_videos);
+		VideosFetchArgs::new(videos_vec, server, lang, id, continuation, fetch_more_videos);
 
 	let videos_view = move || {
 		videos_vec.get().into_iter().map(|video| view! { <VideoPreviewCard video/> }).collect_view()
@@ -293,6 +303,7 @@ async fn fetch_more_videos(args: VideosFetchArgs) -> Result<(), RustyTubeError> 
 		&args.server.get(),
 		&args.id.get(),
 		args.continuation.get().as_deref(),
+		&args.lang.get_value(),
 	)
 	.await?;
 	args.videos_vec.update(|videos| videos.append(&mut channel_videos.videos));
@@ -302,12 +313,17 @@ async fn fetch_more_videos(args: VideosFetchArgs) -> Result<(), RustyTubeError> 
 
 #[component]
 fn Shorts() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let shorts = create_resource(
-		move || (server.get(), id_query.get().unwrap_or_default()),
-		|(server, id)| async move { Channel::fetch_channel_shorts(&server, &id, None).await },
+		move || {
+			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
+		},
+		|(server, id, lang)| async move {
+			Channel::fetch_channel_shorts(&server, &id, None, &lang).await
+		},
 	);
 
 	view! {
@@ -329,6 +345,7 @@ fn Shorts() -> impl IntoView {
 
 #[component]
 fn ShortsInner(shorts: ChannelShorts) -> impl IntoView {
+	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(shorts.continuation);
@@ -336,7 +353,7 @@ fn ShortsInner(shorts: ChannelShorts) -> impl IntoView {
 	let fetch_more_shorts = create_action(|args: &ShortsFetchArgs| fetch_more_shorts(*args));
 
 	let shorts_fetch_args =
-		ShortsFetchArgs::new(shorts_vec, server, id, continuation, fetch_more_shorts);
+		ShortsFetchArgs::new(shorts_vec, server, lang, id, continuation, fetch_more_shorts);
 
 	let shorts_view = move || {
 		shorts_vec
@@ -370,6 +387,7 @@ async fn fetch_more_shorts(args: ShortsFetchArgs) -> Result<(), RustyTubeError> 
 		&args.server.get(),
 		&args.id.get(),
 		args.continuation.get().as_deref(),
+		&args.lang.get_value(),
 	)
 	.await?;
 	args.shorts_vec.update(|shorts| shorts.append(&mut channel_shorts.shorts));
@@ -379,12 +397,17 @@ async fn fetch_more_shorts(args: ShortsFetchArgs) -> Result<(), RustyTubeError> 
 
 #[component]
 fn Livestreams() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let livestreams = create_resource(
-		move || (server.get(), id_query.get().unwrap_or_default()),
-		|(server, id)| async move { Channel::fetch_channel_livestreams(&server, &id, None).await },
+		move || {
+			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
+		},
+		|(server, id, lang)| async move {
+			Channel::fetch_channel_livestreams(&server, &id, None, &lang).await
+		},
 	);
 
 	view! {
@@ -408,6 +431,7 @@ fn Livestreams() -> impl IntoView {
 
 #[component]
 fn LivestreamsInner(livestreams: ChannelLivestreams) -> impl IntoView {
+	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(livestreams.continuation);
@@ -418,6 +442,7 @@ fn LivestreamsInner(livestreams: ChannelLivestreams) -> impl IntoView {
 	let livestream_fetch_args = LivestreamsFetchArgs::new(
 		livestreams_vec,
 		server,
+		lang,
 		id,
 		continuation,
 		fetch_more_livestreams,
@@ -455,6 +480,7 @@ async fn fetch_more_livestreams(args: LivestreamsFetchArgs) -> Result<(), RustyT
 		&args.server.get(),
 		&args.id.get(),
 		args.continuation.get().as_deref(),
+		&args.lang.get_value(),
 	)
 	.await?;
 	args.livestreams_vec.update(|shorts| shorts.append(&mut channel_livestreams.livestreams));
@@ -464,12 +490,17 @@ async fn fetch_more_livestreams(args: LivestreamsFetchArgs) -> Result<(), RustyT
 
 #[component]
 fn Playlists() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let playlists = create_resource(
-		move || (server.get(), id_query.get().unwrap_or_default()),
-		|(server, id)| async move { Channel::fetch_channel_playlists(&server, &id, None).await },
+		move || {
+			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
+		},
+		|(server, id, lang)| async move {
+			Channel::fetch_channel_playlists(&server, &id, None, &lang).await
+		},
 	);
 
 	view! {
@@ -491,6 +522,7 @@ fn Playlists() -> impl IntoView {
 
 #[component]
 fn PlaylistsInner(playlists: ChannelPlaylists) -> impl IntoView {
+	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
 	let server = expect_context::<ServerCtx>().0 .0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(playlists.continuation);
@@ -498,8 +530,14 @@ fn PlaylistsInner(playlists: ChannelPlaylists) -> impl IntoView {
 	let fetch_more_playlists =
 		create_action(|args: &PlaylistsFetchArgs| fetch_more_playlists(*args));
 
-	let playlists_fetch_args =
-		PlaylistsFetchArgs::new(playlists_vec, server, id, continuation, fetch_more_playlists);
+	let playlists_fetch_args = PlaylistsFetchArgs::new(
+		playlists_vec,
+		server,
+		lang,
+		id,
+		continuation,
+		fetch_more_playlists,
+	);
 
 	let playlists_view = move || {
 		playlists_vec
@@ -533,6 +571,7 @@ async fn fetch_more_playlists(args: PlaylistsFetchArgs) -> Result<(), RustyTubeE
 		&args.server.get(),
 		&args.id.get(),
 		args.continuation.get().as_deref(),
+		&args.lang.get_value(),
 	)
 	.await?;
 	args.playlists_vec.update(|shorts| shorts.append(&mut channel_playlists.playlists));
@@ -574,6 +613,7 @@ fn ChannelSectionPlaceholder() -> impl IntoView {
 struct VideosFetchArgs {
 	pub videos_vec: RwSignal<Vec<CommonVideo>>,
 	pub server: Signal<String>,
+	pub lang: StoredValue<String>,
 	pub id: RwSignal<String>,
 	pub continuation: RwSignal<Option<String>>,
 	pub fetch_more_videos: Action<Self, Result<(), RustyTubeError>>,
@@ -583,11 +623,12 @@ impl VideosFetchArgs {
 	fn new(
 		videos_vec: RwSignal<Vec<CommonVideo>>,
 		server: Signal<String>,
+		lang: StoredValue<String>,
 		id: RwSignal<String>,
 		continuation: RwSignal<Option<String>>,
 		fetch_more_videos: Action<Self, Result<(), RustyTubeError>>,
 	) -> Self {
-		Self { videos_vec, server, id, continuation, fetch_more_videos }
+		Self { videos_vec, server, lang, id, continuation, fetch_more_videos }
 	}
 }
 
@@ -595,6 +636,7 @@ impl VideosFetchArgs {
 struct ShortsFetchArgs {
 	pub shorts_vec: RwSignal<Vec<CommonVideo>>,
 	pub server: Signal<String>,
+	pub lang: StoredValue<String>,
 	pub id: RwSignal<String>,
 	pub continuation: RwSignal<Option<String>>,
 	pub fetch_more_shorts: Action<Self, Result<(), RustyTubeError>>,
@@ -604,11 +646,12 @@ impl ShortsFetchArgs {
 	fn new(
 		shorts_vec: RwSignal<Vec<CommonVideo>>,
 		server: Signal<String>,
+		lang: StoredValue<String>,
 		id: RwSignal<String>,
 		continuation: RwSignal<Option<String>>,
 		fetch_more_shorts: Action<Self, Result<(), RustyTubeError>>,
 	) -> Self {
-		Self { shorts_vec, server, id, continuation, fetch_more_shorts }
+		Self { shorts_vec, server, lang, id, continuation, fetch_more_shorts }
 	}
 }
 
@@ -616,6 +659,7 @@ impl ShortsFetchArgs {
 struct LivestreamsFetchArgs {
 	pub livestreams_vec: RwSignal<Vec<CommonVideo>>,
 	pub server: Signal<String>,
+	pub lang: StoredValue<String>,
 	pub id: RwSignal<String>,
 	pub continuation: RwSignal<Option<String>>,
 	pub fetch_more_livestreams: Action<Self, Result<(), RustyTubeError>>,
@@ -625,11 +669,12 @@ impl LivestreamsFetchArgs {
 	fn new(
 		livestreams_vec: RwSignal<Vec<CommonVideo>>,
 		server: Signal<String>,
+		lang: StoredValue<String>,
 		id: RwSignal<String>,
 		continuation: RwSignal<Option<String>>,
 		fetch_more_livestreams: Action<Self, Result<(), RustyTubeError>>,
 	) -> Self {
-		Self { livestreams_vec, server, id, continuation, fetch_more_livestreams }
+		Self { livestreams_vec, server, lang, id, continuation, fetch_more_livestreams }
 	}
 }
 
@@ -637,6 +682,7 @@ impl LivestreamsFetchArgs {
 struct PlaylistsFetchArgs {
 	pub playlists_vec: RwSignal<Vec<CommonPlaylist>>,
 	pub server: Signal<String>,
+	pub lang: StoredValue<String>,
 	pub id: RwSignal<String>,
 	pub continuation: RwSignal<Option<String>>,
 	pub fetch_more_playlists: Action<Self, Result<(), RustyTubeError>>,
@@ -646,10 +692,11 @@ impl PlaylistsFetchArgs {
 	fn new(
 		playlists_vec: RwSignal<Vec<CommonPlaylist>>,
 		server: Signal<String>,
+		lang: StoredValue<String>,
 		id: RwSignal<String>,
 		continuation: RwSignal<Option<String>>,
 		fetch_more_playlists: Action<Self, Result<(), RustyTubeError>>,
 	) -> Self {
-		Self { playlists_vec, server, id, continuation, fetch_more_playlists }
+		Self { playlists_vec, server, lang, id, continuation, fetch_more_playlists }
 	}
 }

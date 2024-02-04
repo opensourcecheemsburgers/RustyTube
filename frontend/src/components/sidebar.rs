@@ -9,7 +9,7 @@ use crate::{
 		donate_modal::{DonateModal, DONATE_MODAL_ID},
 		FerrisError,
 	},
-	contexts::ChannelThumbsCtx,
+	contexts::{ChannelThumbsCtx, LocaleCtx},
 	icons::*,
 };
 
@@ -64,6 +64,9 @@ fn SidebarHeader() -> impl IntoView {
 
 #[component]
 fn SubscriptionsButton() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+	let subs_text = move || t!("sidebar.subscriptions", locale = &locale.get().id());
+
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_subs = move |_| {
@@ -72,13 +75,12 @@ fn SubscriptionsButton() -> impl IntoView {
 			_ = navigate("/subscriptions", Default::default());
 		})
 	};
-
 	view! {
-		<div data-expanded=expanded data-tip="Subscriptions" class=SIDEBAR_TOOLTIP_CLASSES>
+		<div data-expanded=expanded data-tip=subs_text class=SIDEBAR_TOOLTIP_CLASSES>
 			<button on:click=go_to_subs data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 				<SubscriptionsIcon/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
-					Subscriptions
+					{subs_text}
 				</p>
 			</button>
 		</div>
@@ -87,6 +89,9 @@ fn SubscriptionsButton() -> impl IntoView {
 
 #[component]
 fn TrendingButton() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+	let trending_text = move || t!("sidebar.trending", locale = &locale.get().id());
+
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_trending = move |_| {
@@ -97,11 +102,11 @@ fn TrendingButton() -> impl IntoView {
 	};
 
 	view! {
-		<div data-expanded=expanded data-tip="Trending" class=SIDEBAR_TOOLTIP_CLASSES>
+		<div data-expanded=expanded data-tip=trending_text class=SIDEBAR_TOOLTIP_CLASSES>
 			<button on:click=go_to_trending data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 				<TrendingIcon/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
-					Trending
+					{trending_text}
 				</p>
 			</button>
 		</div>
@@ -110,6 +115,9 @@ fn TrendingButton() -> impl IntoView {
 
 #[component]
 fn PopularButton() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+	let popular_text = move || t!("sidebar.popular", locale = &locale.get().id());
+
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_popular = move |_| {
@@ -120,11 +128,11 @@ fn PopularButton() -> impl IntoView {
 	};
 
 	view! {
-		<div data-expanded=expanded data-tip="Popular" class=SIDEBAR_TOOLTIP_CLASSES>
+		<div data-expanded=expanded data-tip=popular_text class=SIDEBAR_TOOLTIP_CLASSES>
 			<button on:click=go_to_popular data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 				<PopularIcon/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
-					Popular
+					{popular_text}
 				</p>
 			</button>
 		</div>
@@ -214,6 +222,8 @@ fn ChannelButtonPlaceholder(sub: Subscription) -> impl IntoView {
 
 #[component]
 fn SettingsButton() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_settings = move |_| {
@@ -223,17 +233,19 @@ fn SettingsButton() -> impl IntoView {
 		})
 	};
 
+	let settings_text = move || t!("sidebar.settings", locale = &locale.get().id());
+
 	view! {
 		<div
 			on:click=go_to_settings
 			data-expanded=expanded
-			data-tip="Settings"
+			data-tip=settings_text
 			class=SIDEBAR_TOOLTIP_CLASSES
 		>
 			<button data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 				<SettingsIcon/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
-					Settings
+					{settings_text}
 				</p>
 			</button>
 		</div>
@@ -242,6 +254,8 @@ fn SettingsButton() -> impl IntoView {
 
 #[component]
 fn DonateButton() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let open_donate_modal = move |_| {
@@ -251,12 +265,14 @@ fn DonateButton() -> impl IntoView {
 		}
 	};
 
+	let donate_text = move || t!("sidebar.donate", locale = &locale.get().id());
+
 	view! {
-		<div data-expanded=expanded data-tip="Donate" class=SIDEBAR_TOOLTIP_CLASSES>
+		<div data-expanded=expanded data-tip=donate_text class=SIDEBAR_TOOLTIP_CLASSES>
 			<button on:click=open_donate_modal data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 				<HeartIcon/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
-					Contribute
+					{donate_text}
 				</p>
 			</button>
 		</div>

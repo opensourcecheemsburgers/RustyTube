@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_router::NavigateOptions;
 use num_format::{Locale, ToFormattedString};
 
-use crate::icons::VerifiedIcon;
+use crate::{contexts::LocaleCtx, icons::VerifiedIcon};
 
 #[component]
 pub fn ChannelPreviewCard(channel: CommonChannel) -> impl IntoView {
@@ -31,8 +31,10 @@ pub fn ChannelPreviewCard(channel: CommonChannel) -> impl IntoView {
 
 #[component]
 pub fn Info(channel: CommonChannel) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let name = channel.name;
-	let subscriber_count = channel.subscribers.to_formatted_string(&Locale::en);
+	let subscriber_count = channel.subscribers.to_formatted_string(&locale.get().to_num_fmt());
 	let verified_check = channel.verified.then_some(view! { <VerifiedIcon/> });
 
 	view! {

@@ -3,7 +3,9 @@ use gloo::{
 	storage::{LocalStorage, Storage},
 };
 use invidious::{NewpipeSubscriptions, Subscriptions, SUBS_KEY};
+use isocountry::CountryCode;
 use leptos::*;
+use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
 use urlencoding::encode;
 use utils::get_element_by_id;
@@ -11,7 +13,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{Event, HtmlDialogElement, HtmlInputElement, MouseEvent};
 
 use crate::{
-	contexts::{SubscriptionsCtx, ThemeCtx},
+	contexts::{LocaleCtx, SubscriptionsCtx, ThemeCtx, TrendingRegionCtx},
 	themes::*,
 };
 
@@ -21,6 +23,7 @@ pub fn SettingsPage() -> impl IntoView {
 		<div class="flex flex-col w-full h-full items-center">
 			<div class="flex flex-col 2xl:w-[50vw] xl:w-[50vw] lg:w-[85vw] md:w-[90vw] sm:w-[95vw] my-[3vh] px-6 overscroll-contain overflow-visible overflow-y-auto gap-16">
 				<DataSettings/>
+				<RegionSettings/>
 				<ThemeSettings/>
 			</div>
 		</div>
@@ -33,14 +36,131 @@ pub fn InstanceSettings() -> impl IntoView {
 }
 
 #[component]
-pub fn DataSettings() -> impl IntoView {
+pub fn RegionSettings() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	view! {
 		<div class="flex flex-col">
-			<h1 class="font-sans text-3xl">Subscriptions</h1>
+			<h1 class="font-sans text-3xl">
+				{move || t!("settings.locale", locale = & locale.get().id())}
+			</h1>
 			<div class="divider"></div>
 			<div class="form-control w-full">
 				<label class="cursor-pointer label">
-					<p class="font-mono text-2xl">Manage</p>
+					<p class="font-mono text-2xl">
+						{move || t!("settings.language", locale = & locale.get().id())}
+					</p>
+					<div class="flex flex-row justify-end gap-4">
+						<LocaleDropdown/>
+					</div>
+				</label>
+				<div class="divider"></div>
+			</div>
+			<div class="form-control w-full">
+				<label class="cursor-pointer label">
+					<p class="font-mono text-2xl">
+						{move || t!("settings.trending_region", locale = & locale.get().id())}
+					</p>
+					<div class="flex flex-row justify-end gap-4">
+						<TrendingRegionDropdown/>
+					</div>
+				</label>
+				<div class="divider"></div>
+			</div>
+		</div>
+	}
+}
+
+#[component]
+pub fn LocaleDropdown() -> impl IntoView {
+	let locale_ctx = expect_context::<LocaleCtx>().0;
+
+	let locales_view = rust_i18n::available_locales!()
+		.into_iter()
+		.map(|available_locale| {
+			let locale = RustyTubeLocale::from_str(available_locale);
+			let set_locale = move |_| locale_ctx.1.set(locale);
+
+			view! {
+				<li>
+					<a
+						class="btn btn-sm btn-ghost h-fit btn-block justify-start text-left"
+						on:click=set_locale
+					>
+						<p>{locale.human_name()}</p>
+					</a>
+				</li>
+			}
+		})
+		.collect_view();
+
+	view! {
+		<div class="dropdown dropdown-end">
+			<div tabindex="0" role="button" class="btn btn-secondary m-1">
+				{move || locale_ctx.0.get().human_name()}
+			</div>
+			<ul
+				tabindex="0"
+				class="overflow-y-scroll dropdown-content p-3 shadow bg-base-300 rounded-xl w-64 max-h-80 h-fit z-10"
+			>
+				{locales_view}
+			</ul>
+		</div>
+	}
+}
+
+#[component]
+pub fn TrendingRegionDropdown() -> impl IntoView {
+	let trending_region_ctx = expect_context::<TrendingRegionCtx>().0;
+
+	let regions_view = isocountry::CountryCode::iter()
+		.map(|region| {
+			let set_region = move |_| trending_region_ctx.1.set(region.clone());
+
+			view! {
+				<li>
+					<a
+						class="btn btn-sm btn-ghost h-fit btn-block justify-start text-left"
+						on:click=set_region
+					>
+						<p>{region.name()}</p>
+					</a>
+				</li>
+			}
+		})
+		.collect_view();
+
+	view! {
+		<div class="dropdown dropdown-end">
+			<div tabindex="0" role="button" class="btn btn-secondary m-1">
+				{move || trending_region_ctx.0.get().name()}
+			</div>
+			<ul
+				tabindex="0"
+				class="overflow-y-scroll dropdown-content p-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
+			>
+
+				{regions_view}
+			</ul>
+		</div>
+	}
+}
+
+#[component]
+pub fn DataSettings() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
+	view! {
+		<div class="flex flex-col">
+			<h1 class="font-sans text-3xl">
+				{move || t!("settings.subscriptions", locale = & locale.get().id())}
+			</h1>
+			<div class="divider"></div>
+			<div class="form-control w-full">
+				<label class="cursor-pointer label">
+					<p class="font-mono text-2xl">
+						{move || t!("settings.manage", locale = & locale.get().id())}
+					</p>
 					<div class="flex flex-row justify-end gap-4">
 						<ImportSubsButton/>
 						<DeleteAllSubsButton/>
@@ -50,7 +170,9 @@ pub fn DataSettings() -> impl IntoView {
 			</div>
 			<div class="form-control w-full">
 				<label class="cursor-pointer label">
-					<p class="font-mono text-2xl">Export</p>
+					<p class="font-mono text-2xl">
+						{move || t!("settings.export", locale = & locale.get().id())}
+					</p>
 					<div class="flex flex-row justify-end gap-4">
 						<ExportSubsFreeTubeButton/>
 						<ExportSubsNewPipeButton/>
@@ -70,6 +192,8 @@ pub fn PlayerSettings() -> impl IntoView {
 
 #[component]
 pub fn ImportSubsButton() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let subs = expect_context::<SubscriptionsCtx>().0;
 
 	let parse_subs_file = create_action(|input: &(RwSignal<Subscriptions>, Event)| {
@@ -86,7 +210,7 @@ pub fn ImportSubsButton() -> impl IntoView {
 	view! {
 		<div>
 			<label class="btn btn-lg btn-primary" for="subs_upload">
-				Import
+				{move || t!("settings.import", locale = & locale.get().id())}
 			</label>
 			<input
 				id="subs_upload"
@@ -122,6 +246,8 @@ async fn get_subs_from_file(
 
 #[component]
 pub fn DeleteAllSubsButton() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let subs_ctx = expect_context::<SubscriptionsCtx>();
 
 	let modal_id = StoredValue::new("delete_subs_modal");
@@ -141,20 +267,22 @@ pub fn DeleteAllSubsButton() -> impl IntoView {
 
 	view! {
 		<button on:click=open_modal class="btn btn-lg btn-error">
-			Delete All
+			{move || t!("settings.delete_all", locale = & locale.get().id())}
 		</button>
 		<dialog id=modal_id class="modal">
 			<div class="modal-box">
-				<h3 class="font-bold text-lg">Delete Subscriptions</h3>
+				<h3 class="font-bold text-lg">
+					{move || t!("settings.delete_subscriptions", locale = & locale.get().id())}
+				</h3>
 				<p class="py-4">
 					This action will delete all subscriptions from the RustyTube database.
 				</p>
 				<div class="modal-action">
 					<button on:click=close_modal class="btn btn-ghost">
-						Close
+						{move || t!("settings.close", locale = & locale.get().id())}
 					</button>
 					<button on:click=delete_all_subs class="btn btn-error">
-						Delete All
+						{move || t!("settings.delete_all", locale = & locale.get().id())}
 					</button>
 				</div>
 			</div>
@@ -236,6 +364,8 @@ pub fn ExportSubsNewPipeButton() -> impl IntoView {
 
 #[component]
 fn ThemeSettings() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let dark_themes_view = DARK_THEMES
 		.into_iter()
 		.map(|theme| view! { <ThemeCard name=theme.to_string()/> })
@@ -248,7 +378,9 @@ fn ThemeSettings() -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col gap-3 w-full">
-			<h1 class="font-sans text-3xl">Themes</h1>
+			<h1 class="font-sans text-3xl">
+				{move || t!("settings.themes", locale = & locale.get().id())}
+			</h1>
 			<div class="divider"></div>
 			<div class="flex flex-wrap flex-row gap-4">{dark_themes_view} {light_themes_view}</div>
 		</div>

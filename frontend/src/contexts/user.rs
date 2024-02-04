@@ -4,6 +4,7 @@ use invidious::{
 use leptos::*;
 use rustytube_error::RustyTubeError;
 
+use super::LocaleCtx;
 use crate::contexts::ServerCtx;
 
 #[derive(Copy, Clone)]
@@ -34,7 +35,7 @@ pub struct ChannelThumbsCtx(
 );
 
 #[derive(Copy, Clone)]
-pub struct SubsVideosCtx(pub Resource<(String, Subscriptions), SubscriptionsFetch>);
+pub struct SubsVideosCtx(pub Resource<(String, Subscriptions, String), SubscriptionsFetch>);
 
 #[derive(Copy, Clone)]
 pub struct InstancesCtx(pub Resource<(), Result<Instances, RustyTubeError>>);
@@ -45,12 +46,13 @@ pub fn provide_user_contexts() {
 }
 
 pub fn provide_user_resources() {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let subs = expect_context::<SubscriptionsCtx>().0;
 	let server = expect_context::<ServerCtx>().0 .0;
 
 	let subs_ctx = create_resource(
-		move || (server.get(), subs.get()),
-		|(server, subs)| async move { subs.fetch_videos(&server, false).await },
+		move || (server.get(), subs.get(), locale.get().to_invidious_lang()),
+		|(server, subs, lang)| async move { subs.fetch_videos(&server, false, &lang).await },
 	);
 	subs_ctx.refetch();
 	let instances_ctx = create_resource(move || (), |_| async move { fetch_instance_info().await });

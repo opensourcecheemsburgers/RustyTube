@@ -2,6 +2,8 @@ use invidious::PopularItem;
 use leptos::*;
 use num_format::{Locale, ToFormattedString};
 
+use crate::contexts::LocaleCtx;
+
 #[component]
 pub fn PopularPreviewCard(video: PopularItem) -> impl IntoView {
 	view! {
@@ -17,8 +19,9 @@ pub fn PopularPreviewCard(video: PopularItem) -> impl IntoView {
 
 #[component]
 pub fn Info(video: PopularItem) -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
+
 	let title = video.title;
-	let view_count = video.views.to_formatted_string(&Locale::en);
 	let author = video.author;
 	let published = video.published_text;
 
@@ -39,7 +42,15 @@ pub fn Info(video: PopularItem) -> impl IntoView {
 					{author}
 				</h2>
 				<p>{"•"}</p>
-				<p>{view_count} {r#" views"#}</p>
+				<p>
+					{move || {
+						t!(
+							"video.info.views", view_count = video.views.to_formatted_string(&
+							locale.get().to_num_fmt()), locale = & locale.get().id()
+						)
+					}}
+
+				</p>
 				<p>{"•"}</p>
 				<p>{published}</p>
 			</div>
