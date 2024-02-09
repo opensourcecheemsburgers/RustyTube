@@ -1,4 +1,5 @@
 use gloo::history::query;
+use html_escape::decode_html_entities;
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
@@ -19,7 +20,12 @@ impl Suggestions {
 	) -> Result<Suggestions, RustyTubeError> {
 		let url = format!("{}/api/v1/search/suggestions?q={}&hl={}", server, query, lang);
 		let suggestions_json = fetch(&url).await?;
-		let suggestions = serde_json::from_str(&suggestions_json)?;
+		let mut suggestions = serde_json::from_str::<Suggestions>(&suggestions_json)?;
+		let decoded_suggestions = suggestions.suggestions.into_iter().map(|suggestion| {
+			decode_html_entities(&suggestion).to_string()
+		}).collect::<Vec<String>>();
+		suggestions.suggestions = decoded_suggestions;
+		
 		Ok(suggestions)
 	}
 }
