@@ -38,7 +38,7 @@ impl RustyTubeLocale {
 	}
 	pub fn to_num_fmt(&self) -> num_format::Locale {
 		match self {
-			RustyTubeLocale::EN_US => num_format::Locale::en_US_POSIX,
+			RustyTubeLocale::EN_US => num_format::Locale::en,
 			RustyTubeLocale::FR_FR => num_format::Locale::fr,
 		}
 	}
