@@ -168,7 +168,7 @@ RustyTube is still in early development. There are things missing and stuff that
 
 [linux-x86_64-generic-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1.tar.gz
 [linux-x86_64-appimage-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_amd64.AppImage
-[aur-package-url]: https://aur.archlinux.org/packages/rustytube
+[aur-package-url]: https://aur.archlinux.org/packages/rustytube-bin
 [debian-package-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_amd64.deb
 [windows-exe-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_x64-setup.exe
 [windows-msi-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_x64_en-US.msi
