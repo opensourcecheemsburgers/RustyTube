@@ -67,6 +67,24 @@ A desktop Youtube client written in Rust. Built with Leptos and Tauri; designed 
 
 
 
+## Building RustyTube
+
+Install Rust and Tauri. Go to the Tauri [prequisites](https://tauri.app/v1/guides/getting-started/prerequisites) page.
+
+After installing Rust and Tauri, execute the following script in the base of your RustyTube directory:
+
+```
+rustup update nightly-unknown-linux-gnu;
+rustup component add rust-src --toolchain nightly-unknown-linux-gnu;
+rustup target add wasm32-unknown-unknown;
+cargo install trunk;
+cargo install tauri-cli;
+cd frontend;
+npm install;
+```
+
+
+
 ## FAQ
 
 ### Windows says that RustyTube is a virus. Is it safe to install?
