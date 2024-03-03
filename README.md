@@ -49,11 +49,11 @@ A desktop Youtube client written in Rust. Built with Leptos and Tauri; designed 
 | Platform         | Link                                                        |
 |------------------|-------------------------------------------------------------|
 | Web              | [rustytube.rs][website-url]                                 |
-| Linux (generic)  | [RustyTube_0.1.1.tar.gz][linux-x86_64-generic-url]          |
-| Linux (appimage) | [RustyTube_0.1.1_amd64.AppImage][linux-x86_64-appimage-url] |
+| Linux (generic)  | [RustyTube_v0.1.1.tar.gz][linux-x86_64-generic-url]          |
+| Linux (appimage) | [RustyTube_v0.1.1_amd64.AppImage][linux-x86_64-appimage-url] |
 | Arch             | [AUR package][aur-package-url]                              |
-| Debian           | [RustyTube_0.1.1_amd64.deb][debian-package-url]             |
-| Windows (exe)    | [RustyTube_0.1.1_x64-setup.exe][windows-exe-url]            |
+| Debian           | [RustyTube_v0.1.1_amd64.deb][debian-package-url]             |
+| Windows (exe)    | [RustyTube_v0.1.1_x64-setup.exe][windows-exe-url]            |
 | Mac              | [rustytube.rs][website-url]                                 |
 
 
@@ -184,12 +184,12 @@ RustyTube is still in early development. There are things missing and stuff that
 [daisyui-url]: https://daisyui.com
 [tauri-url]: https://tauri.app
 
-[linux-x86_64-generic-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1.tar.gz
-[linux-x86_64-appimage-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_amd64.AppImage
+[linux-x86_64-generic-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.1/RustyTube_v0.1.1.tar.gz
+[linux-x86_64-appimage-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.1/RustyTube_v0.1.1_amd64.AppImage
 [aur-package-url]: https://aur.archlinux.org/packages/rustytube
-[debian-package-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_amd64.deb
-[windows-exe-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_x64-setup.exe
-[windows-msi-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/0.1.1-alpha/RustyTube_0.1.1_x64_en-US.msi
+[debian-package-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.1/RustyTube_v0.1.1_amd64.deb
+[windows-exe-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.1/RustyTube_v0.1.1_x64-setup.exe
+[windows-msi-url]: https://github.com/opensourcecheemsburgers/RustyTube/releases/download/v0.1.1/RustyTube_v0.1.1_x64_en-US.msi
 
 [liberapay-link]: https://liberapay.com/opensourcecheemsburgers/donate
 [liberapay-donate-button-url]: https://liberapay.com/assets/widgets/donate.svg
