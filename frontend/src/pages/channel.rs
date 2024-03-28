@@ -3,12 +3,13 @@ use invidious::{
 	CommonVideo,
 };
 use leptos::*;
-use leptos_router::create_query_signal;
+use leptos_router::{create_query_signal, NavigateOptions};
 use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, PlaylistPreviewCard, VideoPreviewCard},
 	contexts::{LocaleCtx, ServerCtx, SubscriptionsCtx},
+	icons::SubscriptionsIcon,
 };
 
 #[derive(Clone)]
@@ -178,7 +179,12 @@ fn SubscribeBtn() -> impl IntoView {
 
 #[component]
 fn ContentCategoryButtons() -> impl IntoView {
+	let locale = expect_context::<LocaleCtx>().0 .0;
 	let content_category = expect_context::<RwSignal<ContentCategory>>();
+	let channel = expect_context::<Channel>();
+
+	let rss_href = format!("https://www.youtube.com/feeds/videos.xml?channel_id={}", channel.id);
+	let rss_text = move || t!("channel.rss", locale = &locale.get().id());
 
 	view! {
 		<div class="flex flex-row gap-x-3">
@@ -206,6 +212,13 @@ fn ContentCategoryButtons() -> impl IntoView {
 			>
 				Playlists
 			</button>
+			<a
+				href=rss_href
+				data-tip=rss_text
+				class="btn btn-outline btn-sm rounded-lg font-normal normal-case tooltip tooltip-info flex flex-row flex-nowrap space-x-2"
+			>
+				<SubscriptionsIcon/>
+			</a>
 		</div>
 	}
 }
