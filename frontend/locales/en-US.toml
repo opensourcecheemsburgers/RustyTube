@@ -67,6 +67,7 @@ videos = "Videos"
 playlists = "Playlists"
 shorts = "Shorts"
 livestreams = "Livestreams"
+rss = "RSS Feed"
 
 [playlist]
 videos = "%{video_count} videos"
