@@ -31,6 +31,7 @@ gaming = "Jeux vidéo"
 movies = "Films"
 
 [settings]
+subscriptions = "Abonnements"
 manage = "Gérer"
 import = "Importer"
 delete_all = "Supprimer tout"

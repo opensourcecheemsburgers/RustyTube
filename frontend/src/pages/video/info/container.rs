@@ -1,10 +1,10 @@
 use invidious::{Dislikes, Formats, Video};
 use leptos::*;
-use num_format::{Locale, ToFormattedString};
+use num_format::ToFormattedString;
 
 use crate::{
 	components::FerrisError,
-	contexts::{LocaleCtx, PlayerState, SubscriptionsCtx},
+	contexts::{PlayerState, RegionConfigCtx, SubscriptionsCtx},
 	icons::{CalendarIcon, DislikeIcon, DownloadIcon, LikeIcon, ShareIcon, ViewsIcon},
 	pages::video::page::VideoResource,
 	utils::get_current_video_query_signal,
@@ -31,7 +31,7 @@ pub fn VideoInfo(video_resource: VideoResource) -> impl IntoView {
 
 #[component]
 pub fn VideoInfoContent(video: Video) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 
 	let title = video.title;
 	let published = video.published_text;

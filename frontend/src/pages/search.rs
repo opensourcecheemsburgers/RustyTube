@@ -12,19 +12,19 @@ use crate::{
 		ChannelPreviewCard, FerrisError, PlaceholderCardArray, PlaylistPreviewCard,
 		VideoPreviewCard,
 	},
-	contexts::{LocaleCtx, ServerCtx},
+	contexts::{NetworkConfigCtx, RegionConfigCtx},
 	utils::{get_current_video_query_signal, VideoQuerySignal},
 };
 
 #[component]
 pub fn SearchSection() -> impl IntoView {
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 
 	let query_map = use_query_map();
 	let search_args = move || get_search_args_from_query_map(query_map.get());
-	let language = expect_context::<LocaleCtx>().0 .0;
 	let search_results_resource = create_resource(
-		move || (server.get(), search_args(), language.get().to_invidious_lang()),
+		move || (server.get(), search_args(), locale.get().to_invidious_lang()),
 		|(server, search_args, lang)| async move {
 			SearchResults::fetch_search_results(&server, search_args, 1, &lang).await
 		},
@@ -66,16 +66,15 @@ pub fn SearchSection() -> impl IntoView {
 
 #[component]
 pub fn SearchResults(search_results: SearchResults, search_args: SearchArgs) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
+	let lang = expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang();
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 
 	let results_vec = create_rw_signal(vec![search_results.items]);
 	let fetch_search_results = create_action(|input: &SearchResultFetchArgs| {
 		let args = input.clone();
 		async move { fetch_search_results(args).await }
 	});
-	let server = expect_context::<ServerCtx>().0 .0;
 	let video_id = get_current_video_query_signal();
-	let lang = expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang();
 
 	let search_results_fetch_args = SearchResultFetchArgs {
 		search_args,
@@ -113,7 +112,7 @@ pub fn SearchResults(search_results: SearchResults, search_args: SearchArgs) -> 
 		<div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
 			{search_results_view}
 			<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_results>
-				{move || t!("general.load_more", locale = & locale.get().id())}
+				{t!("general.load_more")}
 			</button>
 		</div>
 	}
@@ -163,38 +162,3 @@ pub struct SearchResultFetchArgs {
 	pub video_id: VideoQuerySignal,
 	pub fetch_search_results: Action<Self, Result<(), RustyTubeError>>,
 }
-// #[component]
-// pub fn VideoResults(videos: Vec<CommonVideo>) -> impl IntoView {
-//     let videos_view = videos.into_iter().map(|video| view! { <VideoPreviewCard video=video/>
-// }).collect_view();
-
-//     view! {
-//         <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12
-// overflow-y-auto scroll-smooth">             {videos_view}
-//         </div>
-//     }
-// }
-
-// #[component]
-// pub fn ChannelResults(channels: Vec<CommonChannel>) -> impl IntoView {
-//     let channels_view = channels.into_iter().map(|channel| view! { <ChannelPreviewCard
-// channel=channel/> }).collect_view();
-
-//     view! {
-//         <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12
-// overflow-y-auto scroll-smooth">             {channels_view}
-//         </div>
-//     }
-// }
-
-// #[component]
-// pub fn PlaylistResults(playlists: Vec<CommonPlaylist>) -> impl IntoView {
-//     let playlists_view = playlists.into_iter().map(|playlist| view! { <PlaylistPreviewCard
-// playlist=playlist/> }).collect_view();
-
-//     view! {
-//         <div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12
-// overflow-y-auto scroll-smooth">             {playlists_view}
-//         </div>
-//     }
-// }

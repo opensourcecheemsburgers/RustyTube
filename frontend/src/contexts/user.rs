@@ -4,8 +4,7 @@ use invidious::{
 use leptos::*;
 use rustytube_error::RustyTubeError;
 
-use super::LocaleCtx;
-use crate::contexts::ServerCtx;
+use super::{NetworkConfigCtx, RegionConfigCtx};
 
 #[derive(Copy, Clone)]
 pub struct SubscriptionsCtx(pub RwSignal<Subscriptions>);
@@ -46,9 +45,9 @@ pub fn provide_user_contexts() {
 }
 
 pub fn provide_user_resources() {
-	let locale = expect_context::<LocaleCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 	let subs = expect_context::<SubscriptionsCtx>().0;
-	let server = expect_context::<ServerCtx>().0 .0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 
 	let subs_ctx = create_resource(
 		move || (server.get(), subs.get(), locale.get().to_invidious_lang()),

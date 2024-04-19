@@ -2,13 +2,12 @@ use leptos::*;
 use leptos_router::Outlet;
 
 use crate::{
-	components::{Header, Sidebar},
-	contexts::ThemeCtx,
+	components::{Header, Sidebar}, contexts::UiConfigCtx,
 };
 
 #[component]
 pub fn Page() -> impl IntoView {
-	let theme = expect_context::<ThemeCtx>().0 .0;
+	let theme = expect_context::<UiConfigCtx>().theme_slice.0;
 
 	let expanded = create_rw_signal(true.to_string());
 	provide_context(expanded);

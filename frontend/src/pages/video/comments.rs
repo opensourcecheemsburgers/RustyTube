@@ -3,16 +3,14 @@ use leptos::*;
 use num_format::{Locale, ToFormattedString};
 
 use crate::{
-	components::FerrisError,
-	contexts::{LocaleCtx, ServerCtx},
-	icons::{LikeIcon, RepliesIcon},
-	utils::{get_current_video_query_signal, VideoQuerySignal},
+	components::FerrisError, contexts::{NetworkConfigCtx, RegionConfigCtx}, icons::{LikeIcon, RepliesIcon}, 
+	utils::{get_current_video_query_signal, VideoQuerySignal, i18n}
 };
 
 #[component]
 pub fn CommentsSection() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let video_id = get_current_video_query_signal();
 
 	let comments_resource = create_resource(
@@ -43,13 +41,12 @@ pub fn CommentsSection() -> impl IntoView {
 
 #[component]
 pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
+	let video_id = get_current_video_query_signal();
+	
 	let comments_vec = create_rw_signal(comments.comments);
 	let continuation = create_rw_signal(comments.continuation);
-
-	let video_id = get_current_video_query_signal();
 
 	let fetch_comments = create_action(|input: &CommentFetchArgs| {
 		let args = input.clone();
@@ -71,7 +68,7 @@ pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
 			&& comment_fetch_args.continuation.get().is_some())
 		.then_some(view! {
 			<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_comments>
-				{move || t!("general.load_more", locale = & locale.get().id())}
+				{i18n("general.load_more")}
 			</button>
 		})
 		.into_view()
@@ -96,7 +93,8 @@ pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
 
 #[component]
 pub fn Comment(comment: Comment) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 
 	let content = comment.content_html;
 	let author = comment.author;
@@ -119,7 +117,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 		replies_visible,
 		continuation: create_rw_signal(reply_continuation),
 		replies_vec,
-		server: expect_context::<ServerCtx>().0 .0,
+		server,
 		lang: StoredValue::new(locale.get().to_invidious_lang()),
 		video_id: get_current_video_query_signal(),
 		fetch_replies: fetch_replies_action,

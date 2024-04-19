@@ -1,5 +1,5 @@
-use config::{Config, HomepageCategory, NetworkConfig, PlayerConfig, PrivacyConfig, UiConfig};
-use isocountry::CountryCode;
+use config::{Config, HomepageCategory, RememberPosition};
+use invidious::{AudioQuality, VideoQuality};
 use leptos::*;
 use locales::RustyTubeLocale;
 
@@ -7,104 +7,73 @@ pub fn provide_config_context_slices(config: Config) {
 	let config = create_rw_signal(config);
 	create_effect(move |_| config.get().save());
 
-	let server_slice = create_slice(
-		config,
-		|config| config.network.server.clone(),
-		|config, server| config.network.server = server,
-	);
-	let theme_slice = create_slice(
-		config,
-		|config| config.ui.theme.clone(),
-		|config, theme| config.ui.theme = theme,
-	);
-	let homepage_category_slice = create_slice(
-		config,
-		|config| config.ui.homepage.clone(),
-		|config, homepage| config.ui.homepage = homepage,
-	);
-	let volume_slice = create_slice(
-		config,
-		|config| config.player.volume.clone(),
-		|config, volume| config.player.volume = volume,
-	);
-	let network_slice = create_slice(
-		config,
-		|config| config.network.clone(),
-		|config, network| config.network = network,
-	);
-	let ui_slice = create_slice(config, |config| config.ui.clone(), |config, ui| config.ui = ui);
-	let player_slice = create_slice(
-		config,
-		|config| config.player.clone(),
-		|config, player| config.player = player,
-	);
-	let privacy_slice = create_slice(
-		config,
-		|config| config.privacy.clone(),
-		|config, privacy| config.privacy = privacy,
-	);
+	let server_ctx = NetworkConfigCtx {
+		server_slice: slice!(config.network.server),
+		custom_servers_slice: slice!(config.network.custom_servers),
+		auto_fetch_subs_slice: slice!(config.network.auto_fetch_subs),
+		fetch_rss_slice: slice!(config.network.fetch_rss),
+	};
 
-	let locale_slice = create_slice(
-		config,
-		|config| config.region.locale.clone(),
-		|config, locale| config.region.locale = locale,
-	);
+	let ui_ctx = UiConfigCtx {
+		theme_slice: slice!(config.ui.theme),
+		homepage_slice: slice!(config.ui.homepage),
+	};
 
-	let trending_region_slice = create_slice(
-		config,
-		|config| config.region.trending_region.clone(),
-		|config, trending_region| config.region.trending_region = trending_region,
-	);
+	let player_ctx = PlayerConfigCtx {
+		auto_play_slice: slice!(config.player.auto_play),
+		fast_forward_interval_slice: slice!(config.player.fast_forward_interval),
+		default_video_quality_slice: slice!(config.player.default_video_quality),
+		default_audio_quality_slice: slice!(config.player.default_audio_quality),
+		remember_position_slice: slice!(config.player.remember_position),
+		volume_slice: slice!(config.player.volume),
+	};
 
-	let server_ctx = ServerCtx(server_slice);
-	let theme_ctx = ThemeCtx(theme_slice);
-	let network_ctx = NetworkConfigCtx(network_slice);
-	let ui_ctx = UiConfigCtx(ui_slice);
-	let player_ctx = PlayerConfigCtx(player_slice);
-	let privacy_ctx = PrivacyConfigCtx(privacy_slice);
-	let homepage_category_ctx = HomepageCategoryCtx(homepage_category_slice);
-	let volume_ctx = VolumeCtx(volume_slice);
-	let locale_ctx = LocaleCtx(locale_slice);
-	let trending_region_ctx = TrendingRegionCtx(trending_region_slice);
+	let region_ctx = RegionConfigCtx {
+		locale_slice: slice!(config.region.locale),
+		trending_region_slice: slice!(config.region.trending_region),
+	};
 
-	provide_context(config);
+	let privacy_ctx = PrivacyConfigCtx { keep_history_slice: slice!(config.privacy.keep_history) };
+
 	provide_context(server_ctx);
-	provide_context(theme_ctx);
-	provide_context(network_ctx);
 	provide_context(ui_ctx);
 	provide_context(player_ctx);
+	provide_context(region_ctx);
 	provide_context(privacy_ctx);
-	provide_context(homepage_category_ctx);
-	provide_context(volume_ctx);
-	provide_context(locale_ctx);
-	provide_context(trending_region_ctx);
 }
 
-#[derive(Copy, Clone)]
-pub struct NetworkConfigCtx(pub (Signal<NetworkConfig>, SignalSetter<NetworkConfig>));
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub struct NetworkConfigCtx {
+	pub server_slice: (Signal<String>, SignalSetter<String>),
+	pub custom_servers_slice: (Signal<Option<Vec<String>>>, SignalSetter<Option<Vec<String>>>),
+	pub auto_fetch_subs_slice: (Signal<bool>, SignalSetter<bool>),
+	pub fetch_rss_slice: (Signal<bool>, SignalSetter<bool>),
+}
 
-#[derive(Copy, Clone)]
-pub struct UiConfigCtx(pub (Signal<UiConfig>, SignalSetter<UiConfig>));
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub struct UiConfigCtx {
+	pub theme_slice: (Signal<String>, SignalSetter<String>),
+	pub homepage_slice: (Signal<HomepageCategory>, SignalSetter<HomepageCategory>),
+}
 
-#[derive(Copy, Clone)]
-pub struct PlayerConfigCtx(pub (Signal<PlayerConfig>, SignalSetter<PlayerConfig>));
+#[derive(Copy, Clone, PartialEq)]
+pub struct PlayerConfigCtx {
+	pub auto_play_slice: (Signal<bool>, SignalSetter<bool>),
+	pub fast_forward_interval_slice: (Signal<u8>, SignalSetter<u8>),
+	pub default_video_quality_slice: (Signal<VideoQuality>, SignalSetter<VideoQuality>),
+	pub default_audio_quality_slice: (Signal<AudioQuality>, SignalSetter<AudioQuality>),
+	pub remember_position_slice: (Signal<RememberPosition>, SignalSetter<RememberPosition>),
+	pub volume_slice: (Signal<f64>, SignalSetter<f64>),
+}
 
-#[derive(Copy, Clone)]
-pub struct PrivacyConfigCtx(pub (Signal<PrivacyConfig>, SignalSetter<PrivacyConfig>));
-#[derive(Copy, Clone)]
-pub struct ServerCtx(pub (Signal<String>, SignalSetter<String>));
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub struct RegionConfigCtx {
+	pub locale_slice: (Signal<RustyTubeLocale>, SignalSetter<RustyTubeLocale>),
+	pub trending_region_slice:
+		(Signal<isocountry::CountryCode>, SignalSetter<isocountry::CountryCode>),
+}
 
-#[derive(Copy, Clone)]
-pub struct ThemeCtx(pub (Signal<String>, SignalSetter<String>));
-
-#[derive(Copy, Clone)]
-pub struct HomepageCategoryCtx(pub (Signal<HomepageCategory>, SignalSetter<HomepageCategory>));
-
-#[derive(Copy, Clone)]
-pub struct VolumeCtx(pub (Signal<f64>, SignalSetter<f64>));
-
-#[derive(Copy, Clone)]
-pub struct LocaleCtx(pub (Signal<RustyTubeLocale>, SignalSetter<RustyTubeLocale>));
-
-#[derive(Copy, Clone)]
-pub struct TrendingRegionCtx(pub (Signal<CountryCode>, SignalSetter<CountryCode>));
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub struct PrivacyConfigCtx {
+	pub keep_history_slice: (Signal<bool>, SignalSetter<bool>),
+}

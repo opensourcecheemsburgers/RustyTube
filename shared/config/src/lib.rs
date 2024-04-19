@@ -1,7 +1,7 @@
 mod tests;
 
 use gloo::storage::{LocalStorage, Storage};
-use invidious::{AudioQuality, QualityLabel};
+use invidious::{AudioQuality, VideoQuality};
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
@@ -9,7 +9,7 @@ use utils::save_to_browser_storage;
 
 use crate::RememberPosition::VideosOnly;
 
-#[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Serialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub struct NetworkConfig {
 	pub server: String,
@@ -18,12 +18,10 @@ pub struct NetworkConfig {
 	pub fetch_rss: bool,
 }
 
-#[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Serialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub struct UiConfig {
 	pub theme: String,
-	pub font_scale: u8,
-	pub ui_scale: u8,
 	pub homepage: HomepageCategory,
 }
 
@@ -32,19 +30,19 @@ pub struct UiConfig {
 pub struct PlayerConfig {
 	pub auto_play: bool,
 	pub fast_forward_interval: u8,
-	pub default_video_quality: QualityLabel,
+	pub default_video_quality: VideoQuality,
 	pub default_audio_quality: AudioQuality,
 	pub remember_position: RememberPosition,
 	pub volume: f64,
 }
 
-#[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Serialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub struct PrivacyConfig {
 	pub keep_history: bool,
 }
 
-#[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Serialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub struct RegionConfig {
 	pub locale: RustyTubeLocale,
@@ -61,7 +59,7 @@ pub struct Config {
 	pub region: RegionConfig,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum RememberPosition {
 	Always,
@@ -69,7 +67,7 @@ pub enum RememberPosition {
 	Never,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum HomepageCategory {
 	Trending,
@@ -91,11 +89,9 @@ impl Default for NetworkConfig {
 impl Default for UiConfig {
 	fn default() -> Self {
 		let theme = String::from("rustytube");
-		let font_scale = 100u8;
-		let ui_scale = 100u8;
 		let homepage = HomepageCategory::Subscriptions;
 
-		Self { theme, font_scale, ui_scale, homepage }
+		Self { theme, homepage }
 	}
 }
 
@@ -103,7 +99,7 @@ impl Default for PlayerConfig {
 	fn default() -> Self {
 		let auto_play = true;
 		let fast_forward_interval = 10u8;
-		let default_video_quality = QualityLabel::_1080p;
+		let default_video_quality = VideoQuality::_1080p;
 		let default_audio_quality = AudioQuality::Medium;
 		let remember_position = VideosOnly;
 		let volume = 0.5f64;
@@ -169,3 +165,4 @@ impl Config {
 		Ok(toml::from_str(toml_str)?)
 	}
 }
+

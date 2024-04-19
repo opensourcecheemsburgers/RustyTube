@@ -1,13 +1,14 @@
 use invidious::{Instance, InstanceInfo, SearchArgs, Suggestions};
-use leptos::{html::Input, window, *};
+use leptos::{html::Input, *};
 use rustytube_error::RustyTubeError;
 use web_sys::KeyboardEvent;
 
 use crate::{
-	components::{FerrisError, Tooltip, TooltipPosition},
-	contexts::{InstancesCtx, LocaleCtx, ServerCtx, ThemeCtx},
+	components::FerrisError,
+	contexts::{InstancesCtx, NetworkConfigCtx, RegionConfigCtx, UiConfigCtx},
 	icons::{BackIcon, ForwardIcon, PaletteIcon, ReloadIcon, ServerIcon},
 	themes::*,
+	utils::*,
 };
 
 #[component]
@@ -32,12 +33,10 @@ pub fn Header() -> impl IntoView {
 
 #[component]
 pub fn BackBtn() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	view! {
 		<div
 			class="tooltip tooltip-bottom tooltip-info"
-			data-tip=move || t!("header.back", locale = & locale.get().id())
+			data-tip=i18n("header.back")
 		>
 			<button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
 				<BackIcon/>
@@ -52,12 +51,10 @@ fn back() -> Result<(), RustyTubeError> {
 
 #[component]
 pub fn ForwardBtn() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	view! {
 		<div
 			class="tooltip tooltip-bottom tooltip-info"
-			data-tip=move || t!("header.forward", locale = & locale.get().id())
+			data-tip=i18n("header.forward")
 		>
 			<button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
 				<ForwardIcon/>
@@ -72,12 +69,10 @@ fn forward() -> Result<(), RustyTubeError> {
 
 #[component]
 pub fn ReloadBtn() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	view! {
 		<div
 			class="tooltip tooltip-bottom tooltip-info"
-			data-tip=move || t!("header.force_reload", locale = & locale.get().id())
+			data-tip=i18n("header.force_reload")
 		>
 			<button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
 				<ReloadIcon/>
@@ -92,8 +87,6 @@ fn reload() -> Result<(), RustyTubeError> {
 
 #[component]
 pub fn Search() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let search_bar = create_node_ref::<Input>();
 
 	let on_search = move |_| {
@@ -112,7 +105,8 @@ pub fn Search() -> impl IntoView {
 		}
 	};
 
-	let server = expect_context::<ServerCtx>().0 .0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 	let query = RwSignal::new(String::default());
 	let set_query = move |_| query.set(search_bar.get().unwrap().value());
 
@@ -152,14 +146,11 @@ pub fn Search() -> impl IntoView {
 					tabindex="0"
 					id="search"
 					type="text"
-					placeholder=move || {
-						t!("header.search_placeholder", locale = & locale.get().id())
-					}
-
-					class="input input-bordered input-primary w-96 join-item "
+					placeholder=i18n("header.search_placeholder")
+					class="input input-bordered input-primary w-96 join-item"
 				/>
 				<button class="btn btn-primary join-item" on:click=on_search>
-					{move || t!("header.search", locale = & locale.get().id())}
+					{i18n("header.search")}
 				</button>
 			</div>
 			<ul
@@ -183,8 +174,6 @@ fn search(query: String) {
 
 #[component]
 pub fn InstanceSelectDropdown() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let instances = expect_context::<InstancesCtx>().0;
 
 	view! {
@@ -195,7 +184,7 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 					<div class="dropdown dropdown-end">
 						<div
 							class="tooltip tooltip-bottom tooltip-info"
-							data-tip=move || t!("header.instances", locale = & locale.get().id())
+							data-tip=i18n("header.instances")
 						>
 
 							<label tabindex="0" class="btn btn-ghost rounded-btn">
@@ -235,7 +224,7 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 
 #[component]
 pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
-	let server = expect_context::<ServerCtx>().0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice;
 
 	let instance_name = instance.0;
 	let flag = instance.1.flag;
@@ -277,7 +266,7 @@ pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
 
 #[component]
 pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
-	let theme_ctx = expect_context::<ThemeCtx>().0;
+	let theme_ctx = expect_context::<UiConfigCtx>().theme_slice;
 
 	let theme_view = move || match theme_ctx.0.get().eq_ignore_ascii_case(name) {
 		true => view! {
@@ -323,8 +312,6 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
 
 #[component]
 pub fn ThemeSelectDropdown() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let dark_themes_view = DARK_THEMES
 		.into_iter()
 		.map(|theme| view! { <ThemeDropdownListItem name=theme/> })
@@ -339,7 +326,7 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 		<div class="dropdown dropdown-end">
 			<div
 				class="tooltip tooltip-bottom tooltip-info"
-				data-tip=move || t!("header.themes", locale = & locale.get().id())
+				data-tip=i18n("header.themes")
 			>
 
 				<label tabindex="0" class="btn btn-ghost rounded-btn">
@@ -351,9 +338,9 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 				class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
 			>
 				<div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
-					<h1>{move || t!("header.dark_themes", locale = & locale.get().id())}</h1>
+					<h1>{i18n("header.dark_themes")}</h1>
 					{dark_themes_view}
-					<h1>{move || t!("header.light_themes", locale = & locale.get().id())}</h1>
+					<h1>{i18n("header.light_themes")}</h1>
 					{light_themes_view}
 				</div>
 			</ul>

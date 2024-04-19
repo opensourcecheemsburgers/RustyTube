@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use rustytube_error::RustyTubeError;
 use crate::formats::{AudioFormat, AudioQuality, VideoFormat};
-use crate::formats::items::{ColorInfo, Container, Resolution, QualityLabel};
+use crate::formats::items::{ColorInfo, Container, Resolution, VideoQuality};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -22,7 +22,7 @@ pub struct AdaptiveFormat {
 	pub container: Option<Container>,
 	pub encoding: Option<String>,
 	pub resolution: Option<Resolution>,
-	pub quality_label: Option<QualityLabel>,
+	pub quality_label: Option<VideoQuality>,
 	pub color_info: Option<ColorInfo>,
 }
 

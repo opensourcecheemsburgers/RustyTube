@@ -1,21 +1,18 @@
-use invidious::{CountryCode, Trending, TrendingCategory, TrendingCategory::*};
+use invidious::{Trending, TrendingCategory};
 use leptos::*;
 
-use crate::{
-	components::{FerrisError, PlaceholderCardArray, VideoPreviewCard},
-	contexts::{LocaleCtx, ServerCtx, TrendingRegionCtx},
-};
+use crate::{components::{FerrisError, PlaceholderCardArray, VideoPreviewCard}, 
+	contexts::{NetworkConfigCtx, RegionConfigCtx}, utils::i18n};
 
 #[component]
 pub fn TrendingSection() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-	let region = expect_context::<TrendingRegionCtx>().0 .0;
-
-	let category = create_rw_signal(Default);
-	let server = expect_context::<ServerCtx>().0 .0;
-	let language = expect_context::<LocaleCtx>().0 .0;
+	let region_ctx = expect_context::<RegionConfigCtx>();
+	let trending_region = region_ctx.trending_region_slice.0;
+	let language = region_ctx.locale_slice.0;
+	let category = create_rw_signal(TrendingCategory::Default);
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let trending_resource = create_resource(
-		move || (server.get(), category.get(), region.get(), language.get().to_invidious_lang()),
+		move || (server.get(), category.get(), trending_region.get(), language.get().to_invidious_lang()),
 		|(server, category, region, lang)| async move {
 			Trending::fetch_trending(&server, category, region.alpha2(), &lang).await
 		},
@@ -24,9 +21,7 @@ pub fn TrendingSection() -> impl IntoView {
 	view! {
 		<div class="w-full flex justify-center mt-4">
 			<div class="w-[90%] flex flex-col gap-y-8">
-				<h1 class="font-semibold text-2xl">
-					{move || t!("trending.trending", locale = & locale.get().id())}
-				</h1>
+				<h1 class="font-semibold text-2xl">{i18n("trending.trending")}</h1>
 				<TrendingHeader category=category/>
 				<Suspense fallback=move || {
 					view! { <PlaceholderCardArray/> }
@@ -51,23 +46,21 @@ pub fn TrendingSection() -> impl IntoView {
 
 #[component]
 pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let header_btn_classes = "btn btn-sm btn-outline font-normal normal-case rounded-lg";
 
 	view! {
 		<div class="flex flex-row gap-x-3">
-			<button on:click=move |_| category.set(Default) class=header_btn_classes>
-				{move || t!("trending.all", locale = & locale.get().id())}
+			<button on:click=move |_| category.set(TrendingCategory::Default) class=header_btn_classes>
+				{i18n("trending.all")}
 			</button>
-			<button on:click=move |_| category.set(Music) class=header_btn_classes>
-				{move || t!("trending.music", locale = & locale.get().id())}
+			<button on:click=move |_| category.set(TrendingCategory::Music) class=header_btn_classes>
+				{i18n("trending.music")}
 			</button>
-			<button on:click=move |_| category.set(Gaming) class=header_btn_classes>
-				{move || t!("trending.gaming", locale = & locale.get().id())}
+			<button on:click=move |_| category.set(TrendingCategory::Gaming) class=header_btn_classes>
+				{i18n("trending.gaming")}
 			</button>
-			<button on:click=move |_| category.set(Movies) class=header_btn_classes>
-				{move || t!("trending.movies", locale = & locale.get().id())}
+			<button on:click=move |_| category.set(TrendingCategory::Movies) class=header_btn_classes>
+				{i18n("trending.movies")}
 			</button>
 		</div>
 	}
@@ -75,15 +68,11 @@ pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
 
 #[component]
 pub fn TrendingVideos(trending: Trending) -> impl IntoView {
-	let trending_videos_view = trending
-		.videos
-		.into_iter()
-		.map(|video| view! { <VideoPreviewCard video=video/> })
-		.collect_view();
-
 	view! {
 		<div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
-			{trending_videos_view}
+			<For each=move || trending.videos.clone() key=|video| video.id.clone() let:video>
+				<VideoPreviewCard video=video/>
+			</For>
 		</div>
 	}
 }

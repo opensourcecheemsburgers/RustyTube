@@ -5,7 +5,7 @@ mod tests {
     use crate::channel::Channel;
     use crate::{Comments, Replies, SearchResults};
     use crate::fetch::fetch;
-    use crate::formats::{Formats, VideoFormat, AudioFormat, LegacyFormat, AdaptiveFormat, QualityLabel, Resolution, Container};
+    use crate::formats::{Formats, VideoFormat, AudioFormat, LegacyFormat, AdaptiveFormat, VideoQuality, Resolution, Container};
     use crate::hidden::CountryCode;
     use crate::instance::fetch_instance_info;
     use crate::subs::{NewpipeSubscriptions, Subscriptions, YoutubeSubscriptions};
@@ -65,12 +65,12 @@ mod tests {
 
         let first = video_formats.first().unwrap().clone();
         assert_eq!(first.resolution, Resolution::_144p);
-        assert_eq!(first.quality_label, QualityLabel::_144p);
+        assert_eq!(first.quality_label, VideoQuality::_144p);
         assert_eq!(first.container.unwrap(), Container::MP4);
 
         let second = video_formats.last().unwrap().clone();
         assert_eq!(second.resolution, Resolution::_144p);
-        assert_eq!(second.quality_label, QualityLabel::_144p);
+        assert_eq!(second.quality_label, VideoQuality::_144p);
         assert_eq!(second.container.unwrap(), Container::WEBM);
     }
 

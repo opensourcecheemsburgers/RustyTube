@@ -1,9 +1,9 @@
 use invidious::CommonPlaylist;
 use leptos::*;
 use leptos_router::NavigateOptions;
-use num_format::{Locale, ToFormattedString};
+use num_format::{ToFormattedString};
 
-use crate::{contexts::LocaleCtx, icons::VerifiedIcon};
+use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon, utils::i18n};
 
 #[component]
 pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
@@ -20,12 +20,12 @@ pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
 
 #[component]
 pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 
 	let name = playlist.title;
 	let author = playlist.author;
 	let author_id = playlist.author_id;
-	let video_count = playlist.video_count.to_formatted_string(&Locale::en);
+	let video_count = playlist.video_count.to_formatted_string(&locale.get().to_num_fmt());
 	let verified_check = playlist.author_verified.then_some(view! { <VerifiedIcon/> });
 
 	let go_to_channel_page = move |_| {
@@ -46,14 +46,7 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 				{verified_check}
 				<p>{"•"}</p>
 				<p>
-					{move || {
-						t!(
-							"playlist.videos", video_count = playlist.video_count
-							.to_formatted_string(& locale.get().to_num_fmt()), locale = locale.get()
-							.id()
-						)
-					}}
-
+					{t!("playlist.videos", video_count = video_count, locale = &locale.get().id())}
 				</p>
 			</div>
 		</div>

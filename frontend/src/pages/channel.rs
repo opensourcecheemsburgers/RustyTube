@@ -8,7 +8,7 @@ use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, PlaylistPreviewCard, VideoPreviewCard},
-	contexts::{LocaleCtx, ServerCtx, SubscriptionsCtx},
+	contexts::{NetworkConfigCtx, RegionConfigCtx, SubscriptionsCtx},
 };
 
 #[derive(Clone)]
@@ -21,9 +21,8 @@ enum ContentCategory {
 
 #[component]
 pub fn ChannelPage() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let channel = create_resource(
@@ -233,8 +232,8 @@ fn ContentContainer(children: Children) -> impl IntoView {
 
 #[component]
 fn Videos() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let videos = create_resource(
@@ -265,8 +264,8 @@ fn Videos() -> impl IntoView {
 
 #[component]
 fn VideosInner(videos: ChannelVideos) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
-	let server = expect_context::<ServerCtx>().0 .0;
+	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(videos.continuation);
 	let videos_vec = RwSignal::new(videos.videos);
@@ -313,8 +312,8 @@ async fn fetch_more_videos(args: VideosFetchArgs) -> Result<(), RustyTubeError> 
 
 #[component]
 fn Shorts() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let shorts = create_resource(
@@ -345,8 +344,8 @@ fn Shorts() -> impl IntoView {
 
 #[component]
 fn ShortsInner(shorts: ChannelShorts) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
-	let server = expect_context::<ServerCtx>().0 .0;
+	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(shorts.continuation);
 	let shorts_vec = RwSignal::new(shorts.shorts);
@@ -397,8 +396,8 @@ async fn fetch_more_shorts(args: ShortsFetchArgs) -> Result<(), RustyTubeError> 
 
 #[component]
 fn Livestreams() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let livestreams = create_resource(
@@ -431,8 +430,8 @@ fn Livestreams() -> impl IntoView {
 
 #[component]
 fn LivestreamsInner(livestreams: ChannelLivestreams) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
-	let server = expect_context::<ServerCtx>().0 .0;
+	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(livestreams.continuation);
 	let livestreams_vec = RwSignal::new(livestreams.livestreams);
@@ -490,8 +489,8 @@ async fn fetch_more_livestreams(args: LivestreamsFetchArgs) -> Result<(), RustyT
 
 #[component]
 fn Playlists() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
 	let playlists = create_resource(
@@ -522,8 +521,8 @@ fn Playlists() -> impl IntoView {
 
 #[component]
 fn PlaylistsInner(playlists: ChannelPlaylists) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<LocaleCtx>().0 .0.get().to_invidious_lang());
-	let server = expect_context::<ServerCtx>().0 .0;
+	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(playlists.continuation);
 	let playlists_vec = RwSignal::new(playlists.playlists);

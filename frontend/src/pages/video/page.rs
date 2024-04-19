@@ -7,14 +7,14 @@ use super::{
 	video_player::VideoContainer,
 };
 use crate::{
-	contexts::{LocaleCtx, PlayerState, PlayerStyle, ServerCtx},
+	contexts::{NetworkConfigCtx, PlayerState, PlayerStyle, RegionConfigCtx},
 	utils::get_current_video_query_signal,
 };
 
 #[component]
 pub fn VideoPage() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-	let server = expect_context::<ServerCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
+	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = get_current_video_query_signal().0;
 
 	let video_resource: VideoResource = create_resource(

@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use crate::formats::{ColorInfo, Container, Resolution, QualityLabel};
+use crate::formats::{ColorInfo, Container, Resolution, VideoQuality};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,6 +17,6 @@ pub struct VideoFormat {
     pub container: Option<Container>,
     pub encoding: Option<String>,
     pub resolution: Resolution,
-    pub quality_label: QualityLabel,
+    pub quality_label: VideoQuality,
     pub color_info: Option<ColorInfo>,
 }

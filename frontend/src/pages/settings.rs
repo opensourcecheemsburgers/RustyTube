@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use gloo::{
 	file::Blob,
 	storage::{LocalStorage, Storage},
@@ -13,8 +15,7 @@ use wasm_bindgen::JsCast;
 use web_sys::{Event, HtmlDialogElement, HtmlInputElement, MouseEvent};
 
 use crate::{
-	contexts::{LocaleCtx, SubscriptionsCtx, ThemeCtx, TrendingRegionCtx},
-	themes::*,
+	contexts::{RegionConfigCtx, SubscriptionsCtx, UiConfigCtx}, themes::*, utils::i18n
 };
 
 #[component]
@@ -36,20 +37,39 @@ pub fn InstanceSettings() -> impl IntoView {
 }
 
 #[component]
-pub fn RegionSettings() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
+fn SettingsSection(children: Children, title: Cow<'static, str>) -> impl IntoView {
 	view! {
 		<div class="flex flex-col">
-			<h1 class="font-sans text-3xl">
-				{move || t!("settings.locale", locale = & locale.get().id())}
-			</h1>
+			<h1 class="font-sans text-3xl">{title}</h1>
+			<div class="divider"></div>
+			{children()}
+			<div class="divider"></div>
+		</div>
+	}
+}
+
+#[component]
+fn Setting(children: Children, title: Cow<'static, str>) -> impl IntoView {
+	view! {
+		<div class="form-control w-full">
+			<label class="cursor-pointer label">
+				<p class="font-mono text-2xl">{title}</p>
+				{children()}
+			</label>
+			<div class="divider"></div>
+		</div>
+	}
+}
+
+#[component]
+pub fn RegionSettings() -> impl IntoView {
+	view! {
+		<div class="flex flex-col">
+			<h1 class="font-sans text-3xl">{i18n("settings.locale")}</h1>
 			<div class="divider"></div>
 			<div class="form-control w-full">
 				<label class="cursor-pointer label">
-					<p class="font-mono text-2xl">
-						{move || t!("settings.language", locale = & locale.get().id())}
-					</p>
+					<p class="font-mono text-2xl">{i18n("settings.language")}</p>
 					<div class="flex flex-row justify-end gap-4">
 						<LocaleDropdown/>
 					</div>
@@ -58,9 +78,7 @@ pub fn RegionSettings() -> impl IntoView {
 			</div>
 			<div class="form-control w-full">
 				<label class="cursor-pointer label">
-					<p class="font-mono text-2xl">
-						{move || t!("settings.trending_region", locale = & locale.get().id())}
-					</p>
+					<p class="font-mono text-2xl">{i18n("settings.trending_region")}</p>
 					<div class="flex flex-row justify-end gap-4">
 						<TrendingRegionDropdown/>
 					</div>
@@ -73,13 +91,13 @@ pub fn RegionSettings() -> impl IntoView {
 
 #[component]
 pub fn LocaleDropdown() -> impl IntoView {
-	let locale_ctx = expect_context::<LocaleCtx>().0;
+	let locale_slice = expect_context::<RegionConfigCtx>().locale_slice;
 
 	let locales_view = rust_i18n::available_locales!()
 		.into_iter()
 		.map(|available_locale| {
 			let locale = RustyTubeLocale::from_str(available_locale);
-			let set_locale = move |_| locale_ctx.1.set(locale);
+			let set_locale = move |_| locale_slice.1.set(locale);
 
 			view! {
 				<li>
@@ -97,7 +115,7 @@ pub fn LocaleDropdown() -> impl IntoView {
 	view! {
 		<div class="dropdown dropdown-end">
 			<div tabindex="0" role="button" class="btn btn-secondary m-1">
-				{move || locale_ctx.0.get().human_name()}
+				{move || locale_slice.0.get().human_name()}
 			</div>
 			<ul
 				tabindex="0"
@@ -111,11 +129,11 @@ pub fn LocaleDropdown() -> impl IntoView {
 
 #[component]
 pub fn TrendingRegionDropdown() -> impl IntoView {
-	let trending_region_ctx = expect_context::<TrendingRegionCtx>().0;
+	let trending_region_slice = expect_context::<RegionConfigCtx>().trending_region_slice;
 
 	let regions_view = isocountry::CountryCode::iter()
 		.map(|region| {
-			let set_region = move |_| trending_region_ctx.1.set(region.clone());
+			let set_region = move |_| trending_region_slice.1.set(region.clone());
 
 			view! {
 				<li>
@@ -133,7 +151,7 @@ pub fn TrendingRegionDropdown() -> impl IntoView {
 	view! {
 		<div class="dropdown dropdown-end">
 			<div tabindex="0" role="button" class="btn btn-secondary m-1">
-				{move || trending_region_ctx.0.get().name()}
+				{move || trending_region_slice.0.get().name()}
 			</div>
 			<ul
 				tabindex="0"
@@ -148,19 +166,13 @@ pub fn TrendingRegionDropdown() -> impl IntoView {
 
 #[component]
 pub fn DataSettings() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	view! {
 		<div class="flex flex-col">
-			<h1 class="font-sans text-3xl">
-				{move || t!("settings.subscriptions", locale = & locale.get().id())}
-			</h1>
+			<h1 class="font-sans text-3xl">{i18n("settings.subscriptions")}</h1>
 			<div class="divider"></div>
 			<div class="form-control w-full">
 				<label class="cursor-pointer label">
-					<p class="font-mono text-2xl">
-						{move || t!("settings.manage", locale = & locale.get().id())}
-					</p>
+					<p class="font-mono text-2xl">{i18n("settings.manage")}</p>
 					<div class="flex flex-row justify-end gap-4">
 						<ImportSubsButton/>
 						<DeleteAllSubsButton/>
@@ -170,9 +182,7 @@ pub fn DataSettings() -> impl IntoView {
 			</div>
 			<div class="form-control w-full">
 				<label class="cursor-pointer label">
-					<p class="font-mono text-2xl">
-						{move || t!("settings.export", locale = & locale.get().id())}
-					</p>
+					<p class="font-mono text-2xl">{i18n("settings.export")}</p>
 					<div class="flex flex-row justify-end gap-4">
 						<ExportSubsFreeTubeButton/>
 						<ExportSubsNewPipeButton/>
@@ -186,14 +196,7 @@ pub fn DataSettings() -> impl IntoView {
 }
 
 #[component]
-pub fn PlayerSettings() -> impl IntoView {
-	view! {}
-}
-
-#[component]
 pub fn ImportSubsButton() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let subs = expect_context::<SubscriptionsCtx>().0;
 
 	let parse_subs_file = create_action(|input: &(RwSignal<Subscriptions>, Event)| {
@@ -210,7 +213,7 @@ pub fn ImportSubsButton() -> impl IntoView {
 	view! {
 		<div>
 			<label class="btn btn-lg btn-primary" for="subs_upload">
-				{move || t!("settings.import", locale = & locale.get().id())}
+				{i18n("settings.import")}
 			</label>
 			<input
 				id="subs_upload"
@@ -246,8 +249,6 @@ async fn get_subs_from_file(
 
 #[component]
 pub fn DeleteAllSubsButton() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let subs_ctx = expect_context::<SubscriptionsCtx>();
 
 	let modal_id = StoredValue::new("delete_subs_modal");
@@ -267,22 +268,20 @@ pub fn DeleteAllSubsButton() -> impl IntoView {
 
 	view! {
 		<button on:click=open_modal class="btn btn-lg btn-error">
-			{move || t!("settings.delete_all", locale = & locale.get().id())}
+			{i18n("settings.delete_all")}
 		</button>
 		<dialog id=modal_id class="modal">
 			<div class="modal-box">
-				<h3 class="font-bold text-lg">
-					{move || t!("settings.delete_subscriptions", locale = & locale.get().id())}
-				</h3>
+				<h3 class="font-bold text-lg">{i18n("settings.delete_subscriptions")}</h3>
 				<p class="py-4">
 					This action will delete all subscriptions from the RustyTube database.
 				</p>
 				<div class="modal-action">
 					<button on:click=close_modal class="btn btn-ghost">
-						{move || t!("settings.close", locale = & locale.get().id())}
+						{i18n("settings.close")}
 					</button>
 					<button on:click=delete_all_subs class="btn btn-error">
-						{move || t!("settings.delete_all", locale = & locale.get().id())}
+						{i18n("settings.delete_all")}
 					</button>
 				</div>
 			</div>
@@ -364,8 +363,6 @@ pub fn ExportSubsNewPipeButton() -> impl IntoView {
 
 #[component]
 fn ThemeSettings() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let dark_themes_view = DARK_THEMES
 		.into_iter()
 		.map(|theme| view! { <ThemeCard name=theme.to_string()/> })
@@ -378,9 +375,7 @@ fn ThemeSettings() -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col gap-3 w-full">
-			<h1 class="font-sans text-3xl">
-				{move || t!("settings.themes", locale = & locale.get().id())}
-			</h1>
+			<h1 class="font-sans text-3xl">{i18n("settings.themes")}</h1>
 			<div class="divider"></div>
 			<div class="flex flex-wrap flex-row gap-4">{dark_themes_view} {light_themes_view}</div>
 		</div>
@@ -391,7 +386,7 @@ fn ThemeSettings() -> impl IntoView {
 pub fn ThemeCard(name: String) -> impl IntoView {
 	let theme_name = StoredValue::new(name);
 
-	let current_theme_slice = expect_context::<ThemeCtx>().0;
+	let current_theme_slice = expect_context::<UiConfigCtx>().theme_slice;
 
 	let card_classes = move || {
 		let current_theme = current_theme_slice.0.get();

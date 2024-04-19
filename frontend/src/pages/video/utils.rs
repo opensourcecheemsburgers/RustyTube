@@ -20,7 +20,7 @@ pub fn get_format(formats: &Formats) -> Result<Format, RustyTubeError> {
 
 pub fn find_video_format(formats: &Formats) -> Result<VideoFormat, RustyTubeError> {
 	let default_video_quality =
-		move || expect_context::<PlayerConfigCtx>().0 .0.get().default_video_quality;
+		move || expect_context::<PlayerConfigCtx>().default_video_quality_slice.0.get();
 
 	let preferred_format =
 		formats.video_formats.iter().find(|x| x.quality_label == default_video_quality()).cloned();
@@ -37,7 +37,7 @@ pub fn find_legacy_format(formats: &Formats) -> Result<LegacyFormat, RustyTubeEr
 }
 
 pub fn find_audio_format(formats: &Formats) -> Result<AudioFormat, RustyTubeError> {
-	let config = expect_context::<PlayerConfigCtx>().0 .0;
+	let default_audio_quality = move || expect_context::<PlayerConfigCtx>().default_audio_quality_slice.0.get();
 
 	let audio_formats = match is_webkit() {
 		true => filter_mp4_audio_formats(&formats.audio_formats),
@@ -46,7 +46,7 @@ pub fn find_audio_format(formats: &Formats) -> Result<AudioFormat, RustyTubeErro
 
 	let preferred_format = audio_formats
 		.iter()
-		.find(|format| format.audio_quality == config.get().default_audio_quality)
+		.find(|format| format.audio_quality == default_audio_quality())
 		.cloned();
 
 	match preferred_format {

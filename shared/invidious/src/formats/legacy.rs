@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::formats::items::{Container, Resolution, QualityLabel};
+use crate::formats::items::{Container, Resolution, VideoQuality};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -13,7 +13,7 @@ pub struct LegacyFormat {
     #[serde(default)]
     pub encoding: String,
     #[serde(rename = "qualityLabel")]
-    pub quality_label: QualityLabel,
+    pub quality_label: VideoQuality,
     pub resolution: Resolution,
     pub size: String,
 }

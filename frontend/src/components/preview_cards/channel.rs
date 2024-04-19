@@ -1,9 +1,9 @@
 use invidious::CommonChannel;
 use leptos::*;
 use leptos_router::NavigateOptions;
-use num_format::{Locale, ToFormattedString};
+use num_format::ToFormattedString;
 
-use crate::{contexts::LocaleCtx, icons::VerifiedIcon};
+use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
 
 #[component]
 pub fn ChannelPreviewCard(channel: CommonChannel) -> impl IntoView {
@@ -31,7 +31,7 @@ pub fn ChannelPreviewCard(channel: CommonChannel) -> impl IntoView {
 
 #[component]
 pub fn Info(channel: CommonChannel) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 
 	let name = channel.name;
 	let subscriber_count = channel.subscribers.to_formatted_string(&locale.get().to_num_fmt());

@@ -1,16 +1,13 @@
 use invidious::VideoShort;
 use leptos::*;
-use num_format::ToFormattedString;
 
 use crate::{
-	components::FerrisError, contexts::LocaleCtx, pages::video::page::VideoResource,
-	utils::get_current_video_query_signal,
+	components::FerrisError, pages::video::page::VideoResource, 
+	utils::{get_current_video_query_signal, i18n}
 };
 
 #[component]
 pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let recommended_view = move || {
 		video_resource.get().map(|res| match res {
 			Ok(video) => video
@@ -27,7 +24,7 @@ pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
 	view! {
 		<div class="flex flex-col rounded-lg bg-base-200 p-4 space-y-4">
 			<h1 class="font-semibold text-xl">
-				{move || t!("video.info.recommended", locale = & locale.get().id())}
+				{i18n("video.info.recommended")}
 			</h1>
 			<div class="flex flex-col space-y-4 pr-4 rounded-lg bg-base-200">
 				<Suspense fallback=move || {
@@ -40,8 +37,6 @@ pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
 
 #[component]
 pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let src = video.thumbnails.get(4).cloned().unwrap().url;
 
 	let video_id = video.id;
@@ -69,15 +64,7 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 				<div class="flex flex-row flex-wrap mt-2 space-x-1 text-sm">
 					<p>{video.author}</p>
 					<p>{"•"}</p>
-					<p>
-						{move || {
-							t!(
-								"video.info.views", view_count = video.views_text, locale = & locale
-								.get().id()
-							)
-						}}
-
-					</p>
+					<p>{video.views_text}</p>
 				</div>
 			</div>
 		</div>

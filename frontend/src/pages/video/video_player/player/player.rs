@@ -9,7 +9,7 @@ use web_sys::{Element, HtmlDivElement};
 use crate::{
 	components::FerrisError,
 	contexts::{
-		LocaleCtx, PlaybackState, PlayerState, PlayerStyle, VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID,
+		PlaybackState, PlayerState, PlayerStyle, RegionConfigCtx, VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID
 	},
 	pages::video::{
 		page::VideoResource,
@@ -19,6 +19,7 @@ use crate::{
 			VideoPlayerControls,
 		},
 	},
+	utils::i18n,
 };
 
 #[component]
@@ -119,8 +120,6 @@ pub fn VideoFormat() -> impl IntoView {
 
 #[component]
 pub fn LoadingCircle() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let state = expect_context::<PlayerState>();
 	let classes = move || match state.playback_state.get() == PlaybackState::Loading {
 		true => "absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2",
@@ -145,7 +144,7 @@ pub fn LoadingCircle() -> impl IntoView {
 					fill="currentFill"
 				></path>
 			</svg>
-			<span class="sr-only">{move || t!("video.loading", locale = & locale.get().id())}</span>
+			<span class="sr-only">{i18n("video.loading")}</span>
 		</div>
 	}
 }

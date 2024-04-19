@@ -2,8 +2,8 @@ use std::{fmt, str::FromStr};
 use serde::{Deserialize, Serialize};
 use rustytube_error::RustyTubeError;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub enum QualityLabel {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub enum VideoQuality {
 	#[serde(rename = "144p")]
 	_144p,
 	#[serde(rename = "144p60")]
@@ -42,50 +42,50 @@ pub enum QualityLabel {
 	_4320p60
 }
 
-impl fmt::Display for QualityLabel {
+impl fmt::Display for VideoQuality {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
-			QualityLabel::_144p => write!(f, "144p"),
-			QualityLabel::_144p60 => write!(f, "144p60"),
-			QualityLabel::_240p => write!(f, "240p"),
-			QualityLabel::_240p60 => write!(f, "240p60"),
-			QualityLabel::_360p => write!(f, "360p"),
-			QualityLabel::_360p60 => write!(f, "360p60"),
-			QualityLabel::_480p => write!(f, "480p"),
-			QualityLabel::_480p60 => write!(f, "480p60"),
-			QualityLabel::_720p => write!(f, "720p"),
-			QualityLabel::_720p60 => write!(f, "720p60"),
-			QualityLabel::_1080p => write!(f, "1080p"),
-			QualityLabel::_1080p60 => write!(f, "1080p60"),
-			QualityLabel::_1440p => write!(f, "1440p"),
-			QualityLabel::_1440p60 => write!(f, "1440p60"),
-			QualityLabel::_2160p => write!(f, "2160p"),
-			QualityLabel::_2160p60 => write!(f, "2160p60"),
-			QualityLabel::_4320p => write!(f, "4320p"),
-			QualityLabel::_4320p60 => write!(f, "4320p60"),
+			VideoQuality::_144p => write!(f, "144p"),
+			VideoQuality::_144p60 => write!(f, "144p60"),
+			VideoQuality::_240p => write!(f, "240p"),
+			VideoQuality::_240p60 => write!(f, "240p60"),
+			VideoQuality::_360p => write!(f, "360p"),
+			VideoQuality::_360p60 => write!(f, "360p60"),
+			VideoQuality::_480p => write!(f, "480p"),
+			VideoQuality::_480p60 => write!(f, "480p60"),
+			VideoQuality::_720p => write!(f, "720p"),
+			VideoQuality::_720p60 => write!(f, "720p60"),
+			VideoQuality::_1080p => write!(f, "1080p"),
+			VideoQuality::_1080p60 => write!(f, "1080p60"),
+			VideoQuality::_1440p => write!(f, "1440p"),
+			VideoQuality::_1440p60 => write!(f, "1440p60"),
+			VideoQuality::_2160p => write!(f, "2160p"),
+			VideoQuality::_2160p60 => write!(f, "2160p60"),
+			VideoQuality::_4320p => write!(f, "4320p"),
+			VideoQuality::_4320p60 => write!(f, "4320p60"),
 		}
 	}
 }
 
-impl FromStr for QualityLabel {
+impl FromStr for VideoQuality {
 	type Err = RustyTubeError;
 
 	fn from_str(quality_string: &str) -> Result<Self, Self::Err> {
 		match quality_string {
-			"144p" => Ok(QualityLabel::_144p),
-			"240p" => Ok(QualityLabel::_240p),
-			"360p" => Ok(QualityLabel::_360p),
-			"480p" => Ok(QualityLabel::_480p),
-			"720p" => Ok(QualityLabel::_720p),
-			"720p60" => Ok(QualityLabel::_720p60),
-			"1080p" => Ok(QualityLabel::_1080p),
-			"1080p60" => Ok(QualityLabel::_1080p60),
-			"1440p" => Ok(QualityLabel::_1440p),
-			"1440p60" => Ok(QualityLabel::_1440p60),
-			"2160p" => Ok(QualityLabel::_2160p),
-			"2160p60" => Ok(QualityLabel::_2160p60),
-			"4320p" => Ok(QualityLabel::_4320p),
-			"4320p60" => Ok(QualityLabel::_4320p60),
+			"144p" => Ok(VideoQuality::_144p),
+			"240p" => Ok(VideoQuality::_240p),
+			"360p" => Ok(VideoQuality::_360p),
+			"480p" => Ok(VideoQuality::_480p),
+			"720p" => Ok(VideoQuality::_720p),
+			"720p60" => Ok(VideoQuality::_720p60),
+			"1080p" => Ok(VideoQuality::_1080p),
+			"1080p60" => Ok(VideoQuality::_1080p60),
+			"1440p" => Ok(VideoQuality::_1440p),
+			"1440p60" => Ok(VideoQuality::_1440p60),
+			"2160p" => Ok(VideoQuality::_2160p),
+			"2160p60" => Ok(VideoQuality::_2160p60),
+			"4320p" => Ok(VideoQuality::_4320p),
+			"4320p60" => Ok(VideoQuality::_4320p60),
 			_ => Err(RustyTubeError::format_parse())
 		}
 	}

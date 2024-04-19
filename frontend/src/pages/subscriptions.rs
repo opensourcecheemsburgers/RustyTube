@@ -4,15 +4,14 @@ use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, VideoPreviewCard},
-	contexts::{LocaleCtx, SubsVideosCtx, SubscriptionsCtx},
+	contexts::{SubsVideosCtx, SubscriptionsCtx},
 	icons::FerrisWaveIcon,
 	pages::settings::ImportSubsButton,
+	utils::i18n
 };
 
 #[component]
 pub fn SubscriptionsSection() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	let subs = expect_context::<SubscriptionsCtx>().0;
 
 	let subs_view = move || match subs.get().channels.len() == 0 {
@@ -24,7 +23,7 @@ pub fn SubscriptionsSection() -> impl IntoView {
 		<div class="flex justify-center w-full mt-4">
 			<div class="w-[90%] flex flex-col gap-y-8">
 				<h1 class="text-2xl font-semibold">
-					{move || t!("sidebar.subscriptions", locale = & locale.get().id())}
+					{i18n("sidebar.subscriptions")}
 				</h1>
 				{subs_view}
 			</div>
@@ -126,15 +125,13 @@ pub fn ImportSubscriptions() -> impl IntoView {
 
 #[component]
 pub fn ImportSubscriptionsTutorial() -> impl IntoView {
-	let locale = expect_context::<LocaleCtx>().0 .0;
-
 	view! {
 		<a
 			target="_blank"
 			class="btn btn-lg btn-outline btn-info"
 			href="https://docs.invidious.io/export-youtube-subscriptions/"
 		>
-			{move || t!("subscriptions.tutorial", locale = & locale.get().id())}
+			{i18n("subscriptions.tutorial")}
 		</a>
 	}
 }

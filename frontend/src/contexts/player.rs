@@ -4,7 +4,7 @@ use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
 use web_sys::{HtmlAudioElement, HtmlVideoElement};
 
-use crate::{contexts::VolumeCtx, utils::is_webkit};
+use crate::{contexts::PlayerConfigCtx, utils::is_webkit};
 
 pub const VIDEO_CONTAINER_ID: &'static str = "video_container";
 pub const VIDEO_PLAYER_ID: &'static str = "video_player";
@@ -38,7 +38,7 @@ impl PlayerState {
 		let playback_state = create_rw_signal(PlaybackState::Initial);
 		let video_ready = create_rw_signal(false);
 		let audio_ready = create_rw_signal(false);
-		let volume = create_rw_signal(expect_context::<VolumeCtx>().0 .0.get());
+		let volume = create_rw_signal(expect_context::<PlayerConfigCtx>().volume_slice.0.get());
 		let current_time_str = create_rw_signal(String::from("0:00"));
 		let duration_str = create_rw_signal(String::from("0:00"));
 		let current_time = create_rw_signal(0f64);
@@ -265,7 +265,7 @@ impl PlayerState {
 		video.set_volume(volume);
 		audio.set_volume(volume);
 		self.volume.set(volume);
-		expect_context::<VolumeCtx>().0 .1.set(volume);
+		expect_context::<PlayerConfigCtx>().volume_slice.1.set(volume);
 
 		Ok(())
 	}
