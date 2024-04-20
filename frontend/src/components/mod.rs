@@ -4,7 +4,7 @@ mod header;
 mod page;
 mod preview_cards;
 mod sidebar;
-mod tooltip;
+mod toaster;
 
 pub use error::*;
 pub use header::Header;
@@ -14,4 +14,4 @@ pub use preview_cards::{
 	VideoPreviewCard,
 };
 pub use sidebar::*;
-pub use tooltip::{Tooltip, TooltipPosition};
+pub use toaster::*;
