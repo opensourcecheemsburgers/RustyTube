@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_router::NavigateOptions;
 use num_format::ToFormattedString;
 
-use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon, utils::i18n};
+use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
 
 #[component]
 pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {

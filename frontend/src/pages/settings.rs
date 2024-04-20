@@ -5,7 +5,6 @@ use gloo::{
 	storage::{LocalStorage, Storage},
 };
 use invidious::{NewpipeSubscriptions, Subscriptions, SUBS_KEY};
-use isocountry::CountryCode;
 use leptos::*;
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
@@ -272,7 +271,7 @@ pub fn DeleteAllSubsButton() -> impl IntoView {
 		<button on:click=open_modal class="btn btn-lg btn-error">
 			{i18n("settings.delete_all")}
 		</button>
-		<dialog id=modal_id class="modal">
+		<dialog id=modal_id.get_value() class="modal">
 			<div class="modal-box">
 				<h3 class="font-bold text-lg">{i18n("settings.delete_subscriptions")}</h3>
 				<p class="py-4">
@@ -409,14 +408,14 @@ pub fn ThemeCard(name: String) -> impl IntoView {
 	view! {
 		<div on:click=set_theme class=card_classes>
 			<div
-				data-theme=theme_name
+				data-theme=theme_name.get_value()
 				class="bg-base-100 text-base-content cursor-pointer font-sans"
 			>
 				<div class="grid grid-cols-5 grid-rows-3">
 					<div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
 					<div class="bg-base-300 col-start-1 row-start-3"></div>
 					<div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
-						<div class="font-bold">{theme_name}</div>
+						<div class="font-bold">{theme_name.get_value()}</div>
 						<div class="flex flex-wrap gap-1">
 							<div class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
 								<div class="text-primary-content text-sm font-bold">{"A"}</div>

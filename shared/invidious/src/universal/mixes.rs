@@ -6,7 +6,7 @@ use crate::{fetch::fetch, hidden::MixVideo};
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Mix {
 	pub title: String,
-	#[serde(rename = "midId")]
+	#[serde(rename = "mixId")]
 	pub id: String,
 	pub videos: Vec<MixVideo>,
 }

@@ -1,4 +1,3 @@
-use gloo::history::query;
 use html_escape::decode_html_entities;
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};

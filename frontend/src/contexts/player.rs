@@ -97,9 +97,8 @@ impl PlayerState {
 			let video_play = video.play();
 			video.set_current_time(audio.current_time());
 			let audio_play = audio.play();
-			if let Ok(_) = audio_play
-				&& let Ok(_) = video_play
-			{
+
+			if audio_play.is_ok() && video_play.is_ok() {
 				self.playback_state.set(PlaybackState::Playing);
 			}
 		}
@@ -117,9 +116,8 @@ impl PlayerState {
 			if is_webkit() {
 				let video_play = video.play();
 				let audio_play = audio.play();
-				if let Ok(_) = audio_play
-					&& let Ok(_) = video_play
-				{
+				
+				if audio_play.is_ok() && video_play.is_ok()	{
 					self.playback_state.set(PlaybackState::Playing);
 				}
 			} else {
@@ -127,9 +125,8 @@ impl PlayerState {
 				let video_play = video.play();
 				audio.set_current_time(video.current_time());
 				let audio_play = audio.play();
-				if let Ok(_) = audio_play
-					&& let Ok(_) = video_play
-				{
+				
+				if audio_play.is_ok() && video_play.is_ok()	{
 					self.playback_state.set(PlaybackState::Playing);
 				}
 			}
@@ -142,10 +139,8 @@ impl PlayerState {
 		let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 		let video_pause = video.pause();
 		let audio_pause = audio.pause();
-		if let Ok(_) = video_pause
-			&& let Ok(_) = audio_pause
-		{
-			self.playback_state.set(PlaybackState::Paused);
+		if audio_pause.is_ok() && video_pause.is_ok() {
+			self.playback_state.set(PlaybackState::Playing);
 		}
 		Ok(())
 	}

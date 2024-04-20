@@ -1,7 +1,7 @@
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
-use crate::{common::CommonVideo, fetch::fetch, hidden::CountryCode};
+use crate::{common::CommonVideo, fetch::fetch};
 
 #[derive(PartialEq, Clone)]
 pub enum TrendingCategory {

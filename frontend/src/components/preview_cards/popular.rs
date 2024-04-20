@@ -1,6 +1,6 @@
 use invidious::PopularItem;
 use leptos::*;
-use num_format::{Locale, ToFormattedString};
+use num_format::ToFormattedString;
 
 use crate::contexts::RegionConfigCtx;
 

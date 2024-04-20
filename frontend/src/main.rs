@@ -1,5 +1,3 @@
-#![feature(let_chains)]
-
 #[macro_use]
 extern crate rust_i18n;
 
@@ -12,18 +10,15 @@ mod pages;
 mod themes;
 mod utils;
 
-use std::fmt::Debug;
-
 use config::Config;
 use console_error_panic_hook;
 use leptos::*;
 use leptos_router::*;
-use num_format::Format;
 pub use themes::*;
 
 use crate::{
 	components::Page,
-	contexts::{provide_config_context_slices, provide_user_contexts, provide_user_resources},
+	contexts::{provide_config_context_slices, provide_toaster_ctx, provide_user_contexts, provide_user_resources},
 	pages::{
 		ChannelPage, PopularSection, SearchSection, SettingsPage, SubscriptionsSection,
 		TrendingSection, VideoPage,
@@ -33,6 +28,7 @@ use crate::{
 #[component]
 fn App() -> impl IntoView {
 	console_error_panic_hook::set_once();
+	provide_toaster_ctx();
 	provide_config_context_slices(Config::load().unwrap_or_default());
 	provide_user_contexts();
 	provide_user_resources();

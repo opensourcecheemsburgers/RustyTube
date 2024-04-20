@@ -1,5 +1,3 @@
-#![feature(let_chains)]
-
 mod channel;
 mod common;
 mod dislikes;

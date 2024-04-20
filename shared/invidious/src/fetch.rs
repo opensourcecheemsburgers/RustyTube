@@ -1,6 +1,3 @@
-use std::fmt::Display;
-
-use gloo::storage::LocalStorage;
 use reqwasm::http::{Method, Request, RequestMode};
 use rustytube_error::RustyTubeError;
 use web_sys::RequestCache;

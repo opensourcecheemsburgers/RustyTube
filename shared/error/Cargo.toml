@@ -29,4 +29,4 @@ workspace = true
 
 [dependencies.leptos]
 workspace = true
-features = ["csr", "nightly"]
+features = ["csr"]
