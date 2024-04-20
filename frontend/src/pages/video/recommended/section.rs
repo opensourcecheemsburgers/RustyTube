@@ -2,8 +2,9 @@ use invidious::VideoShort;
 use leptos::*;
 
 use crate::{
-	components::FerrisError, pages::video::page::VideoResource, 
-	utils::{get_current_video_query_signal, i18n}
+	components::FerrisError,
+	pages::video::page::VideoResource,
+	utils::{get_current_video_query_signal, i18n},
 };
 
 #[component]
@@ -23,9 +24,7 @@ pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col rounded-lg bg-base-200 p-4 space-y-4">
-			<h1 class="font-semibold text-xl">
-				{i18n("video.info.recommended")}
-			</h1>
+			<h1 class="font-semibold text-xl">{i18n("video.info.recommended")}</h1>
 			<div class="flex flex-col space-y-4 pr-4 rounded-lg bg-base-200">
 				<Suspense fallback=move || {
 					view! { <RecommendedSectionPlaceholder/> }

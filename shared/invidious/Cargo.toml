@@ -2,38 +2,38 @@
 name = "invidious"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
-license.workspace = true
 edition.workspace = true
+license.workspace = true
+description.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gloo = { workspace = true }
-reqwasm = { workspace = true }
 csv = { workspace = true }
-ron = { workspace = true }
 futures = { workspace = true }
-rustytube-error = { workspace = true }
-utils = { workspace = true }
-serde-xml-rs = { workspace = true }
+gloo = { workspace = true }
 html-escape = { workspace = true }
+reqwasm = { workspace = true }
+ron = { workspace = true }
+rustytube-error = { workspace = true }
+serde-xml-rs = { workspace = true }
+utils = { workspace = true }
 
+js-sys = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
-js-sys = { workspace = true }
 
 [dependencies.web-sys]
 workspace = true
 features = [
-    'Headers',
-    'Request',
-    'RequestInit',
-    'RequestMode',
-    'Response',
-    'Window',
-    'Performance',
-    "MediaSource"
+  'Headers',
+  'Request',
+  'RequestInit',
+  'RequestMode',
+  'Response',
+  'Window',
+  'Performance',
+  "MediaSource",
 ]
 
 [dependencies.serde]
@@ -44,11 +44,11 @@ features = ["derive"]
 workspace = true
 
 [dev-dependencies]
-wasm-bindgen-test = { workspace = true }
-wasm-bindgen-cli = { workspace = true }
-wasm-bindgen = { workspace = true }
-wasm-bindgen-futures = { workspace = true }
 js-sys = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-cli = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+wasm-bindgen-test = { workspace = true }
 
 [dev-dependencies.web-sys]
 workspace = true

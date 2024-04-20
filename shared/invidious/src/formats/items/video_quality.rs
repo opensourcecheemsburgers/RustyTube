@@ -1,6 +1,7 @@
 use std::{fmt, str::FromStr};
-use serde::{Deserialize, Serialize};
+
 use rustytube_error::RustyTubeError;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub enum VideoQuality {
@@ -39,7 +40,7 @@ pub enum VideoQuality {
 	#[serde(rename = "4320p")]
 	_4320p,
 	#[serde(rename = "4320p60")]
-	_4320p60
+	_4320p60,
 }
 
 impl fmt::Display for VideoQuality {
@@ -86,7 +87,7 @@ impl FromStr for VideoQuality {
 			"2160p60" => Ok(VideoQuality::_2160p60),
 			"4320p" => Ok(VideoQuality::_4320p),
 			"4320p60" => Ok(VideoQuality::_4320p60),
-			_ => Err(RustyTubeError::format_parse())
+			_ => Err(RustyTubeError::format_parse()),
 		}
 	}
 }

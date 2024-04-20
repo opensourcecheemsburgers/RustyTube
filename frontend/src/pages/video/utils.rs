@@ -37,7 +37,8 @@ pub fn find_legacy_format(formats: &Formats) -> Result<LegacyFormat, RustyTubeEr
 }
 
 pub fn find_audio_format(formats: &Formats) -> Result<AudioFormat, RustyTubeError> {
-	let default_audio_quality = move || expect_context::<PlayerConfigCtx>().default_audio_quality_slice.0.get();
+	let default_audio_quality =
+		move || expect_context::<PlayerConfigCtx>().default_audio_quality_slice.0.get();
 
 	let audio_formats = match is_webkit() {
 		true => filter_mp4_audio_formats(&formats.audio_formats),

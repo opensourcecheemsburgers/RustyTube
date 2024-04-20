@@ -15,7 +15,9 @@ use wasm_bindgen::JsCast;
 use web_sys::{Event, HtmlDialogElement, HtmlInputElement, MouseEvent};
 
 use crate::{
-	contexts::{RegionConfigCtx, SubscriptionsCtx, UiConfigCtx}, themes::*, utils::i18n
+	contexts::{RegionConfigCtx, SubscriptionsCtx, UiConfigCtx},
+	themes::*,
+	utils::i18n,
 };
 
 #[component]

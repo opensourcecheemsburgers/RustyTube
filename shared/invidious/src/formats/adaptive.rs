@@ -1,7 +1,10 @@
-use serde::{Deserialize, Serialize};
 use rustytube_error::RustyTubeError;
-use crate::formats::{AudioFormat, AudioQuality, VideoFormat};
-use crate::formats::items::{ColorInfo, Container, Resolution, VideoQuality};
+use serde::{Deserialize, Serialize};
+
+use crate::formats::{
+	items::{ColorInfo, Container, Resolution, VideoQuality},
+	AudioFormat, AudioQuality, VideoFormat,
+};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -31,7 +34,8 @@ impl TryFrom<AdaptiveFormat> for AudioFormat {
 
 	fn try_from(adaptive_format: AdaptiveFormat) -> Result<Self, Self::Error> {
 		let audio_quality = adaptive_format.audio_quality.ok_or(RustyTubeError::format_parse())?;
-		let audio_sample_rate = adaptive_format.audio_sample_rate.ok_or(RustyTubeError::format_parse())?;
+		let audio_sample_rate =
+			adaptive_format.audio_sample_rate.ok_or(RustyTubeError::format_parse())?;
 		let audio_channels = adaptive_format.audio_channels.ok_or(RustyTubeError::format_parse())?;
 
 		Ok(AudioFormat {
@@ -76,7 +80,7 @@ impl TryFrom<AdaptiveFormat> for VideoFormat {
 			fps,
 			resolution,
 			quality_label,
-			color_info: adaptive_format.color_info
+			color_info: adaptive_format.color_info,
 		})
 	}
 }

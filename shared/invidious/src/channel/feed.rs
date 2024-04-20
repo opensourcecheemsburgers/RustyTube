@@ -1,6 +1,7 @@
-use crate::{fetch, CommonThumbnail, CommonVideo, ChannelVideos};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
+
+use crate::{fetch, ChannelVideos, CommonThumbnail, CommonVideo};
 
 /// Fetching feeds via RSS is currently broken due to CORS restrictions in regular browsers.
 impl Feed {
@@ -151,6 +152,3 @@ impl Into<CommonVideo> for Entry {
 		}
 	}
 }
-
-
-

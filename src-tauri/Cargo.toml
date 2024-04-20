@@ -1,12 +1,12 @@
 [package]
 name = "RustyTube"
 version = "0.1.1"
-description = "A Tauri App"
 authors = ["Stephen Power"]
+edition = "2021"
 license = "AGPL-3.0"
 repository = "https://github.com/opensourcecheemsburgers/rustytube"
-edition = "2021"
 rust-version = "1.71"
+description = "A Tauri App"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -15,15 +15,15 @@ tauri-build = { version = "1.5.0", features = [] }
 
 [dependencies.tauri]
 version = "1.5.3"
-features = [ "fs-write-file", "dialog-save", "shell-open"]
+features = ["fs-write-file", "dialog-save", "shell-open"]
 
 [dependencies]
-serde_json = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
 # If you use cargo directly instead of tauri's cli you can use this feature flag to switch between tauri's `dev` and `build` modes.
 # DO NOT REMOVE!!
 default = ["custom-protocol"]
-custom-protocol = [ "tauri/custom-protocol" ]
+custom-protocol = ["tauri/custom-protocol"]

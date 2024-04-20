@@ -1,8 +1,11 @@
 use invidious::{Trending, TrendingCategory};
 use leptos::*;
 
-use crate::{components::{FerrisError, PlaceholderCardArray, VideoPreviewCard}, 
-	contexts::{NetworkConfigCtx, RegionConfigCtx}, utils::i18n};
+use crate::{
+	components::{FerrisError, PlaceholderCardArray, VideoPreviewCard},
+	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	utils::i18n,
+};
 
 #[component]
 pub fn TrendingSection() -> impl IntoView {
@@ -12,7 +15,14 @@ pub fn TrendingSection() -> impl IntoView {
 	let category = create_rw_signal(TrendingCategory::Default);
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let trending_resource = create_resource(
-		move || (server.get(), category.get(), trending_region.get(), language.get().to_invidious_lang()),
+		move || {
+			(
+				server.get(),
+				category.get(),
+				trending_region.get(),
+				language.get().to_invidious_lang(),
+			)
+		},
 		|(server, category, region, lang)| async move {
 			Trending::fetch_trending(&server, category, region.alpha2(), &lang).await
 		},
@@ -50,16 +60,28 @@ pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-row gap-x-3">
-			<button on:click=move |_| category.set(TrendingCategory::Default) class=header_btn_classes>
+			<button
+				on:click=move |_| category.set(TrendingCategory::Default)
+				class=header_btn_classes
+			>
 				{i18n("trending.all")}
 			</button>
-			<button on:click=move |_| category.set(TrendingCategory::Music) class=header_btn_classes>
+			<button
+				on:click=move |_| category.set(TrendingCategory::Music)
+				class=header_btn_classes
+			>
 				{i18n("trending.music")}
 			</button>
-			<button on:click=move |_| category.set(TrendingCategory::Gaming) class=header_btn_classes>
+			<button
+				on:click=move |_| category.set(TrendingCategory::Gaming)
+				class=header_btn_classes
+			>
 				{i18n("trending.gaming")}
 			</button>
-			<button on:click=move |_| category.set(TrendingCategory::Movies) class=header_btn_classes>
+			<button
+				on:click=move |_| category.set(TrendingCategory::Movies)
+				class=header_btn_classes
+			>
 				{i18n("trending.movies")}
 			</button>
 		</div>

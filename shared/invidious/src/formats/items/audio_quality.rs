@@ -1,4 +1,5 @@
 use std::fmt;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -12,7 +13,6 @@ pub enum AudioQuality {
 	#[serde(rename = "AUDIO_QUALITY_HIGH")]
 	High,
 }
-
 
 impl fmt::Display for AudioQuality {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

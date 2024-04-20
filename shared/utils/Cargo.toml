@@ -2,23 +2,23 @@
 name = "utils"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
-license.workspace = true
 edition.workspace = true
+license.workspace = true
+description.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = { workspace = true }
+csv = { workspace = true }
+gloo = { workspace = true }
+humantime = { workspace = true }
+reqwasm = { workspace = true }
+ron = { workspace = true }
+rustytube-error = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-csv = { workspace = true }
-ron = { workspace = true }
 tauri-sys = { workspace = true }
-gloo = { workspace = true }
-reqwasm = { workspace = true }
-humantime = { workspace = true }
-chrono = { workspace = true }
-rustytube-error = { workspace = true }
 
 [dependencies.wasm-bindgen]
 workspace = true
@@ -26,11 +26,11 @@ workspace = true
 [dependencies.web-sys]
 workspace = true
 features = [
-    'Headers',
-    'Request',
-    'RequestInit',
-    'RequestMode',
-    'Response',
-    'Window',
-    'Performance'
+  'Headers',
+  'Request',
+  'RequestInit',
+  'RequestMode',
+  'Response',
+  'Window',
+  'Performance',
 ]

@@ -2,12 +2,12 @@
 name = "locales"
 version.workspace = true
 authors.workspace = true
-description.workspace = true
-license.workspace = true
 edition.workspace = true
+license.workspace = true
+description.workspace = true
 
 [dependencies]
-serde = { workspace = true }
-serde_json = { workspace = true }
 num-format = { workspace = true }
 rust-i18n = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

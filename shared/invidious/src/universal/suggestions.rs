@@ -21,11 +21,13 @@ impl Suggestions {
 		let url = format!("{}/api/v1/search/suggestions?q={}&hl={}", server, query, lang);
 		let suggestions_json = fetch(&url).await?;
 		let mut suggestions = serde_json::from_str::<Suggestions>(&suggestions_json)?;
-		let decoded_suggestions = suggestions.suggestions.into_iter().map(|suggestion| {
-			decode_html_entities(&suggestion).to_string()
-		}).collect::<Vec<String>>();
+		let decoded_suggestions = suggestions
+			.suggestions
+			.into_iter()
+			.map(|suggestion| decode_html_entities(&suggestion).to_string())
+			.collect::<Vec<String>>();
 		suggestions.suggestions = decoded_suggestions;
-		
+
 		Ok(suggestions)
 	}
 }

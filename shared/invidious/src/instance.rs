@@ -1,6 +1,7 @@
+use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use rustytube_error::RustyTubeError;
+
 use crate::fetch::fetch;
 
 pub const INSTANCES_API_LINK: &'static str = "https://api.invidious.io/instances.json";

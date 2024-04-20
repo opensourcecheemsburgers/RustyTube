@@ -1,6 +1,6 @@
-mod video;
 mod annotations;
 mod captions;
+mod video;
 
-pub use video::*;
 pub use captions::*;
+pub use video::*;

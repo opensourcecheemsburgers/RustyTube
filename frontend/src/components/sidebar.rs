@@ -11,7 +11,7 @@ use crate::{
 	},
 	contexts::ChannelThumbsCtx,
 	icons::*,
-	utils::i18n
+	utils::i18n,
 };
 
 #[derive(Clone, Copy)]
@@ -74,7 +74,11 @@ fn SubscriptionsButton() -> impl IntoView {
 		})
 	};
 	view! {
-		<div data-expanded=expanded data-tip=i18n("sidebar.subscriptions") class=SIDEBAR_TOOLTIP_CLASSES>
+		<div
+			data-expanded=expanded
+			data-tip=i18n("sidebar.subscriptions")
+			class=SIDEBAR_TOOLTIP_CLASSES
+		>
 			<button on:click=go_to_subs data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 				<SubscriptionsIcon/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>

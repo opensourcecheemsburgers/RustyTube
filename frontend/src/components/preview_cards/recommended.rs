@@ -37,7 +37,7 @@ pub fn Info(video: VideoShort) -> impl IntoView {
 		<div class="flex flex-col w-[70%] overflow-hidden">
 			<p class="text-sm">{video.title}</p>
 			<div class="flex flex-row flex-wrap items-center mt-2 space-x-1 text-sm">
-				<ViewsIcon />
+				<ViewsIcon/>
 				<p>{video.views_text}</p>
 			</div>
 		</div>

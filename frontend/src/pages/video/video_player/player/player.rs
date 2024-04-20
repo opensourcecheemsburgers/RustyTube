@@ -9,7 +9,8 @@ use web_sys::{Element, HtmlDivElement};
 use crate::{
 	components::FerrisError,
 	contexts::{
-		PlaybackState, PlayerState, PlayerStyle, RegionConfigCtx, VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID
+		PlaybackState, PlayerState, PlayerStyle, RegionConfigCtx, VIDEO_CONTAINER_ID,
+		VIDEO_CONTROLS_ID,
 	},
 	pages::video::{
 		page::VideoResource,

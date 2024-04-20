@@ -20,9 +20,7 @@ pub fn PopularSection() -> impl IntoView {
 	view! {
 		<div class="w-full flex justify-center mt-4">
 			<div class="w-[90%] flex flex-col gap-y-8">
-				<h1 class="font-semibold text-2xl">
-					{i18n("sidebar.popular")}
-				</h1>
+				<h1 class="font-semibold text-2xl">{i18n("sidebar.popular")}</h1>
 				<Suspense fallback=move || {
 					view! { <PlaceholderCardArray/> }
 				}>

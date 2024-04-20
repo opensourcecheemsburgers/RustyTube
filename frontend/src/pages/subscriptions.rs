@@ -7,7 +7,7 @@ use crate::{
 	contexts::{SubsVideosCtx, SubscriptionsCtx},
 	icons::FerrisWaveIcon,
 	pages::settings::ImportSubsButton,
-	utils::i18n
+	utils::i18n,
 };
 
 #[component]
@@ -22,9 +22,7 @@ pub fn SubscriptionsSection() -> impl IntoView {
 	view! {
 		<div class="flex justify-center w-full mt-4">
 			<div class="w-[90%] flex flex-col gap-y-8">
-				<h1 class="text-2xl font-semibold">
-					{i18n("sidebar.subscriptions")}
-				</h1>
+				<h1 class="text-2xl font-semibold">{i18n("sidebar.subscriptions")}</h1>
 				{subs_view}
 			</div>
 		</div>

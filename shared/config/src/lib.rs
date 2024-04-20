@@ -165,4 +165,3 @@ impl Config {
 		Ok(toml::from_str(toml_str)?)
 	}
 }
-

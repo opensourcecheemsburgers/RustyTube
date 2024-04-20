@@ -1,6 +1,6 @@
-
 use serde::{Deserialize, Serialize};
-use crate::formats::items::{Container, AudioQuality};
+
+use crate::formats::items::{AudioQuality, Container};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

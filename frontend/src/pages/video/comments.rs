@@ -3,8 +3,10 @@ use leptos::*;
 use num_format::{Locale, ToFormattedString};
 
 use crate::{
-	components::FerrisError, contexts::{NetworkConfigCtx, RegionConfigCtx}, icons::{LikeIcon, RepliesIcon}, 
-	utils::{get_current_video_query_signal, VideoQuerySignal, i18n}
+	components::FerrisError,
+	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	icons::{LikeIcon, RepliesIcon},
+	utils::{get_current_video_query_signal, i18n, VideoQuerySignal},
 };
 
 #[component]
@@ -44,7 +46,7 @@ pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
 	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let video_id = get_current_video_query_signal();
-	
+
 	let comments_vec = create_rw_signal(comments.comments);
 	let continuation = create_rw_signal(comments.continuation);
 

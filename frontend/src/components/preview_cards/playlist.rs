@@ -1,7 +1,7 @@
 use invidious::CommonPlaylist;
 use leptos::*;
 use leptos_router::NavigateOptions;
-use num_format::{ToFormattedString};
+use num_format::ToFormattedString;
 
 use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon, utils::i18n};
 
@@ -46,7 +46,7 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 				{verified_check}
 				<p>{"•"}</p>
 				<p>
-					{t!("playlist.videos", video_count = video_count, locale = &locale.get().id())}
+					{t!("playlist.videos", video_count = video_count, locale = & locale.get().id())}
 				</p>
 			</div>
 		</div>

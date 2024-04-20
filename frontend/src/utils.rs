@@ -10,7 +10,9 @@ pub fn get_current_video_query_signal() -> VideoQuerySignal {
 }
 
 pub fn i18n(key: &'static str) -> impl Fn() -> String {
-	move || t!(key, locale = &expect_context::<RegionConfigCtx>().locale_slice.0.get().id()).to_string()
+	move || {
+		t!(key, locale = &expect_context::<RegionConfigCtx>().locale_slice.0.get().id()).to_string()
+	}
 }
 
 pub fn is_webkit() -> bool {

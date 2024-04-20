@@ -3,28 +3,28 @@ name = "frontend"
 version = "0.1.1"
 edition = "2021"
 
-#[dev-dependencies]
-#console_error_panic_hook = { workspace = true }
+# [dev-dependencies]
+# console_error_panic_hook = { workspace = true }
 
 [dependencies]
-web-sys = { workspace = true }
+gloo = { workspace = true }
+js-sys = { workspace = true }
+reqwasm = { workspace = true }
+urlencoding = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-cli = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
-js-sys = { workspace = true }
-gloo = { workspace = true }
-reqwasm = { workspace = true }
-urlencoding = {workspace = true }
+web-sys = { workspace = true }
 
+config = { workspace = true }
 invidious = { workspace = true }
 rustytube-error = { workspace = true }
-config = { workspace = true }
 utils = { workspace = true }
 
+isocountry = { workspace = true }
+locales = { workspace = true }
 num-format = { workspace = true }
 rust-i18n = { workspace = true }
-locales = { workspace = true }
-isocountry = { workspace = true }
 
 console_error_panic_hook = { workspace = true }
 

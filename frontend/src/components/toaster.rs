@@ -21,6 +21,7 @@ where
 	view! {
 		<div class="toast toast-center z-50">
 			<For each=move || toaster.toasts.get() key=|toast| toast.clone() let:toast>
+
 				{
 					set_timeout(
 						move || toaster.remove_toast(&toast),
@@ -38,4 +39,3 @@ where
 		</div>
 	}
 }
-

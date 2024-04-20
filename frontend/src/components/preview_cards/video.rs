@@ -24,9 +24,9 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 	let title = video.title;
 	let author = video.author;
 	let author_id = video.author_id;
-	
+
 	let views = move || video.views.to_formatted_string(&locale.get().to_num_fmt());
-	
+
 	let published = match video.upcoming {
 		true => utils::get_time_until(video.premiere_timestamp),
 		false => video.published_text,

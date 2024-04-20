@@ -264,7 +264,9 @@ fn Videos() -> impl IntoView {
 
 #[component]
 fn VideosInner(videos: ChannelVideos) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let lang = StoredValue::new(
+		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
+	);
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(videos.continuation);
@@ -344,7 +346,9 @@ fn Shorts() -> impl IntoView {
 
 #[component]
 fn ShortsInner(shorts: ChannelShorts) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let lang = StoredValue::new(
+		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
+	);
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(shorts.continuation);
@@ -430,7 +434,9 @@ fn Livestreams() -> impl IntoView {
 
 #[component]
 fn LivestreamsInner(livestreams: ChannelLivestreams) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let lang = StoredValue::new(
+		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
+	);
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(livestreams.continuation);
@@ -521,7 +527,9 @@ fn Playlists() -> impl IntoView {
 
 #[component]
 fn PlaylistsInner(playlists: ChannelPlaylists) -> impl IntoView {
-	let lang = StoredValue::new(expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang());
+	let lang = StoredValue::new(
+		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
+	);
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
 	let continuation = RwSignal::new(playlists.continuation);

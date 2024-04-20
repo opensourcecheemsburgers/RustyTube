@@ -34,10 +34,7 @@ pub fn Header() -> impl IntoView {
 #[component]
 pub fn BackBtn() -> impl IntoView {
 	view! {
-		<div
-			class="tooltip tooltip-bottom tooltip-info"
-			data-tip=i18n("header.back")
-		>
+		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.back")>
 			<button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
 				<BackIcon/>
 			</button>
@@ -52,10 +49,7 @@ fn back() -> Result<(), RustyTubeError> {
 #[component]
 pub fn ForwardBtn() -> impl IntoView {
 	view! {
-		<div
-			class="tooltip tooltip-bottom tooltip-info"
-			data-tip=i18n("header.forward")
-		>
+		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.forward")>
 			<button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
 				<ForwardIcon/>
 			</button>
@@ -70,10 +64,7 @@ fn forward() -> Result<(), RustyTubeError> {
 #[component]
 pub fn ReloadBtn() -> impl IntoView {
 	view! {
-		<div
-			class="tooltip tooltip-bottom tooltip-info"
-			data-tip=i18n("header.force_reload")
-		>
+		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.force_reload")>
 			<button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
 				<ReloadIcon/>
 			</button>
@@ -324,10 +315,7 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 
 	view! {
 		<div class="dropdown dropdown-end">
-			<div
-				class="tooltip tooltip-bottom tooltip-info"
-				data-tip=i18n("header.themes")
-			>
+			<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.themes")>
 
 				<label tabindex="0" class="btn btn-ghost rounded-btn">
 					<PaletteIcon/>
