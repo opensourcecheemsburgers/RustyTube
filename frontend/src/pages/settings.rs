@@ -14,7 +14,8 @@ use wasm_bindgen::JsCast;
 use web_sys::{Event, HtmlDialogElement, HtmlInputElement, MouseEvent};
 
 use crate::{
-	contexts::{RegionConfigCtx, SubscriptionsCtx, UiConfigCtx},
+	contexts::{RegionConfigCtx, UiConfigCtx},
+	resources::{SubscriptionsCtx, SubscriptionsThumbnailsResource, SubscriptionsVideosResource},
 	themes::*,
 	utils::i18n,
 };
@@ -198,9 +199,9 @@ pub fn DataSettings() -> impl IntoView {
 
 #[component]
 pub fn ImportSubsButton() -> impl IntoView {
-	let subs = expect_context::<SubscriptionsCtx>().0;
+	let subs = expect_context::<SubscriptionsCtx>();
 
-	let parse_subs_file = create_action(|input: &(RwSignal<Subscriptions>, Event)| {
+	let parse_subs_file = create_action(|input: &(SubscriptionsCtx, Event)| {
 		let subs = input.0.clone();
 		let event = input.1.clone();
 
@@ -229,7 +230,7 @@ pub fn ImportSubsButton() -> impl IntoView {
 }
 
 async fn get_subs_from_file(
-	subs: RwSignal<Subscriptions>,
+	subs_resource: SubscriptionsCtx,
 	event: Event,
 ) -> Result<(), RustyTubeError> {
 	let input = event.target().unwrap().dyn_into::<HtmlInputElement>().unwrap();
@@ -237,14 +238,14 @@ async fn get_subs_from_file(
 	let file = filelist.get(0).ok_or(RustyTubeError::no_file_selected())?;
 	let blob: Blob = file.into();
 	let mut subscriptions = Subscriptions::read_subs(blob).await?;
-	subscriptions.save().await?;
-	subs.update(|existing_subscriptions| {
-		existing_subscriptions.channels.append(&mut subscriptions.channels);
-		existing_subscriptions
-			.channels
-			.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
-		existing_subscriptions.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name))
+	subs_resource.0.update(|subs| {
+		subs.channels.append(&mut subscriptions.channels);
+		subs.channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+		subs.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name))
 	});
+	subs_resource.save().await;
+	expect_context::<SubscriptionsVideosResource>().resource.refetch();
+	expect_context::<SubscriptionsThumbnailsResource>().resource.refetch();
 	Ok(())
 }
 
@@ -263,7 +264,7 @@ pub fn DeleteAllSubsButton() -> impl IntoView {
 
 	let delete_all_subs = move |ev: MouseEvent| {
 		LocalStorage::set(SUBS_KEY, "").unwrap();
-		subs_ctx.0.update(|subs| subs.channels.clear());
+		subs_ctx.0.set(Subscriptions::default());
 		close_modal(ev);
 	};
 

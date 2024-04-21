@@ -4,9 +4,10 @@ use num_format::ToFormattedString;
 
 use crate::{
 	components::FerrisError,
-	contexts::{PlayerState, RegionConfigCtx, SubscriptionsCtx},
+	contexts::{PlayerState, RegionConfigCtx},
 	icons::{CalendarIcon, DislikeIcon, DownloadIcon, LikeIcon, ShareIcon, ViewsIcon},
 	pages::video::page::VideoResource,
+	resources::SubscriptionsCtx,
 	utils::get_current_video_query_signal,
 };
 

@@ -5,8 +5,9 @@ use web_sys::KeyboardEvent;
 
 use crate::{
 	components::FerrisError,
-	contexts::{InstancesCtx, NetworkConfigCtx, RegionConfigCtx, UiConfigCtx},
+	contexts::{NetworkConfigCtx, RegionConfigCtx, UiConfigCtx},
 	icons::{BackIcon, ForwardIcon, PaletteIcon, ReloadIcon, ServerIcon},
+	resources::InstancesResource,
 	themes::*,
 	utils::*,
 };
@@ -165,51 +166,48 @@ fn search(query: String) {
 
 #[component]
 pub fn InstanceSelectDropdown() -> impl IntoView {
-	let instances = expect_context::<InstancesCtx>().0;
+	let instances = expect_context::<InstancesResource>().resource;
 
-	view! {
-		{move || match instances.get() {
-			None => view! { <div></div> },
-			Some(instances) => {
-				view! {
-					<div class="dropdown dropdown-end">
-						<div
-							class="tooltip tooltip-bottom tooltip-info"
-							data-tip=i18n("header.instances")
-						>
+	move || {
+		instances.get().map(|instances| {
+			view! {
+				<div class="dropdown dropdown-end">
+					<div
+						class="tooltip tooltip-bottom tooltip-info"
+						data-tip=i18n("header.instances")
+					>
 
-							<label tabindex="0" class="btn btn-ghost rounded-btn">
-								<ServerIcon/>
-							</label>
-						</div>
-						<ul
-							tabindex="0"
-							class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
-						>
-							<div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
-
-								{instances
-									.unwrap()
-									.into_iter()
-									.map(|instance: (String, InstanceInfo)| {
-										let api = instance.1.api.unwrap_or_default();
-										let cors = instance.1.cors.unwrap_or_default();
-										let server_visible = api && cors;
-										match server_visible {
-											true => {
-												view! { <InstanceDropdownListItem instance=instance/> }
-											}
-											false => view! { <div class="hidden"></div> }.into_view(),
-										}
-									})
-									.collect_view()}
-
-							</div>
-						</ul>
+						<label tabindex="0" class="btn btn-ghost rounded-btn">
+							<ServerIcon/>
+						</label>
 					</div>
-				}
+					<ul
+						tabindex="0"
+						class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
+					>
+						<div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
+
+							{instances
+								.unwrap()
+								.into_iter()
+								.map(|instance: (String, InstanceInfo)| {
+									let api = instance.1.api.unwrap_or_default();
+									let cors = instance.1.cors.unwrap_or_default();
+									let server_visible = api && cors;
+									match server_visible {
+										true => {
+											view! { <InstanceDropdownListItem instance=instance/> }
+										}
+										false => view! { <div class="hidden"></div> }.into_view(),
+									}
+								})
+								.collect_view()}
+
+						</div>
+					</ul>
+				</div>
 			}
-		}}
+		})
 	}
 }
 

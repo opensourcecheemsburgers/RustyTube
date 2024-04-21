@@ -7,6 +7,8 @@ edition = "2021"
 gloo = { workspace = true }
 js-sys = { workspace = true }
 reqwasm = { workspace = true }
+ron = { workspace = true }
+serde = { workspace = true }
 urlencoding = { workspace = true }
 wasm-bindgen = { workspace = true }
 web-sys = { workspace = true }
@@ -14,6 +16,7 @@ web-sys = { workspace = true }
 config = { workspace = true }
 invidious = { workspace = true }
 rustytube-error = { workspace = true }
+tauri-sys = { workspace = true }
 utils = { workspace = true }
 
 isocountry = { workspace = true }

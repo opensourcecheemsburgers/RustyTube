@@ -7,6 +7,7 @@ mod components;
 mod contexts;
 mod icons;
 mod pages;
+mod resources;
 mod themes;
 mod utils;
 
@@ -18,10 +19,15 @@ pub use themes::*;
 
 use crate::{
 	components::Page,
-	contexts::{provide_config_context_slices, provide_toaster_ctx, provide_user_contexts, provide_user_resources},
+	contexts::{provide_config_context_slices, provide_toaster_ctx},
 	pages::{
 		ChannelPage, PopularSection, SearchSection, SettingsPage, SubscriptionsSection,
 		TrendingSection, VideoPage,
+	},
+	resources::{
+		InstancesResource, SubscriptionsCtx, SubscriptionsThumbnailsResource,
+		SubscriptionsThumbnailsResourceArgs, SubscriptionsVideosResource,
+		SubscriptionsVideosResourceArgs,
 	},
 };
 
@@ -29,11 +35,19 @@ use crate::{
 fn App() -> impl IntoView {
 	console_error_panic_hook::set_once();
 	provide_toaster_ctx();
-	provide_config_context_slices(Config::load().unwrap_or_default());
-	provide_user_contexts();
-	provide_user_resources();
 
-	let view = move || view! { <div></div> }.into_view();
+	provide_config_context_slices(Config::load().unwrap_or_default());
+
+	let subscriptions_resource = SubscriptionsCtx::initialise();
+
+	provide_context(subscriptions_resource);
+	provide_context(SubscriptionsVideosResource::initialise(SubscriptionsVideosResourceArgs::new(
+		subscriptions_resource,
+	)));
+	provide_context(SubscriptionsThumbnailsResource::initialise(
+		SubscriptionsThumbnailsResourceArgs::new(subscriptions_resource),
+	));
+	provide_context(InstancesResource::initialise());
 
 	view! {
 		<Router>
@@ -46,9 +60,9 @@ fn App() -> impl IntoView {
 					<Route path="/trending" view=move || view! { <TrendingSection/> }/>
 					<Route path="/popular" view=move || view! { <PopularSection/> }/>
 					<Route path="/search" view=move || view! { <SearchSection/> }/>
-					<Route path="/playlist" view=view/>
+					<Route path="/playlist" view=move || ().into_view()/>
 					<Route path="/settings" view=move || view! { <SettingsPage/> }/>
-					<Route path="/about" view=view/>
+					<Route path="/about" view=move || ().into_view()/>
 				</Route>
 			</Routes>
 		</Router>

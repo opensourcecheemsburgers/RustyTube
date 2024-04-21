@@ -3,19 +3,13 @@ use leptos::*;
 
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, PopularPreviewCard},
-	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	resources::PopularResource,
 	utils::i18n,
 };
 
 #[component]
 pub fn PopularSection() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-
-	let popular_videos = create_resource(
-		move || (server.get(), locale.get().to_invidious_lang()),
-		|(server, lang)| async move { Popular::fetch_popular(&server, &lang).await },
-	);
+	let popular = PopularResource::initialise();
 
 	view! {
 		<div class="w-full flex justify-center mt-4">
@@ -25,7 +19,8 @@ pub fn PopularSection() -> impl IntoView {
 					view! { <PlaceholderCardArray/> }
 				}>
 					{move || {
-						popular_videos
+						popular
+							.resource
 							.get()
 							.map(|popular_videos_res| {
 								match popular_videos_res {

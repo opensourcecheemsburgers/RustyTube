@@ -17,7 +17,7 @@ pub struct Trending {
 }
 
 impl Trending {
-	fn url(server: &str, category: TrendingCategory, region: &str, lang: &str) -> String {
+	fn url(server: &str, category: &TrendingCategory, region: &str, lang: &str) -> String {
 		match category {
 			TrendingCategory::Default => {
 				format!("{server}/api/v1/trending/?region={region}&hl={lang}")
@@ -34,7 +34,7 @@ impl Trending {
 
 	pub async fn fetch_trending(
 		server: &str,
-		category: TrendingCategory,
+		category: &TrendingCategory,
 		region: &str,
 		lang: &str,
 	) -> Result<Self, RustyTubeError> {

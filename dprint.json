@@ -15,8 +15,7 @@
 
   "exec": {
     "commands": [{
-      "command": "leptosfmt --stdin --rustfmt {{file_path}}",
-      "stdin": true,
+      "command": "leptosfmt --stdin --rustfmt",
       "exts": ["rs"]
     }]
   },

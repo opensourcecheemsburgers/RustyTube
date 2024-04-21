@@ -1,26 +1,21 @@
-use invidious::{Comment, Comments, Replies};
+use invidious::Comment;
 use leptos::*;
-use num_format::{Locale, ToFormattedString};
+use num_format::ToFormattedString;
 
 use crate::{
 	components::FerrisError,
-	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	contexts::RegionConfigCtx,
 	icons::{LikeIcon, RepliesIcon},
-	utils::{get_current_video_query_signal, i18n, VideoQuerySignal},
+	resources::{CommentsResource, CommentsResourceArgs, RepliesResource, RepliesResourceArgs},
+	utils::i18n,
 };
 
 #[component]
 pub fn CommentsSection() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let video_id = get_current_video_query_signal();
-
-	let comments_resource = create_resource(
-		move || {
-			(server.get(), video_id.0.get().unwrap_or_default(), locale.get().to_invidious_lang())
-		},
-		|(server, id, lang)| async move { Comments::fetch_comments(&server, &id, None, &lang).await },
-	);
+	let comments_vec = RwSignal::new(vec![]);
+	let continuation = RwSignal::new(None);
+	let args = CommentsResourceArgs::new(comments_vec, continuation);
+	let comments_resource = CommentsResource::initialise(args);
 
 	view! {
 		<Suspense fallback=move || {
@@ -28,10 +23,37 @@ pub fn CommentsSection() -> impl IntoView {
 		}>
 			{move || {
 				comments_resource
+					.resource
 					.get()
-					.map(|comments_result| {
-						match comments_result {
-							Ok(comments) => view! { <CommentsSectionContent comments=comments/> },
+					.map(|comments| {
+						match comments {
+							Ok(_) => {
+								view! {
+									<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
+										<div class="flex flex-col space-y-8">
+											<For
+												each=move || comments_vec.get()
+												key=|comment| comment.id.clone()
+												let:comment
+											>
+												<Comment comment=comment/>
+											</For>
+										</div>
+										<Show when=move || continuation.get().is_some()>
+											<button
+												class="btn btn-primary btn-outline btn-sm"
+												on:click=move |_| {
+													comments_resource.fetch_more.dispatch(args)
+												}
+											>
+
+												{i18n("general.load_more")}
+											</button>
+										</Show>
+									</div>
+								}
+									.into_view()
+							}
 							Err(err) => view! { <FerrisError error=err/> },
 						}
 					})
@@ -42,60 +64,7 @@ pub fn CommentsSection() -> impl IntoView {
 }
 
 #[component]
-pub fn CommentsSectionContent(comments: Comments) -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let video_id = get_current_video_query_signal();
-
-	let comments_vec = create_rw_signal(comments.comments);
-	let continuation = create_rw_signal(comments.continuation);
-
-	let fetch_comments = create_action(|input: &CommentFetchArgs| {
-		let args = input.clone();
-		async move {
-			fetch_comments(args).await;
-		}
-	});
-
-	let lang = StoredValue::new(locale.get().to_invidious_lang());
-
-	let comment_fetch_args =
-		CommentFetchArgs { comments_vec, video_id, continuation, server, lang, fetch_comments };
-
-	let fetch_comments =
-		move |_| comment_fetch_args.fetch_comments.dispatch(comment_fetch_args.clone());
-
-	let fetch_more_comments_btn = move || {
-		(!comment_fetch_args.comments_vec.get().is_empty()
-			&& comment_fetch_args.continuation.get().is_some())
-		.then_some(view! {
-			<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_comments>
-				{i18n("general.load_more")}
-			</button>
-		})
-		.into_view()
-	};
-
-	let comments_view = move || {
-		comment_fetch_args
-			.comments_vec
-			.get()
-			.into_iter()
-			.map(|comment| view! { <Comment comment=comment/> })
-			.collect_view()
-	};
-
-	view! {
-		<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
-			<div class="flex flex-col space-y-8">{comments_view}</div>
-			{fetch_more_comments_btn}
-		</div>
-	}
-}
-
-#[component]
 pub fn Comment(comment: Comment) -> impl IntoView {
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 
 	let content = comment.content_html;
@@ -106,36 +75,12 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 	let reply_count = comment.replies_info.clone().map_or(0, |replies| replies.replies);
 	let reply_continuation = comment.replies_info.clone().map(|replies| replies.continuation);
 
-	let replies_visible = create_rw_signal(false);
-	let replies_vec = create_rw_signal::<Vec<Comment>>(vec![]);
-	let fetch_replies_action = create_action(|input: &ReplyFetchArgs| {
-		let args = input.clone();
-		async move {
-			fetch_replies(args).await;
-		}
-	});
+	let replies_vec = RwSignal::new(vec![]);
+	let continuation = RwSignal::new(reply_continuation);
+	let args = RepliesResourceArgs::new(replies_vec, continuation);
+	let replies = RepliesResource::initialise(args);
 
-	let reply_fetch_args = ReplyFetchArgs {
-		replies_visible,
-		continuation: create_rw_signal(reply_continuation),
-		replies_vec,
-		server,
-		lang: StoredValue::new(locale.get().to_invidious_lang()),
-		video_id: get_current_video_query_signal(),
-		fetch_replies: fetch_replies_action,
-	};
-
-	let toggle_replies_visible = move |_| {
-		replies_visible.set(!replies_visible.get());
-		if replies_vec.get().is_empty() {
-			fetch_replies_action.dispatch(reply_fetch_args.clone());
-		}
-	};
-
-	let replies_view = move || match reply_count != 0 && replies_visible.get() {
-		true => Some(view! { <CommentReplies reply_fetch_args=reply_fetch_args/> }),
-		false => None,
-	};
+	let replies_visible = RwSignal::new(false);
 
 	view! {
 		<div class="flex flex-col space-y-4 h-max">
@@ -154,7 +99,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 						<p>{"•"}</p>
 						<div
 							class="flex flex-row gap-1 items-center"
-							on:click=toggle_replies_visible
+							on:click=move |_| replies_visible.set(!replies_visible.get())
 						>
 							<RepliesIcon/>
 							<p>{reply_count}</p>
@@ -162,7 +107,28 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 					</div>
 				</div>
 			</div>
-			{replies_view}
+			<Show when=move || { reply_count != 0 && replies_visible.get() }>
+				<div class="pl-2 flex flex-row h-max space-x-3">
+					<div class="w-0.5 h-full bg-primary rounded-xl"></div>
+					<div class="flex flex-col w-full h-max space-y-4">
+						<div class="flex flex-col space-y-4">
+							<For
+								each=move || replies_vec.get()
+								key=|reply| reply.id.clone()
+								let:reply
+							>
+								<Reply reply=reply/>
+							</For>
+						</div>
+						<button
+							class="btn btn-primary btn-outline btn-sm"
+							on:click=move |_| replies.fetch_more.dispatch(args)
+						>
+							{i18n("general.load_more")}
+						</button>
+					</div>
+				</div>
+			</Show>
 		</div>
 	}
 }
@@ -183,6 +149,35 @@ pub fn CommenterIcon(url: String) -> impl IntoView {
 			src=url
 			class="data-[loaded=false]:hidden w-12 h-12 rounded-full mt-1"
 		/>
+	}
+}
+
+#[component]
+pub fn Reply(reply: Comment) -> impl IntoView {
+	let author_thumb_url = reply.author_thumbnails.first().cloned().map(|thumb| thumb.url);
+	let likes = reply.likes.to_formatted_string(
+		&expect_context::<RegionConfigCtx>().locale_slice.0.get().to_num_fmt(),
+	);
+
+	view! {
+		<div class="flex flex-col space-y-4 h-max">
+			<div class="flex flex-row w-full items-start space-x-4">
+				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
+				<div class="flex flex-col text-sm">
+					<div class="flex flex-row gap-1">
+						<p class="font-semibold">{reply.author}</p>
+						<p>{"•"}</p>
+						<p>{reply.published}</p>
+					</div>
+					<div class="mt-1" inner_html=reply.content></div>
+					<div class="mt-3 flex flex-row gap-1 items-center">
+						<LikeIcon/>
+						<p>{likes}</p>
+						<p>{"•"}</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	}
 }
 
@@ -220,124 +215,4 @@ pub fn CommentPlaceholder() -> impl IntoView {
 			</div>
 		</div>
 	}
-}
-
-#[component]
-pub fn CommentReplies(reply_fetch_args: ReplyFetchArgs) -> impl IntoView {
-	let fetch_replies = move |_| reply_fetch_args.fetch_replies.dispatch(reply_fetch_args.clone());
-
-	let load_more_replies_btn = move || {
-		(!reply_fetch_args.replies_vec.get().is_empty()
-			&& reply_fetch_args.continuation.get().is_some())
-		.then_some(view! {
-			<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_replies>
-				{"Load more"}
-			</button>
-		})
-		.into_view()
-	};
-
-	let replies = move || {
-		reply_fetch_args
-			.replies_vec
-			.get()
-			.into_iter()
-			.map(|reply| view! { <Reply comment=reply/> })
-			.collect_view()
-	};
-
-	view! {
-		<div class="pl-2 flex flex-row h-max space-x-3">
-			<div class="w-0.5 h-full bg-primary rounded-xl"></div>
-			<div class="flex flex-col w-full h-max space-y-4">
-				<div class="flex flex-col space-y-4">{replies}</div>
-				{load_more_replies_btn}
-			</div>
-		</div>
-	}
-}
-
-#[component]
-pub fn Reply(comment: Comment) -> impl IntoView {
-	let content = comment.content_html;
-	let author = comment.author;
-	let author_thumb_url = comment.author_thumbnails.first().cloned().map(|thumb| thumb.url);
-	let published = comment.published_text;
-	let likes = comment.likes.to_formatted_string(&Locale::en);
-
-	view! {
-		<div class="flex flex-col space-y-4 h-max">
-			<div class="flex flex-row w-full items-start space-x-4">
-				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
-				<div class="flex flex-col text-sm">
-					<div class="flex flex-row gap-1">
-						<p class="font-semibold">{author}</p>
-						<p>{"•"}</p>
-						<p>{published}</p>
-					</div>
-					<div class="mt-1" inner_html=content></div>
-					<div class="mt-3 flex flex-row gap-1 items-center">
-						<LikeIcon/>
-						<p>{likes}</p>
-						<p>{"•"}</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	}
-}
-
-async fn fetch_comments(args: CommentFetchArgs) {
-	if let Some(token) = args.continuation.get() {
-		let comments = Comments::fetch_comments(
-			args.server.get().as_str(),
-			args.video_id.0.get().unwrap().as_str(),
-			Some(token.as_str()),
-			&args.lang.get_value(),
-		)
-		.await
-		.unwrap();
-		args.continuation.set(comments.continuation);
-		let mut temp = args.comments_vec.get();
-		temp.append(comments.comments.clone().as_mut());
-		args.comments_vec.set(temp);
-	}
-}
-
-async fn fetch_replies(args: ReplyFetchArgs) {
-	if let Some(token) = args.continuation.get() {
-		let replies = Replies::fetch_replies(
-			token.as_str(),
-			args.server.get().as_str(),
-			args.video_id.0.get().unwrap().as_str(),
-			&args.lang.get_value(),
-		)
-		.await
-		.unwrap();
-		args.continuation.set(replies.continuation);
-		let mut temp = args.replies_vec.get();
-		temp.append(replies.comments.clone().as_mut());
-		args.replies_vec.set(temp);
-	}
-}
-
-#[derive(Clone, Copy)]
-pub struct CommentFetchArgs {
-	pub continuation: RwSignal<Option<String>>,
-	pub comments_vec: RwSignal<Vec<Comment>>,
-	pub server: Signal<String>,
-	pub lang: StoredValue<String>,
-	pub video_id: VideoQuerySignal,
-	pub fetch_comments: Action<Self, ()>,
-}
-
-#[derive(Clone, Copy)]
-pub struct ReplyFetchArgs {
-	pub replies_visible: RwSignal<bool>,
-	pub continuation: RwSignal<Option<String>>,
-	pub replies_vec: RwSignal<Vec<Comment>>,
-	pub server: Signal<String>,
-	pub lang: StoredValue<String>,
-	pub video_id: VideoQuerySignal,
-	pub fetch_replies: Action<Self, ()>,
 }

@@ -34,9 +34,9 @@ impl Subscription {
 
 pub const SUBS_KEY: &'static str = "subscriptions";
 
-pub type SubscriptionVideos = Result<ChannelVideos, RustyTubeError>;
-pub type SubscriptionsVideos = Vec<SubscriptionVideos>;
-pub type SubscriptionsFetch = Result<SubscriptionsVideos, RustyTubeError>;
+pub type SubsVideosResult = Result<Vec<Result<ChannelVideos, RustyTubeError>>, RustyTubeError>;
+pub type SubsThumbsResult = Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError>;
+pub type SubsChannelsResult = Result<Vec<Result<Channel, RustyTubeError>>, RustyTubeError>;
 
 impl Subscriptions {
 	pub async fn read_subs(blob: Blob) -> Result<Self, RustyTubeError> {
@@ -58,23 +58,7 @@ impl Subscriptions {
 		}
 	}
 
-	pub fn to_ron_string(&self) -> Result<String, RustyTubeError> {
-		Ok(ron::to_string(&self)?)
-	}
-
-	pub async fn save(&self) -> Result<(), RustyTubeError> {
-		let subs_ron_str = ron::to_string(&self)?;
-		save_to_browser_storage(SUBS_KEY, &subs_ron_str)?;
-		Ok(())
-	}
-
-	pub fn load() -> Result<Self, RustyTubeError> {
-		let subs_ron_str: String = LocalStorage::get(SUBS_KEY)?;
-		let subs: Subscriptions = ron::from_str(&subs_ron_str)?;
-		Ok(subs)
-	}
-
-	pub async fn fetch_videos(&self, server: &str, rss: bool, lang: &str) -> SubscriptionsFetch {
+	pub async fn fetch_videos(&self, server: &str, rss: bool, lang: &str) -> SubsVideosResult {
 		let mut futures = Vec::new();
 
 		for channel in self.channels.clone() {
@@ -92,11 +76,7 @@ impl Subscriptions {
 		Ok(subs_videos)
 	}
 
-	pub async fn fetch_channels(
-		&self,
-		server: &str,
-		lang: &str,
-	) -> Result<Vec<Result<Channel, RustyTubeError>>, RustyTubeError> {
+	pub async fn fetch_channels(&self, server: &str, lang: &str) -> SubsChannelsResult {
 		let mut futures = Vec::new();
 
 		for channel in self.channels.clone() {
@@ -108,10 +88,7 @@ impl Subscriptions {
 		Ok(channels)
 	}
 
-	pub async fn fetch_channel_thumbs(
-		&self,
-		server: &str,
-	) -> Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError> {
+	pub async fn fetch_channel_thumbs(&self, server: &str) -> SubsThumbsResult {
 		let mut futures = Vec::new();
 
 		for channel in self.channels.clone() {

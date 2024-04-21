@@ -1,20 +1,20 @@
-use invidious::{CommonVideo, SubscriptionsVideos};
+use invidious::{ChannelVideos, CommonVideo};
 use leptos::*;
 use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, VideoPreviewCard},
-	contexts::{SubsVideosCtx, SubscriptionsCtx},
 	icons::FerrisWaveIcon,
 	pages::settings::ImportSubsButton,
+	resources::{SubscriptionsCtx, SubscriptionsVideosResource},
 	utils::i18n,
 };
 
 #[component]
 pub fn SubscriptionsSection() -> impl IntoView {
-	let subs = expect_context::<SubscriptionsCtx>().0;
+	let subs = expect_context::<SubscriptionsCtx>();
 
-	let subs_view = move || match subs.get().channels.len() == 0 {
+	let subs_view = move || match subs.0.get().channels.len() == 0 {
 		true => view! { <ImportSubscriptions/> },
 		false => view! { <SubscriptionsVideos/> },
 	};
@@ -31,7 +31,7 @@ pub fn SubscriptionsSection() -> impl IntoView {
 
 #[component]
 pub fn SubscriptionsVideos() -> impl IntoView {
-	let subs_videos_resource = expect_context::<SubsVideosCtx>().0;
+	let subs_videos_resource = expect_context::<SubscriptionsVideosResource>().resource;
 
 	view! {
 		<Suspense fallback=move || {
@@ -55,7 +55,9 @@ pub fn SubscriptionsVideos() -> impl IntoView {
 }
 
 #[component]
-pub fn SubscriptionsVideosInner(subs_videos: SubscriptionsVideos) -> impl IntoView {
+pub fn SubscriptionsVideosInner(
+	subs_videos: Vec<Result<ChannelVideos, RustyTubeError>>,
+) -> impl IntoView {
 	let mut videos: Vec<Vec<CommonVideo>> = Vec::new();
 	let mut fails: Vec<RustyTubeError> = Vec::new();
 

@@ -4,29 +4,14 @@ use leptos::*;
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, VideoPreviewCard},
 	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	resources::TrendingResource,
 	utils::i18n,
 };
 
 #[component]
 pub fn TrendingSection() -> impl IntoView {
-	let region_ctx = expect_context::<RegionConfigCtx>();
-	let trending_region = region_ctx.trending_region_slice.0;
-	let language = region_ctx.locale_slice.0;
-	let category = create_rw_signal(TrendingCategory::Default);
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let trending_resource = create_resource(
-		move || {
-			(
-				server.get(),
-				category.get(),
-				trending_region.get(),
-				language.get().to_invidious_lang(),
-			)
-		},
-		|(server, category, region, lang)| async move {
-			Trending::fetch_trending(&server, category, region.alpha2(), &lang).await
-		},
-	);
+	let category = RwSignal::new(TrendingCategory::Default);
+	let trending = TrendingResource::initialise(category);
 
 	view! {
 		<div class="w-full flex justify-center mt-4">
@@ -36,15 +21,26 @@ pub fn TrendingSection() -> impl IntoView {
 				<Suspense fallback=move || {
 					view! { <PlaceholderCardArray/> }
 				}>
-
 					{move || {
-						trending_resource
+						trending
+							.resource
 							.get()
-							.map(|trending_videos_res| {
-								match trending_videos_res {
-									Ok(trending) => view! { <TrendingVideos trending=trending/> },
-									Err(err) => view! { <FerrisError error=err/> },
+							.map(|trending| match trending {
+								Ok(trending) => {
+									view! {
+										<div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
+											<For
+												each=move || trending.videos.clone()
+												key=|video| video.id.clone()
+												let:video
+											>
+												<VideoPreviewCard video=video/>
+											</For>
+										</div>
+									}
+										.into_view()
 								}
+								Err(err) => view! { <FerrisError error=err/> },
 							})
 					}}
 

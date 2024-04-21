@@ -9,8 +9,8 @@ use crate::{
 		donate_modal::{DonateModal, DONATE_MODAL_ID},
 		FerrisError,
 	},
-	contexts::ChannelThumbsCtx,
 	icons::*,
+	resources::{SubscriptionsCtx, SubscriptionsThumbnailsResource},
 	utils::i18n,
 };
 
@@ -138,22 +138,19 @@ fn PopularButton() -> impl IntoView {
 #[component]
 fn Subs() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
-	let channel_thumbs_ctx = expect_context::<ChannelThumbsCtx>().0;
+	let channel_thumbs_ctx = expect_context::<SubscriptionsThumbnailsResource>().resource;
+
 	view! {
 		<div data-expanded=expanded class=SIDEBAR_SUBS_CLASSES>
-			<Suspense fallback=move || {
-				view! { <SubsPlaceholders/> }
-			}>
-				{move || {
-					channel_thumbs_ctx
-						.get()
-						.map(|channel_thumbs| match channel_thumbs {
-							Ok(channel_thumbs) => view! { <SubsInner results=channel_thumbs/> },
-							Err(err) => view! { <FerrisError error=err/> },
-						})
-				}}
+			{move || {
+				channel_thumbs_ctx
+					.get()
+					.map(|channel_thumbs| match channel_thumbs {
+						Ok(channel_thumbs) => view! { <SubsInner results=channel_thumbs/> },
+						Err(err) => view! { <FerrisError error=err/> },
+					})
+			}}
 
-			</Suspense>
 		</div>
 	}
 }
@@ -165,18 +162,6 @@ pub fn SubsInner(results: Vec<Result<ChannelThumb, RustyTubeError>>) -> impl Int
 	channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
 
 	channels.into_iter().map(|channel| view! { <ChannelButton channel=channel/> }).collect_view()
-}
-
-#[component]
-fn SubsPlaceholders() -> impl IntoView {
-	let mut subscriptions = Subscriptions::load().unwrap_or_default().channels;
-	subscriptions.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
-	subscriptions
-		.into_iter()
-		.map(|sub| {
-			view! { <ChannelButtonPlaceholder sub=sub/> }
-		})
-		.collect_view()
 }
 
 #[component]

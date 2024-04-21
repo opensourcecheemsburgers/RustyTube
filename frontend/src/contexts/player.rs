@@ -116,8 +116,8 @@ impl PlayerState {
 			if is_webkit() {
 				let video_play = video.play();
 				let audio_play = audio.play();
-				
-				if audio_play.is_ok() && video_play.is_ok()	{
+
+				if audio_play.is_ok() && video_play.is_ok() {
 					self.playback_state.set(PlaybackState::Playing);
 				}
 			} else {
@@ -125,8 +125,8 @@ impl PlayerState {
 				let video_play = video.play();
 				audio.set_current_time(video.current_time());
 				let audio_play = audio.play();
-				
-				if audio_play.is_ok() && video_play.is_ok()	{
+
+				if audio_play.is_ok() && video_play.is_ok() {
 					self.playback_state.set(PlaybackState::Playing);
 				}
 			}

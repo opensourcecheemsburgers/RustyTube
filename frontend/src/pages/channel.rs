@@ -8,7 +8,8 @@ use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{FerrisError, PlaceholderCardArray, PlaylistPreviewCard, VideoPreviewCard},
-	contexts::{NetworkConfigCtx, RegionConfigCtx, SubscriptionsCtx},
+	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	resources::SubscriptionsCtx,
 };
 
 #[derive(Clone)]
