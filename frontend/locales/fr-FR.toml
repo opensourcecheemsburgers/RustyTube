@@ -36,10 +36,28 @@ manage = "Gérer"
 import = "Importer"
 delete_all = "Supprimer tout"
 export = "Exporter"
+config = "Config"
 locale = "Locale"
 language = "Langue"
 trending_region = "Pays pour les tendances"
 themes = "Thèmes"
+autoplay = "Lecture auto"
+
+[settings.sponsorblock]
+enabled = "Activé"
+sponsor = "Sponsor"
+selfpromo = "Autopromotion"
+intro = "Intro"
+outro = "Conclusion"
+interaction = "Interaction"
+filler = "Bouche-trou"
+preview = "Récap"
+offtopic_music = "Musique hors sujet"
+
+[playlist]
+shuffle = "Mélanger la liste de lecture"
+loop = "Liste de lecture en boucle"
+videos = "%{video_count} vidéos"
 
 [video]
 loading = "Chargement..."
@@ -49,10 +67,11 @@ play = "Lire"
 pause = "Pause"
 volume = "Volume"
 formats = "Formats"
-full_window = "Full window"
+full_window = "Fenêtre"
 fullscreen = "Plein écran"
 playback_speed = "Vitesse de lecture"
 captions = "Sous-titres"
+autoplay = "Lecture auto"
 
 [video.info]
 share = "Partager"
@@ -68,5 +87,5 @@ playlists = "Listes de lecture"
 shorts = "Shorts"
 livestreams = "Livestreams"
 
-[playlist]
-videos = "%{video_count} vidéos"
+[sponsorblock]
+skipped = "SponsorBlock segment ignoré."

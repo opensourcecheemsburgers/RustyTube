@@ -25,7 +25,7 @@ use crate::{
 		TrendingSection, VideoPage,
 	},
 	resources::{
-		InstancesResource, SubscriptionsCtx, SubscriptionsThumbnailsResource,
+		InstancesResource, SponsorBlockResource, SubscriptionsCtx, SubscriptionsThumbnailsResource,
 		SubscriptionsThumbnailsResourceArgs, SubscriptionsVideosResource,
 		SubscriptionsVideosResourceArgs,
 	},
@@ -35,6 +35,7 @@ use crate::{
 fn App() -> impl IntoView {
 	console_error_panic_hook::set_once();
 	provide_toaster_ctx();
+	provide_context::<SponsorBlockResource>(SponsorBlockResource::empty());
 
 	provide_config_context_slices(Config::load().unwrap_or_default());
 

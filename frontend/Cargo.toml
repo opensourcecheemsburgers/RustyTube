@@ -16,6 +16,7 @@ web-sys = { workspace = true }
 config = { workspace = true }
 invidious = { workspace = true }
 rustytube-error = { workspace = true }
+sponsorblock-rs = { workspace = true }
 tauri-sys = { workspace = true }
 utils = { workspace = true }
 

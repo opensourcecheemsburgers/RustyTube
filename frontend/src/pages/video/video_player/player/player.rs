@@ -22,6 +22,11 @@ use crate::{
 
 #[component]
 pub fn VideoContainer(video_resource: VideoResource) -> impl IntoView {
+	let state = PlayerState::init();
+	let style = PlayerStyle::init();
+	provide_context(state);
+	provide_context(style);
+
 	let video_player_view = move || {
 		video_resource.get().map(|video_result| match video_result {
 			Ok(video) => view! { <VideoPlayer video=video/> },

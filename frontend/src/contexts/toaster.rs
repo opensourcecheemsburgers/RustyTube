@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use leptos::{provide_context, RwSignal, SignalUpdate, StoredValue};
+use leptos::{expect_context, provide_context, RwSignal, SignalUpdate, StoredValue};
 
 #[derive(Clone, Copy)]
 pub struct Toaster {
@@ -21,11 +21,25 @@ impl Toaster {
 	}
 }
 
+pub fn toast(toast: Toast) {
+	expect_context::<Toaster>().add_toast(toast)
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Toast {
 	pub message: StoredValue<String>,
 	pub duration: Option<ToastDuration>,
 	pub r#type: Option<ToastType>,
+}
+
+impl Toast {
+	pub fn new(
+		message: String,
+		duration: Option<ToastDuration>,
+		r#type: Option<ToastType>,
+	) -> Self {
+		Self { message: StoredValue::new(message), duration, r#type }
+	}
 }
 
 #[derive(Clone, Copy, Default, PartialEq, Eq, Hash)]

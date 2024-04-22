@@ -139,3 +139,6 @@ path = "shared/tauri"
 
 [workspace.dependencies.locales]
 path = "shared/locales"
+
+[workspace.dependencies.sponsorblock-rs]
+path = "shared/sponsorblock"

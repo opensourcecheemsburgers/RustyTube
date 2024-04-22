@@ -1,10 +1,18 @@
+use std::ops::RangeBounds;
+
 use invidious::Format;
-use leptos::*;
+use leptos::{error::Result, *};
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
 use web_sys::{HtmlAudioElement, HtmlVideoElement};
 
-use crate::{contexts::PlayerConfigCtx, utils::is_webkit};
+use crate::{
+	contexts::PlayerConfigCtx,
+	resources::SponsorBlockResource,
+	utils::{i18n, is_webkit},
+};
+
+use super::{toast, Toast};
 
 pub const VIDEO_CONTAINER_ID: &'static str = "video_container";
 pub const VIDEO_PLAYER_ID: &'static str = "video_player";
@@ -232,6 +240,7 @@ impl PlayerState {
 		self.duration.set(total_time);
 		self.current_time_str.set(utils::unix_to_hours_secs_mins(current_time));
 		self.duration_str.set(utils::unix_to_hours_secs_mins(total_time));
+		self.check_sponsorblock(current_time)?;
 		Ok(())
 	}
 
@@ -262,6 +271,24 @@ impl PlayerState {
 		self.volume.set(volume);
 		expect_context::<PlayerConfigCtx>().volume_slice.1.set(volume);
 
+		Ok(())
+	}
+
+	pub fn check_sponsorblock(&self, time: f64) -> Result<(), RustyTubeError> {
+		if let Some(segments) = expect_context::<SponsorBlockResource>().get_segments() {
+			segments.into_iter().for_each(|segment| {
+				let range =
+					(segment.timeframe.0.round() - 1f64)..=(segment.timeframe.0.round() + 2f64);
+				if range.contains(&time) {
+					self.seek(segment.timeframe.1);
+					toast(Toast::new(
+						i18n("sponsorblock.skipped")(),
+						Some(super::ToastDuration::Normal),
+						Some(super::ToastType::Info),
+					))
+				}
+			});
+		}
 		Ok(())
 	}
 }

@@ -146,22 +146,23 @@ impl Query {
 
 #[derive(Clone, Deserialize, Serialize)]
 pub struct Segment {
-	segment: (f64, f64),
+	#[serde(rename = "segment")]
+	pub timeframe: (f64, f64),
 	#[serde(rename = "UUID")]
-	uuid: String,
-	category: String,
+	pub uuid: String,
+	pub category: String,
 	#[serde(rename = "videoDuration")]
-	video_duration: f64,
+	pub video_duration: f64,
 	#[serde(rename = "actionType")]
-	action: String,
-	locked: u8,
-	votes: i64,
-	description: String,
+	pub action: String,
+	pub locked: u8,
+	pub votes: i64,
+	pub description: String,
 }
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(transparent)]
 pub struct Response {
-	response: Vec<Segment>,
+	pub segments: Vec<Segment>,
 }
 
 #[cfg(test)]

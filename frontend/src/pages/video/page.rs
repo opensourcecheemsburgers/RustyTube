@@ -8,6 +8,7 @@ use super::{
 };
 use crate::{
 	contexts::{NetworkConfigCtx, PlayerState, PlayerStyle, RegionConfigCtx},
+	resources::SponsorBlockResource,
 	utils::get_current_video_query_signal,
 };
 
@@ -17,6 +18,8 @@ pub fn VideoPage() -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id = get_current_video_query_signal().0;
 
+	expect_context::<SponsorBlockResource>().set_video(id);
+
 	let video_resource: VideoResource = create_resource(
 		move || (server.get(), id.get().unwrap_or_default(), locale.get().to_invidious_lang()),
 		|(server, id, lang)| async move {
@@ -24,11 +27,6 @@ pub fn VideoPage() -> impl IntoView {
 			video
 		},
 	);
-
-	let state = PlayerState::init();
-	let style = PlayerStyle::init();
-	provide_context(state);
-	provide_context(style);
 
 	view! {
 		<div class="flex flex-row space-x-4 px-4">

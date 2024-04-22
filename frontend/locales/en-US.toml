@@ -23,8 +23,9 @@ donate = "Donate"
 import_subscriptions = "Import subscriptions"
 tutorial = "Tutorial"
 
-[trending]
 trending = "Trending"
+
+[trending.headers]
 all = "All"
 music = "Music"
 gaming = "Gaming"
@@ -36,10 +37,29 @@ manage = "Manage"
 import = "Import"
 delete_all = "Delete all"
 export = "Export"
+config = "Config"
 locale = "Locale"
 language = "Language"
 trending_region = "Trending region"
 themes = "Themes"
+autoplay = "Autoplay"
+
+[settings.sponsorblock]
+title = "SponsorBlock"
+enabled = "Enabled"
+sponsor = "Sponsor"
+selfpromo = "Self-promotion"
+intro = "Intro"
+outro = "Outro"
+interaction = "Interactions"
+filler = "Filler"
+preview = "Preview"
+offtopic_music = "Off-topic music"
+
+[playlist]
+shuffle = "Shuffle playlist"
+loop = "Loop playlist"
+videos = "%{video_count} vidéos"
 
 [video]
 loading = "Loading..."
@@ -68,5 +88,5 @@ playlists = "Playlists"
 shorts = "Shorts"
 livestreams = "Livestreams"
 
-[playlist]
-videos = "%{video_count} videos"
+[sponsorblock]
+skipped = "SponsorBlock segment skipped."
