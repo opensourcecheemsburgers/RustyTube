@@ -226,7 +226,6 @@ impl PlayerState {
 
 		self.current_time.set(time);
 		self.current_time_str.set(utils::unix_to_hours_secs_mins(time));
-		self.pause()?;
 		self.play()?;
 		Ok(())
 	}
