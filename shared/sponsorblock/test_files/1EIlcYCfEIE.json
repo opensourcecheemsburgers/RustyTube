@@ -1,0 +1,52 @@
+[
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [0, 49.862],
+    "UUID": "0f2ab5bd9e01df43a9ec44a212ec4a1122ec2b844364f843687af755c61b84ee7",
+    "videoDuration": 1836.921,
+    "locked": 0,
+    "votes": 0,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [229.392, 250.912],
+    "UUID": "5dbef52773d07f9d193417e39dc3e2e345cc06e98bab3f4f6fe0fa2ec777ef687",
+    "videoDuration": 1836.921,
+    "locked": 0,
+    "votes": 0,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [1279.058, 1286.753],
+    "UUID": "10e22940bb146572b2c1fa521a7a819e17edd3e10dd2dd4708505060d23a5a137",
+    "videoDuration": 1836.921,
+    "locked": 0,
+    "votes": -1,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [1560.91, 1564.186],
+    "UUID": "5f97aea3cb52951d787efff53bb520c0f127a326a60a6a3d0d41862dae41ce457",
+    "videoDuration": 1836.921,
+    "locked": 0,
+    "votes": 0,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [1770.194, 1812.03],
+    "UUID": "fea63bcc441b8d756b3f65ddad9c3c183428e1e766912bdbe776a41c4d06a7957",
+    "videoDuration": 1836.921,
+    "locked": 0,
+    "votes": 11,
+    "description": ""
+  }
+]

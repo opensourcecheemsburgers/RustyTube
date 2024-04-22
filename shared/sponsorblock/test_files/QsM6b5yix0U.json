@@ -1,0 +1,22 @@
+[
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [85.782, 108.961],
+    "UUID": "3bed34041d4d48746d51dedb8e04fe1df8323e9ce14e6b11664b10f0c758effc7",
+    "videoDuration": 714.381,
+    "locked": 1,
+    "votes": 9,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [647.058, 702.373],
+    "UUID": "bcacd9c46910a91548a0af5c22bf8939ffa26a87abc4db278e5a6ad1863a99ed7",
+    "videoDuration": 714.381,
+    "locked": 0,
+    "votes": 5,
+    "description": ""
+  }
+]

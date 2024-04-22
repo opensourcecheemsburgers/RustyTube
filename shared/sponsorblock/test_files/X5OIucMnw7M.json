@@ -1,0 +1,42 @@
+[
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [70.8, 74.9],
+    "UUID": "56ba89e743f6f5ccb9c22b28276783fa6dea5c204014658ea0f4b4eb40dfe2607",
+    "videoDuration": 1031.701,
+    "locked": 1,
+    "votes": 6,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [389.893, 486.308],
+    "UUID": "b3a8f2402ffc91b6580219e8f8d14d452528ac6cf1809ec17e866f127d01ce9b7",
+    "videoDuration": 1031.701,
+    "locked": 1,
+    "votes": 14,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [666.11, 669.417],
+    "UUID": "4a4154b1f27b81526324e97bfd35d0657240715daf3151d0e7b6b1f83379db397",
+    "videoDuration": 1031.701,
+    "locked": 1,
+    "votes": 6,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [990.87, 1014.33],
+    "UUID": "796c2cb3abf312008c8055f843b83609ae02686acfeac3e6ea766a9902dc14457",
+    "videoDuration": 1031.701,
+    "locked": 1,
+    "votes": 8,
+    "description": ""
+  }
+]

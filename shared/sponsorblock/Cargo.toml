@@ -1,0 +1,13 @@
+[package]
+name = "sponsorblock-rs"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+gloo = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+wasm-bindgen-test = { workspace = true }

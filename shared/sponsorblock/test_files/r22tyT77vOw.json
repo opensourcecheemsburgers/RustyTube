@@ -1,0 +1,72 @@
+[
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [19.299, 29.338],
+    "UUID": "a68d8b40ed4f1772144b319b792e463d415c8bf802b185beceb6b245093366287",
+    "videoDuration": 804.801,
+    "locked": 1,
+    "votes": 2,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [136.323, 151.715],
+    "UUID": "c84393de376f6325793d918fb37dbfb6af205925452cbbf5307bb630bea180c47",
+    "videoDuration": 804.801,
+    "locked": 1,
+    "votes": 3,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [402.65, 405.773],
+    "UUID": "c464790c2803de6ad8cdb4ab5fdf68c7c9b94e354e8a3eeaa94fe0cf8f0753937",
+    "videoDuration": 804.801,
+    "locked": 1,
+    "votes": 0,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [442.317, 492.318],
+    "UUID": "4c4a34880f8a441cb6770c8143ec4d281d05c8d6be7cd634757224ed5c0c95107",
+    "videoDuration": 804.801,
+    "locked": 1,
+    "votes": 3,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [544.598, 555.392],
+    "UUID": "5b28bca5ab78161a195c5e705889d406957027f84d2585326c34089d4caf33e07",
+    "videoDuration": 804.801,
+    "locked": 1,
+    "votes": 2,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [707.795, 714.342],
+    "UUID": "ebd1c292a521a8e8b5035213879f90de37b2ce6bfb14d2985710e5862263f5f97",
+    "videoDuration": 804.801,
+    "locked": 1,
+    "votes": 1,
+    "description": ""
+  },
+  {
+    "category": "sponsor",
+    "actionType": "skip",
+    "segment": [718.685, 740.179],
+    "UUID": "3ec103b46b42623f41b02ec246d8eb7d6a62f1d7962959b2f62da525547849c37",
+    "videoDuration": 804.801,
+    "locked": 1,
+    "votes": 3,
+    "description": ""
+  }
+]
