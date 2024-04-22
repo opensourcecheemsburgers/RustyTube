@@ -43,19 +43,19 @@ async fn fetch_subs() -> Subscriptions {
 
 static SUBSCRIPTIONS_VIDEOS_KEY: &'static str = "subscriptions_videos";
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct SubscriptionsVideosResourceArgs {
-	server: Signal<String>,
-	locale: Signal<RustyTubeLocale>,
-	subscriptions: SubscriptionsCtx,
+	server: String,
+	locale: RustyTubeLocale,
+	subscriptions: Subscriptions,
 }
 
 impl SubscriptionsVideosResourceArgs {
 	pub fn new(subscriptions: SubscriptionsCtx) -> Self {
 		Self {
-			server: expect_context::<NetworkConfigCtx>().server_slice.0,
-			locale: expect_context::<RegionConfigCtx>().locale_slice.0,
-			subscriptions,
+			server: expect_context::<NetworkConfigCtx>().server_slice.0.get(),
+			locale: expect_context::<RegionConfigCtx>().locale_slice.0.get(),
+			subscriptions: subscriptions.0.get(),
 		}
 	}
 }
@@ -66,10 +66,10 @@ pub struct SubscriptionsVideosResource {
 }
 
 impl SubscriptionsVideosResource {
-	pub fn initialise(args: SubscriptionsVideosResourceArgs) -> Self {
+	pub fn initialise(subscriptions: SubscriptionsCtx) -> Self {
 		SubscriptionsVideosResource {
 			resource: create_resource_with_initial_value(
-				move || (args),
+				move || SubscriptionsVideosResourceArgs::new(subscriptions),
 				move |args| fetch_subs_videos(args),
 				initial_value(SUBSCRIPTIONS_KEY),
 			),
@@ -80,9 +80,7 @@ impl SubscriptionsVideosResource {
 async fn fetch_subs_videos(args: SubscriptionsVideosResourceArgs) -> SubsVideosResult {
 	let videos = args
 		.subscriptions
-		.0
-		.get()
-		.fetch_videos(&args.server.get(), false, &args.locale.get().to_invidious_lang())
+		.fetch_videos(&args.server, false, &args.locale.to_invidious_lang())
 		.await;
 	// save_resource(SUBSCRIPTIONS_VIDEOS_KEY, &videos).await?;
 	videos
@@ -90,15 +88,18 @@ async fn fetch_subs_videos(args: SubscriptionsVideosResourceArgs) -> SubsVideosR
 
 static SUBSCRIPTIONS_THUMBNAILS_KEY: &'static str = "subscriptions_thumbs";
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct SubscriptionsThumbnailsResourceArgs {
-	server: Signal<String>,
-	subscriptions: SubscriptionsCtx,
+	server: String,
+	subscriptions: Subscriptions,
 }
 
 impl SubscriptionsThumbnailsResourceArgs {
 	pub fn new(subscriptions: SubscriptionsCtx) -> Self {
-		Self { server: expect_context::<NetworkConfigCtx>().server_slice.0, subscriptions }
+		Self {
+			server: expect_context::<NetworkConfigCtx>().server_slice.0.get(),
+			subscriptions: subscriptions.0.get(),
+		}
 	}
 }
 
@@ -108,19 +109,19 @@ pub struct SubscriptionsThumbnailsResource {
 }
 
 impl SubscriptionsThumbnailsResource {
-	pub fn initialise(args: SubscriptionsThumbnailsResourceArgs) -> Self {
+	pub fn initialise(args: SubscriptionsCtx) -> Self {
 		SubscriptionsThumbnailsResource {
 			resource: create_resource_with_initial_value(
-				move || (args),
+				move || SubscriptionsThumbnailsResourceArgs::new(args),
 				move |args| fetch_subs_thumbnails(args),
-				initial_value(SUBSCRIPTIONS_KEY),
+				initial_value(SUBSCRIPTIONS_THUMBNAILS_KEY),
 			),
 		}
 	}
 }
 
 async fn fetch_subs_thumbnails(args: SubscriptionsThumbnailsResourceArgs) -> SubsThumbsResult {
-	let thumbs = args.subscriptions.0.get().fetch_channel_thumbs(&args.server.get()).await;
-	// save_resource(SUBSCRIPTIONS_THUMBNAILS_KEY, &thumbs).await?;
+	let thumbs = args.subscriptions.fetch_channel_thumbs(&args.server).await;
+	save_resource(SUBSCRIPTIONS_THUMBNAILS_KEY, &thumbs.clone().unwrap()).await?;
 	thumbs
 }

@@ -10,21 +10,21 @@ use super::{initial_value, save_resource};
 
 static TRENDING_KEY: &'static str = "trending_videos";
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, PartialEq)]
 pub struct TrendingResourceArgs {
-	server: Signal<String>,
-	category: RwSignal<TrendingCategory>,
-	locale: Signal<RustyTubeLocale>,
-	region: Signal<CountryCode>,
+	pub server: String,
+	pub category: TrendingCategory,
+	pub locale: RustyTubeLocale,
+	pub region: CountryCode,
 }
 
 impl TrendingResourceArgs {
 	fn new(category: RwSignal<TrendingCategory>) -> Self {
 		Self {
-			server: expect_context::<NetworkConfigCtx>().server_slice.0,
-			category,
-			locale: expect_context::<RegionConfigCtx>().locale_slice.0,
-			region: expect_context::<RegionConfigCtx>().trending_region_slice.0,
+			server: expect_context::<NetworkConfigCtx>().server_slice.0.get(),
+			category: category.get(),
+			locale: expect_context::<RegionConfigCtx>().locale_slice.0.get(),
+			region: expect_context::<RegionConfigCtx>().trending_region_slice.0.get(),
 		}
 	}
 }
@@ -47,10 +47,10 @@ impl TrendingResource {
 
 async fn fetch_trending(args: TrendingResourceArgs) -> Result<Trending, RustyTubeError> {
 	let trending = Trending::fetch_trending(
-		&args.server.get(),
-		&args.category.get(),
-		&args.region.get().alpha2(),
-		&args.locale.get().to_invidious_lang(),
+		&args.server,
+		&args.category,
+		&args.region.alpha2(),
+		&args.locale.to_invidious_lang(),
 	)
 	.await?;
 	save_resource(TRENDING_KEY, &trending).await?;

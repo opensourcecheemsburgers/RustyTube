@@ -9,17 +9,17 @@ use super::{initial_value, save_resource};
 
 static POPULAR_KEY: &'static str = "popular_videos";
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct PopularResourceArgs {
-	server: Signal<String>,
-	locale: Signal<RustyTubeLocale>,
+	server: String,
+	locale: RustyTubeLocale,
 }
 
 impl PopularResourceArgs {
 	fn new() -> Self {
 		Self {
-			server: expect_context::<NetworkConfigCtx>().server_slice.0,
-			locale: expect_context::<RegionConfigCtx>().locale_slice.0,
+			server: expect_context::<NetworkConfigCtx>().server_slice.0.get(),
+			locale: expect_context::<RegionConfigCtx>().locale_slice.0.get(),
 		}
 	}
 }
@@ -42,8 +42,7 @@ impl PopularResource {
 }
 
 async fn fetch_popular(args: PopularResourceArgs) -> Result<Popular, RustyTubeError> {
-	let popular =
-		Popular::fetch_popular(&args.server.get(), &args.locale.get().to_invidious_lang()).await?;
+	let popular = Popular::fetch_popular(&args.server, &args.locale.to_invidious_lang()).await?;
 	save_resource(POPULAR_KEY, &popular).await?;
 	Ok(popular)
 }

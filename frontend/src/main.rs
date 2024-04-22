@@ -41,12 +41,8 @@ fn App() -> impl IntoView {
 	let subscriptions_resource = SubscriptionsCtx::initialise();
 
 	provide_context(subscriptions_resource);
-	provide_context(SubscriptionsVideosResource::initialise(SubscriptionsVideosResourceArgs::new(
-		subscriptions_resource,
-	)));
-	provide_context(SubscriptionsThumbnailsResource::initialise(
-		SubscriptionsThumbnailsResourceArgs::new(subscriptions_resource),
-	));
+	provide_context(SubscriptionsVideosResource::initialise(subscriptions_resource));
+	provide_context(SubscriptionsThumbnailsResource::initialise(subscriptions_resource));
 	provide_context(InstancesResource::initialise());
 
 	view! {
