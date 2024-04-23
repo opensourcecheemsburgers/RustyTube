@@ -64,8 +64,8 @@ Install Rust and Tauri. Go to the Tauri [prequisites](https://tauri.app/v1/guide
 After installing Rust and Tauri, execute the following script in the base of your RustyTube directory:
 
 ```
-rustup update nightly-unknown-linux-gnu;
-rustup component add rust-src --toolchain nightly-unknown-linux-gnu;
+rustup update stable-unknown-linux-gnu;
+rustup component add rust-src --toolchain stable-unknown-linux-gnu;
 rustup target add wasm32-unknown-unknown;
 cargo install trunk;
 cargo install tauri-cli;
