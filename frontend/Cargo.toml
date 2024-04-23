@@ -4,33 +4,28 @@ version = "0.1.1"
 edition = "2021"
 
 [dependencies]
-gloo = { workspace = true }
-js-sys = { workspace = true }
-reqwasm = { workspace = true }
-ron = { workspace = true }
-serde = { workspace = true }
-urlencoding = { workspace = true }
-wasm-bindgen = { workspace = true }
-web-sys = { workspace = true }
-
 config = { workspace = true }
+console_error_panic_hook = { workspace = true }
+chrono = { workspace = true }
+csv = { workspace = true }
+gloo = { workspace = true }
 invidious = { workspace = true }
-rustytube-error = { workspace = true }
-sponsorblock-rs = { workspace = true }
-tauri-sys = { workspace = true }
-utils = { workspace = true }
-
 isocountry = { workspace = true }
 locales = { workspace = true }
+leptos = { workspace = true }
+leptos_router = { workspace = true }
 num-format = { workspace = true }
+reqwasm = { workspace = true }
+ron = { workspace = true }
 rust-i18n = { workspace = true }
-
-console_error_panic_hook = { workspace = true }
-
-[dependencies.leptos]
-workspace = true
-features = ["csr"]
-
-[dependencies.leptos_router]
-workspace = true
-features = ["csr"]
+rustytube-error = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde-xml-rs = { workspace = true }
+sponsorblock-rs = { workspace = true }
+tauri-sys = { workspace = true }
+toml = { workspace = true }
+urlencoding = { workspace = true }
+utils = { workspace = true }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

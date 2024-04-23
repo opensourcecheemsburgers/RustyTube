@@ -19,18 +19,5 @@ rustytube-error = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tauri-sys = { workspace = true }
-
-[dependencies.wasm-bindgen]
-workspace = true
-
-[dependencies.web-sys]
-workspace = true
-features = [
-  'Headers',
-  'Request',
-  'RequestInit',
-  'RequestMode',
-  'Response',
-  'Window',
-  'Performance',
-]
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

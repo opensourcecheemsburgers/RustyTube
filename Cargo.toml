@@ -6,7 +6,7 @@ version = "0.1.1"
 authors = ["Stephen Power"]
 edition = "2021"
 license = "GPL"
-description = "A cross-platform Youtube frontend. Built with Leptos and Tauri; Designed with DaisyUI and Tailwind"
+description = "A cross-platform Youtube frontend. Built with Leptos and Tauri; Designed with DaisyUI and Tailwind."
 
 [profile.release]
 panic = "abort"
@@ -26,119 +26,46 @@ rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/mold"]
 
 [workspace.dependencies]
 chrono = "0.4.26"
+config = { path = "shared/config" }
 console_error_panic_hook = "0.1.7"
 csv = "1.2.2"
 futures = "0.3.28"
+gloo = { version = "0.10.0", features = ["file", "futures"] }
 html-escape = "0.2.13"
 humantime = "2.1.0"
+invidious = { path = "shared/invidious" }
 isocountry = "0.3.2"
-js-sys = "0.3.64"
+locales = { path = "shared/locales" }
+leptos = { version = "0.6.11", features = ["csr"] }
+leptos_router = { version = "0.6.11", features = ["csr"] }
 num-format = "0.4.4"
 reqwasm = "0.5.0"
 ron = "0.8.0"
 rust-i18n = "3.0.0"
+rustytube-error = { path = "shared/error" }
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.105"
 serde-xml-rs = "0.6.0"
+sponsorblock-rs = { path = "shared/sponsorblock" }
+tauri = { version = "1.4.1", default-features = false }
+tauri-sys = { git = "https://github.com/opensourcecheemsburgers/tauri-sys", features = ["all"] }
+tauri_utils = { path = "shared/tauri" }
+utils = { path = "shared/utils" }
 toml = "0.8.8"
 urlencoding = "2.1.3"
 wasm-bindgen = "0.2.92"
-wasm-bindgen-cli = "0.2.92"
-wasm-bindgen-futures = "0.4.42"
 wasm-bindgen-test = "0.3.37"
-
-[workspace.dependencies.tauri]
-version = "1.4.1"
-features = []
-
-[workspace.dependencies.leptos]
-version = "0.6.11"
-features = ["csr"]
-
-[workspace.dependencies.leptos_router]
-version = "0.6.11"
-features = ["csr"]
-
-[workspace.dependencies.serde]
-version = "1.0.188"
-features = ["derive"]
-
-[workspace.dependencies.serde_json]
-version = "1.0.105"
 
 [workspace.dependencies.web-sys]
 version = "0.3.64"
 features = [
-  "AudioTrack",
-  "AudioTrackList",
-  "MediaSource",
-  "MediaSourceReadyState",
-  "SourceBufferList",
-  "SourceBuffer",
-  "DataTransfer",
-  "Element",
   "Navigator",
-  "HtmlAnchorElement",
-  "HtmlButtonElement",
-  "HtmlDialogElement",
-  "Navigator",
-  "Clipboard",
-  "HtmlDivElement",
-  "HtmlDocument",
-  "HtmlInputElement",
-  "HtmlLabelElement",
-  "HtmlTextAreaElement",
-  "HtmlParagraphElement",
   "HtmlAudioElement",
   "HtmlMediaElement",
   "HtmlVideoElement",
-  "Event",
-  "EventTarget",
-  "MouseEvent",
-  "InputEvent",
-  "KeyEvent",
-  "KeyboardEvent",
-  "KeyboardEventInit",
-  "TouchEvent",
-  "TouchList",
-  "Touch",
-  "DomTokenList",
   "Performance",
   "Window",
-  "ProgressEvent",
-  "MediaSource",
   "TextTrack",
   "TextTrackMode",
   "TextTrackList",
 ]
-
-[workspace.dependencies.gloo]
-version = "0.10.0"
-features = ["file", "futures"]
-
-[workspace.dependencies.tauri-sys]
-git = "https://github.com/opensourcecheemsburgers/tauri-sys"
-features = ["all"]
-
-[workspace.dependencies.invidious]
-path = "shared/invidious"
-
-[workspace.dependencies.figment]
-version = "0.10.10"
-features = ["toml"]
-
-[workspace.dependencies.rustytube-error]
-path = "shared/error"
-
-[workspace.dependencies.utils]
-path = "shared/utils"
-
-[workspace.dependencies.config]
-path = "shared/config"
-
-[workspace.dependencies.tauri_utils]
-path = "shared/tauri"
-
-[workspace.dependencies.locales]
-path = "shared/locales"
-
-[workspace.dependencies.sponsorblock-rs]
-path = "shared/sponsorblock"

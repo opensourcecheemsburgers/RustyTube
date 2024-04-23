@@ -6,8 +6,6 @@ edition.workspace = true
 license.workspace = true
 description.workspace = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 csv = { workspace = true }
 futures = { workspace = true }
@@ -16,39 +14,9 @@ html-escape = { workspace = true }
 reqwasm = { workspace = true }
 ron = { workspace = true }
 rustytube-error = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 serde-xml-rs = { workspace = true }
 utils = { workspace = true }
-
-js-sys = { workspace = true }
 wasm-bindgen = { workspace = true }
-wasm-bindgen-futures = { workspace = true }
-
-[dependencies.web-sys]
-workspace = true
-features = [
-  'Headers',
-  'Request',
-  'RequestInit',
-  'RequestMode',
-  'Response',
-  'Window',
-  'Performance',
-  "MediaSource",
-]
-
-[dependencies.serde]
-workspace = true
-features = ["derive"]
-
-[dependencies.serde_json]
-workspace = true
-
-[dev-dependencies]
-js-sys = { workspace = true }
-wasm-bindgen = { workspace = true }
-wasm-bindgen-cli = { workspace = true }
-wasm-bindgen-futures = { workspace = true }
-wasm-bindgen-test = { workspace = true }
-
-[dev-dependencies.web-sys]
-workspace = true
+web-sys = { workspace = true }
