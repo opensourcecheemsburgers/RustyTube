@@ -1,6 +1,7 @@
 use leptos::*;
+use phosphor_leptos::{ArrowsOut, IconWeight};
 
-use crate::{contexts::PlayerStyle, icons::FullWindowIcon};
+use crate::contexts::PlayerStyle;
 
 #[component]
 pub fn FullWindowBtn() -> impl IntoView {
@@ -9,7 +10,7 @@ pub fn FullWindowBtn() -> impl IntoView {
 
 	view! {
 		<button on:click=toggle_fullwindow class="btn btn-ghost btn-xs">
-			<FullWindowIcon/>
+			<ArrowsOut weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 		</button>
 	}
 }

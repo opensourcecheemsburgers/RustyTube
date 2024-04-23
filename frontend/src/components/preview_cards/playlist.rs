@@ -2,6 +2,7 @@ use invidious::CommonPlaylist;
 use leptos::*;
 use leptos_router::NavigateOptions;
 use num_format::ToFormattedString;
+use phosphor_leptos::{CheckCircle, IconWeight};
 
 use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
 
@@ -26,7 +27,9 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 	let author = playlist.author;
 	let author_id = playlist.author_id;
 	let video_count = playlist.video_count.to_formatted_string(&locale.get().to_num_fmt());
-	let verified_check = playlist.author_verified.then_some(view! { <VerifiedIcon/> });
+	let verified_check = playlist.author_verified.then_some(
+		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
+	);
 
 	let go_to_channel_page = move |_| {
 		let navigate = leptos_router::use_navigate();

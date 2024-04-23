@@ -1,5 +1,6 @@
 use invidious::VideoShort;
 use leptos::*;
+use phosphor_leptos::{Eye, IconWeight};
 
 use crate::{icons::ViewsIcon, utils::get_current_video_query_signal};
 
@@ -37,7 +38,7 @@ pub fn Info(video: VideoShort) -> impl IntoView {
 		<div class="flex flex-col w-[70%] overflow-hidden">
 			<p class="text-sm">{video.title}</p>
 			<div class="flex flex-row flex-wrap items-center mt-2 space-x-1 text-sm">
-				<ViewsIcon/>
+				<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 				<p>{video.views_text}</p>
 			</div>
 		</div>

@@ -1,13 +1,16 @@
 use leptos::*;
+use phosphor_leptos::{
+	IconWeight, SpeakerSimpleHigh, SpeakerSimpleLow, SpeakerSimpleNone, SpeakerSimpleX,
+};
 use wasm_bindgen::JsCast;
 use web_sys::{Event, HtmlInputElement};
 
-use crate::{contexts::PlayerState, icons::VolumeDefaultIcon};
+use crate::contexts::PlayerState;
 
 #[component]
 pub fn VolumeKnob() -> impl IntoView {
 	let state = expect_context::<PlayerState>();
-	let vol_position = state.volume.get() * 100f64;
+	let volume = move || (state.volume.get() * 100f64).round() as u8;
 
 	let vol_change = move |event: Event| {
 		let range = event.target().unwrap().dyn_into::<HtmlInputElement>().unwrap();
@@ -26,7 +29,54 @@ pub fn VolumeKnob() -> impl IntoView {
 	view! {
 		<div class="flex flex-row group items-center peer cursor-pointer">
 			<button on:click=toggle_knob class="btn btn-ghost btn-xs peer" id="vol_btn">
-				<VolumeDefaultIcon/>
+				{move || match volume() == 0 {
+					true => {
+						view! {
+							<SpeakerSimpleX
+								weight=IconWeight::Regular
+								class="h-4 w-4 base-content"
+							/>
+						}
+					}
+					false => {
+						match (1..=20).contains(&volume()) {
+							true => {
+								view! {
+									<SpeakerSimpleNone
+										weight=IconWeight::Regular
+										class="h-4 w-4 base-content"
+									/>
+								}
+							}
+							false => {
+								match (21..=50).contains(&volume()) {
+									true => {
+										view! {
+											<SpeakerSimpleLow
+												weight=IconWeight::Regular
+												class="h-4 w-4 base-content"
+											/>
+										}
+									}
+									false => {
+										view! {
+											<SpeakerSimpleHigh
+												weight=IconWeight::Regular
+												class="h-4 w-4 base-content"
+											/>
+										}
+									}
+								}
+							}
+						}
+					}
+				}}
+
+			// <SpeakerNone/>
+			// </Show>
+			// <Show when=move || state.volume.get() == 0f64>
+			// <SpeakerNone/>
+			// </Show>
 			</button>
 			<input
 				on:input=vol_change
@@ -34,7 +84,7 @@ pub fn VolumeKnob() -> impl IntoView {
 				type="range"
 				min="0"
 				max="100"
-				value=vol_position
+				value=volume
 				class=classes
 			/>
 		</div>

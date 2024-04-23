@@ -39,6 +39,7 @@ locales = { path = "shared/locales" }
 leptos = { version = "0.6.11", features = ["csr"] }
 leptos_router = { version = "0.6.11", features = ["csr"] }
 num-format = "0.4.4"
+phosphor-leptos = "0.3.1"
 reqwasm = "0.5.0"
 ron = "0.8.0"
 rust-i18n = "3.0.0"

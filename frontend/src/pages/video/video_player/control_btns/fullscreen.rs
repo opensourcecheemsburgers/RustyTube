@@ -1,4 +1,5 @@
 use leptos::*;
+use phosphor_leptos::{CornersOut, FrameCorners, IconWeight};
 use utils::get_element_by_id;
 use web_sys::HtmlDivElement;
 
@@ -25,7 +26,7 @@ pub fn FullScreenBtn() -> impl IntoView {
 
 	view! {
 		<button on:click=fullscreen class="btn btn-ghost btn-xs">
-			<FullScreenIcon/>
+			<FrameCorners weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 		</button>
 	}
 }

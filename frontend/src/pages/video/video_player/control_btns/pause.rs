@@ -1,20 +1,11 @@
 use leptos::*;
+use phosphor_leptos::{IconWeight, Pause, Play};
 
-use crate::{
-	contexts::{PlaybackState, PlayerState},
-	icons::{PauseIcon, PlayIcon},
-};
+use crate::contexts::{PlaybackState, PlayerState};
 
 #[component]
 pub fn PauseBtn() -> impl IntoView {
 	let state = expect_context::<PlayerState>();
-
-	let btn_view = move || match state.playback_state.get() {
-		PlaybackState::Playing => view! { <PauseIcon/> },
-		PlaybackState::Paused => view! { <PlayIcon/> },
-		PlaybackState::Loading => view! { <PauseIcon/> },
-		PlaybackState::Initial => view! { <PlayIcon/> },
-	};
 
 	view! {
 		<button
@@ -24,7 +15,21 @@ pub fn PauseBtn() -> impl IntoView {
 
 			class="btn btn-ghost btn-xs"
 		>
-			{btn_view}
+			{move || match state.playback_state.get() {
+				PlaybackState::Playing => {
+					view! { <Pause weight=IconWeight::Regular class="h-4 w-4 base-content"/> }
+				}
+				PlaybackState::Loading => {
+					view! { <Pause weight=IconWeight::Regular class="h-4 w-4 base-content"/> }
+				}
+				PlaybackState::Paused => {
+					view! { <Play weight=IconWeight::Regular class="h-4 w-4 base-content"/> }
+				}
+				PlaybackState::Initial => {
+					view! { <Play weight=IconWeight::Regular class="h-4 w-4 base-content"/> }
+				}
+			}}
+
 		</button>
 	}
 }

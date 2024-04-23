@@ -16,6 +16,7 @@ leptos = { workspace = true }
 leptos_router = { workspace = true }
 num-format = { workspace = true }
 reqwasm = { workspace = true }
+phosphor-leptos = { workspace = true }
 ron = { workspace = true }
 rust-i18n = { workspace = true }
 rustytube-error = { workspace = true }

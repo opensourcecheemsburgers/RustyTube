@@ -1,5 +1,6 @@
 use invidious::{DashFormat, Format, Formats};
 use leptos::*;
+use phosphor_leptos::{GearFine, IconWeight};
 
 use crate::{contexts::PlayerState, icons::CogIcon, pages::video::utils::find_audio_format};
 
@@ -17,7 +18,7 @@ pub fn FormatDropdown() -> impl IntoView {
 pub fn DropdownBtn() -> impl IntoView {
 	view! {
 		<label tabindex="0" class="btn btn-ghost btn-xs">
-			<CogIcon/>
+			<GearFine weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 		</label>
 	}
 }

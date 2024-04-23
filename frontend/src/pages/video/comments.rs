@@ -1,6 +1,7 @@
 use invidious::Comment;
 use leptos::*;
 use num_format::ToFormattedString;
+use phosphor_leptos::{Chat, IconWeight, ThumbsUp};
 
 use crate::{
 	components::FerrisError,
@@ -94,14 +95,14 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 					</div>
 					<div class="mt-1" inner_html=content></div>
 					<div class="mt-3 flex flex-row gap-1 items-center">
-						<LikeIcon/>
+						<ThumbsUp weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 						<p>{likes}</p>
 						<p>{"•"}</p>
 						<div
 							class="flex flex-row gap-1 items-center"
 							on:click=move |_| replies_visible.set(!replies_visible.get())
 						>
-							<RepliesIcon/>
+							<Chat weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 							<p>{reply_count}</p>
 						</div>
 					</div>
@@ -171,7 +172,7 @@ pub fn Reply(reply: Comment) -> impl IntoView {
 					</div>
 					<div class="mt-1" inner_html=reply.content></div>
 					<div class="mt-3 flex flex-row gap-1 items-center">
-						<LikeIcon/>
+						<ThumbsUp weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 						<p>{likes}</p>
 						<p>{"•"}</p>
 					</div>

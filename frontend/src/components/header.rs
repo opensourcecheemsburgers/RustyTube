@@ -1,12 +1,14 @@
 use invidious::{Instance, InstanceInfo, SearchArgs, Suggestions};
 use leptos::{html::Input, *};
+use phosphor_leptos::{
+	ArrowClockwise, ArrowLeft, ArrowRight, ArrowUUpLeft, HardDrives, IconWeight, Palette,
+};
 use rustytube_error::RustyTubeError;
 use web_sys::KeyboardEvent;
 
 use crate::{
 	components::FerrisError,
 	contexts::{NetworkConfigCtx, RegionConfigCtx, UiConfigCtx},
-	icons::{BackIcon, ForwardIcon, PaletteIcon, ReloadIcon, ServerIcon},
 	resources::InstancesResource,
 	themes::*,
 	utils::*,
@@ -37,7 +39,7 @@ pub fn BackBtn() -> impl IntoView {
 	view! {
 		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.back")>
 			<button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
-				<BackIcon/>
+				<ArrowLeft weight=IconWeight::Regular class="base-content" size="24px"/>
 			</button>
 		</div>
 	}
@@ -52,7 +54,7 @@ pub fn ForwardBtn() -> impl IntoView {
 	view! {
 		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.forward")>
 			<button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
-				<ForwardIcon/>
+				<ArrowRight weight=IconWeight::Regular class="base-content" size="24px"/>
 			</button>
 		</div>
 	}
@@ -67,7 +69,7 @@ pub fn ReloadBtn() -> impl IntoView {
 	view! {
 		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.force_reload")>
 			<button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
-				<ReloadIcon/>
+				<ArrowClockwise weight=IconWeight::Regular class="base-content" size="24px"/>
 			</button>
 		</div>
 	}
@@ -178,7 +180,11 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 					>
 
 						<label tabindex="0" class="btn btn-ghost rounded-btn">
-							<ServerIcon/>
+							<HardDrives
+								weight=IconWeight::Regular
+								class="base-content"
+								size="24px"
+							/>
 						</label>
 					</div>
 					<ul
@@ -316,7 +322,7 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 			<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.themes")>
 
 				<label tabindex="0" class="btn btn-ghost rounded-btn">
-					<PaletteIcon/>
+					<Palette weight=IconWeight::Regular class="base-content" size="24px"/>
 				</label>
 			</div>
 			<ul

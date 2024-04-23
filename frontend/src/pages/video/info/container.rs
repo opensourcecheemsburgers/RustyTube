@@ -1,11 +1,13 @@
 use invidious::{Dislikes, Formats, Video};
 use leptos::*;
 use num_format::ToFormattedString;
+use phosphor_leptos::{
+	CalendarBlank, DownloadSimple, Eye, IconWeight, ShareNetwork, ThumbsDown, ThumbsUp,
+};
 
 use crate::{
 	components::FerrisError,
 	contexts::{PlayerState, RegionConfigCtx},
-	icons::{CalendarIcon, DislikeIcon, DownloadIcon, LikeIcon, ShareIcon, ViewsIcon},
 	pages::video::page::VideoResource,
 	resources::SubscriptionsCtx,
 	utils::get_current_video_query_signal,
@@ -61,7 +63,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 		dislikes.get().map(|dislikes| {
 			view! {
 				<div class="flex flex-row items-center gap-1">
-					<DislikeIcon/>
+					<ThumbsDown weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 					<p>
 						{dislikes
 							.unwrap_or_default()
@@ -91,20 +93,20 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 					<input type="checkbox"/>
 					<div class="collapse-title pl-0 flex flex-row flex-wrap items-center gap-2 w-fit">
 						<div class="flex flex-row items-center gap-1">
-							<ViewsIcon/>
+							<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 							<p>{views}</p>
 						</div>
 						<p>{"•"}</p>
 						<div class="flex flex-row items-center gap-2">
 							<div class="flex flex-row items-center gap-1">
-								<LikeIcon/>
+								<ThumbsUp weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 								<p>{likes}</p>
 							</div>
 							{dislikes_view}
 						</div>
 						<p>{"•"}</p>
 						<div class="flex flex-row items-center gap-1">
-							<CalendarIcon/>
+							<CalendarBlank weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 							<p>{published}</p>
 						</div>
 					</div>
@@ -149,7 +151,7 @@ pub fn DownloadsDropdown(formats: Formats, title: String) -> impl IntoView {
 	view! {
 		<div class="dropdown dropdown-bottom dropdown-end z-20">
 			<div tabindex="0" role="button" class="btn btn-circle btn-accent btn-outline">
-				<DownloadIcon/>
+				<DownloadSimple weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 			</div>
 			<ul
 				tabindex="0"
@@ -297,7 +299,7 @@ pub fn ShareDropdown() -> impl IntoView {
 	view! {
 		<div class="dropdown dropdown-bottom dropdown-end z-20">
 			<div tabindex="0" role="button" class="btn btn-circle btn-outline btn-accent">
-				<ShareIcon/>
+				<ShareNetwork weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 			</div>
 
 			<div

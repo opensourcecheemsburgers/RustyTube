@@ -1,5 +1,6 @@
 use invidious::{ChannelThumb, Subscription, Subscriptions};
 use leptos::*;
+use phosphor_leptos::{FireSimple, GearSix, Heart, IconWeight, RssSimple, TrendUp};
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
 use web_sys::HtmlDialogElement;
@@ -80,7 +81,7 @@ fn SubscriptionsButton() -> impl IntoView {
 			class=SIDEBAR_TOOLTIP_CLASSES
 		>
 			<button on:click=go_to_subs data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
-				<SubscriptionsIcon/>
+				<RssSimple weight=IconWeight::Regular class="base-content" size="24px"/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
 					{i18n("sidebar.subscriptions")}
 				</p>
@@ -103,7 +104,7 @@ fn TrendingButton() -> impl IntoView {
 	view! {
 		<div data-expanded=expanded data-tip=i18n("sidebar.trending") class=SIDEBAR_TOOLTIP_CLASSES>
 			<button on:click=go_to_trending data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
-				<TrendingIcon/>
+				<TrendUp weight=IconWeight::Regular class="base-content" size="24px"/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
 					{i18n("sidebar.trending")}
 				</p>
@@ -126,7 +127,7 @@ fn PopularButton() -> impl IntoView {
 	view! {
 		<div data-expanded=expanded data-tip=i18n("sidebar.popular") class=SIDEBAR_TOOLTIP_CLASSES>
 			<button on:click=go_to_popular data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
-				<PopularIcon/>
+				<FireSimple weight=IconWeight::Regular class="base-content" size="24px"/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
 					{i18n("sidebar.popular")}
 				</p>
@@ -220,7 +221,7 @@ fn SettingsButton() -> impl IntoView {
 			class=SIDEBAR_TOOLTIP_CLASSES
 		>
 			<button data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
-				<SettingsIcon/>
+				<GearSix weight=IconWeight::Regular class="base-content" size="24px"/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
 					{i18n("sidebar.settings")}
 				</p>
@@ -243,7 +244,7 @@ fn DonateButton() -> impl IntoView {
 	view! {
 		<div data-expanded=expanded data-tip=i18n("sidebar.donate") class=SIDEBAR_TOOLTIP_CLASSES>
 			<button on:click=open_donate_modal data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
-				<HeartIcon/>
+				<Heart weight=IconWeight::Regular class="base-content" size="24px"/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
 					{i18n("settings.donate")}
 				</p>

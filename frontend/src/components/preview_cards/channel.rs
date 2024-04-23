@@ -2,6 +2,7 @@ use invidious::CommonChannel;
 use leptos::*;
 use leptos_router::NavigateOptions;
 use num_format::ToFormattedString;
+use phosphor_leptos::{CheckCircle, IconWeight};
 
 use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
 
@@ -35,7 +36,9 @@ pub fn Info(channel: CommonChannel) -> impl IntoView {
 
 	let name = channel.name;
 	let subscriber_count = channel.subscribers.to_formatted_string(&locale.get().to_num_fmt());
-	let verified_check = channel.verified.then_some(view! { <VerifiedIcon/> });
+	let verified_check = channel.verified.then_some(
+		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
+	);
 
 	view! {
 		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">

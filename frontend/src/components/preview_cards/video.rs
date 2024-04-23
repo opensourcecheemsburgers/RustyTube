@@ -1,6 +1,7 @@
 use invidious::CommonVideo;
 use leptos::*;
 use num_format::ToFormattedString;
+use phosphor_leptos::{CheckCircle, IconWeight};
 
 use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
 
@@ -32,7 +33,9 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 		false => video.published_text,
 	};
 
-	let verified_check = video.author_verified.then_some(view! { <VerifiedIcon/> });
+	let verified_check = video.author_verified.then_some(
+		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
+	);
 
 	let go_to_channel_page = move |_| {
 		let navigate = leptos_router::use_navigate();

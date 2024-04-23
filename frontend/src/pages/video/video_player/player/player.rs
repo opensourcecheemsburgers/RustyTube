@@ -185,17 +185,17 @@ fn toggle_fullscreen() {
 	}
 }
 
-pub const VIDEO_CLASSES: &'static str = "
-relative flex flex-col transition-all object-contain items-center justify-center
-
-data-[controls=false]:cursor-none
-
-data-[fullwindow=false]:w-full
-data-[fullwindow=false]:duration-300
-data-[fullwindow=false]:ease-out
-
-data-[fullwindow=true]:fullwindow
-data-[fullwindow=true]:object-cover
-data-[fullwindow=true]:ease-in
-data-[fullwindow=true]:duration-300
+pub const VIDEO_CLASSES: &'static str = "\
+relative flex flex-col transition-all \
+object-contain items-center justify-center \
+\
+data-[controls=false]:cursor-none \
+data-[fullwindow=false]:w-full \
+data-[fullwindow=false]:duration-300 \
+data-[fullwindow=false]:ease-out \
+\
+data-[fullwindow=true]:fullwindow \
+data-[fullwindow=true]:object-cover \
+data-[fullwindow=true]:ease-in \
+data-[fullwindow=true]:duration-300 \
 ";
