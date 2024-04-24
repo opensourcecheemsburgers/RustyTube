@@ -1,9 +1,10 @@
 use invidious::Caption;
 use leptos::*;
+use phosphor_leptos::{IconWeight, Subtitles};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlVideoElement, MouseEvent, TextTrackMode};
 
-use crate::{contexts::VIDEO_PLAYER_ID, icons::CaptionsIcon};
+use crate::contexts::VIDEO_PLAYER_ID;
 
 #[component]
 pub fn CaptionsDropdown(captions: Vec<Caption>) -> impl IntoView {
@@ -19,7 +20,7 @@ pub fn CaptionsDropdown(captions: Vec<Caption>) -> impl IntoView {
 pub fn CaptionsDropdownBtn() -> impl IntoView {
 	view! {
 		<label tabindex="0" class="btn btn-ghost btn-xs">
-			<CaptionsIcon/>
+			<Subtitles weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 		</label>
 	}
 }

@@ -2,7 +2,7 @@ use invidious::{DashFormat, Format, Formats};
 use leptos::*;
 use phosphor_leptos::{GearFine, IconWeight};
 
-use crate::{contexts::PlayerState, icons::CogIcon, pages::video::utils::find_audio_format};
+use crate::{contexts::PlayerState, pages::video::utils::find_audio_format};
 
 #[component]
 pub fn FormatDropdown() -> impl IntoView {

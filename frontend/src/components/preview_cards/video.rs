@@ -1,9 +1,9 @@
 use invidious::CommonVideo;
 use leptos::*;
 use num_format::ToFormattedString;
-use phosphor_leptos::{CheckCircle, IconWeight};
+use phosphor_leptos::{CheckCircle, Eye, IconWeight};
 
-use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
+use crate::contexts::RegionConfigCtx;
 
 #[component]
 pub fn VideoPreviewCard(video: CommonVideo) -> impl IntoView {
@@ -54,6 +54,7 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 				</h2>
 				{verified_check}
 				<p>{"•"}</p>
+				<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 				<p>{views}</p>
 				<p>{"•"}</p>
 				<p>{published}</p>

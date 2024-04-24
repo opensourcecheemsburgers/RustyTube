@@ -6,7 +6,6 @@ use phosphor_leptos::{Chat, IconWeight, ThumbsUp};
 use crate::{
 	components::FerrisError,
 	contexts::RegionConfigCtx,
-	icons::{LikeIcon, RepliesIcon},
 	resources::{CommentsResource, CommentsResourceArgs, RepliesResource, RepliesResourceArgs},
 	utils::i18n,
 };

@@ -2,7 +2,7 @@ use invidious::VideoShort;
 use leptos::*;
 use phosphor_leptos::{Eye, IconWeight};
 
-use crate::{icons::ViewsIcon, utils::get_current_video_query_signal};
+use crate::utils::get_current_video_query_signal;
 
 #[component]
 pub fn RecommendedPreviewCard(video: VideoShort) -> impl IntoView {

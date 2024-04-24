@@ -1,6 +1,7 @@
 use invidious::PopularItem;
 use leptos::*;
 use num_format::ToFormattedString;
+use phosphor_leptos::{Eye, IconWeight};
 
 use crate::contexts::RegionConfigCtx;
 
@@ -43,6 +44,7 @@ pub fn Info(video: PopularItem) -> impl IntoView {
 					{author}
 				</h2>
 				<p>{"•"}</p>
+				<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 				<p>{view_count}</p>
 				<p>{"•"}</p>
 				<p>{published}</p>

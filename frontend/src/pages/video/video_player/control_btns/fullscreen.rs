@@ -1,12 +1,9 @@
 use leptos::*;
-use phosphor_leptos::{CornersOut, FrameCorners, IconWeight};
+use phosphor_leptos::{FrameCorners, IconWeight};
 use utils::get_element_by_id;
 use web_sys::HtmlDivElement;
 
-use crate::{
-	contexts::{PlayerStyle, VIDEO_CONTAINER_ID},
-	icons::FullScreenIcon,
-};
+use crate::contexts::{PlayerStyle, VIDEO_CONTAINER_ID};
 
 #[component]
 pub fn FullScreenBtn() -> impl IntoView {

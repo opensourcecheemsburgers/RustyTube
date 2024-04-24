@@ -4,7 +4,7 @@ use leptos_router::NavigateOptions;
 use num_format::ToFormattedString;
 use phosphor_leptos::{CheckCircle, IconWeight};
 
-use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
+use crate::contexts::RegionConfigCtx;
 
 #[component]
 pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {

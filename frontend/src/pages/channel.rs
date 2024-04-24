@@ -75,7 +75,7 @@ fn Header() -> impl IntoView {
 	view! {
 		<div class="flex flex-col space-y-8 self-center">
 			<Banner/>
-			<div class="flex flex-row items-center space-x-2">
+			<div class="flex flex-row items-center space-x-4">
 				<ChannelAvatar/>
 				<div class="flex h-16 flex-col justify-around">
 					<h1 class="font-semibold text-lg">{channel.name}</h1>

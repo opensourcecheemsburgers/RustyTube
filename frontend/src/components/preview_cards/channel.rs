@@ -2,9 +2,9 @@ use invidious::CommonChannel;
 use leptos::*;
 use leptos_router::NavigateOptions;
 use num_format::ToFormattedString;
-use phosphor_leptos::{CheckCircle, IconWeight};
+use phosphor_leptos::{CheckCircle, IconWeight, UsersThree};
 
-use crate::{contexts::RegionConfigCtx, icons::VerifiedIcon};
+use crate::contexts::RegionConfigCtx;
 
 #[component]
 pub fn ChannelPreviewCard(channel: CommonChannel) -> impl IntoView {
@@ -42,13 +42,16 @@ pub fn Info(channel: CommonChannel) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-			<div class="flex flex-row gap-1 item">
+			<div class="flex flex-row items-center gap-1">
 				<h1 class="cursor-pointer text-primary font-sans font-semibold text-base line-clamp-2">
 					{name}
 				</h1>
 				{verified_check}
 			</div>
-			<h2>{subscriber_count}</h2>
+			<div class="flex flex-row items-center gap-1">
+				<UsersThree weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+				<h2>{subscriber_count}</h2>
+			</div>
 		</div>
 	}
 }
