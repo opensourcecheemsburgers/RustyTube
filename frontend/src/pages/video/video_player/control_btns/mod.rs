@@ -7,6 +7,7 @@ mod theatre;
 mod time_info;
 mod volume;
 
+pub use captions::CaptionsDropdown;
 pub use format::FormatDropdown;
 pub use fullscreen::FullScreenBtn;
 pub use pause::PauseBtn;

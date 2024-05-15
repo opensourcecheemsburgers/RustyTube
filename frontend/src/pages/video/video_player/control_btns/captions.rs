@@ -1,18 +1,39 @@
-use invidious::Caption;
+use invidious::{Caption, Captions};
 use leptos::*;
 use phosphor_leptos::{IconWeight, Subtitles};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlVideoElement, MouseEvent, TextTrackMode};
 
-use crate::contexts::VIDEO_PLAYER_ID;
+use crate::{components::FerrisError, contexts::VIDEO_PLAYER_ID, resources::CaptionsResource};
 
 #[component]
-pub fn CaptionsDropdown(captions: Vec<Caption>) -> impl IntoView {
+pub fn CaptionsDropdown() -> impl IntoView {
+	let captions = expect_context::<CaptionsResource>();
+
 	view! {
-		<div class="dropdown dropdown-top dropdown-end z-20">
-			<CaptionsDropdownBtn/>
-			<CaptionsDropdownContent captions=captions/>
-		</div>
+		<Suspense fallback=move || {
+			().into_view()
+		}>
+
+			{move || {
+				captions
+					.resource
+					.get()
+					.map(|captions| match captions {
+						Ok(captions) => {
+							view! {
+								<div class="dropdown dropdown-top dropdown-end z-20">
+									<CaptionsDropdownBtn/>
+									<CaptionsDropdownContent captions=captions/>
+								</div>
+							}
+								.into_view()
+						}
+						Err(err) => view! { <FerrisError error=err/> },
+					})
+			}}
+
+		</Suspense>
 	}
 }
 
@@ -26,7 +47,7 @@ pub fn CaptionsDropdownBtn() -> impl IntoView {
 }
 
 #[component]
-pub fn CaptionsDropdownContent(captions: Vec<Caption>) -> impl IntoView {
+pub fn CaptionsDropdownContent(captions: Captions) -> impl IntoView {
 	view! {
 		<ul
 			tabindex="0"
@@ -34,6 +55,7 @@ pub fn CaptionsDropdownContent(captions: Vec<Caption>) -> impl IntoView {
 		>
 			<div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
 				{captions
+					.captions
 					.into_iter()
 					.map(|caption| {
 						view! { <CaptionsDropdownItem caption=caption/> }

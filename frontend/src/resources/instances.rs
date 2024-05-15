@@ -1,11 +1,12 @@
-use invidious::{fetch_instance_info, Instances};
+use gloo::storage::{LocalStorage, Storage};
+use invidious::{fetch_instance_info, Instance, Instances};
 use leptos::*;
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
 
 use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
 
-use super::{initial_value, save_resource};
+use super::save_resource;
 
 static INSTANCES_KEY: &'static str = "instances";
 
@@ -16,11 +17,7 @@ pub struct InstancesResource {
 
 impl InstancesResource {
 	pub fn initialise() -> Self {
-		let resource = create_local_resource_with_initial_value(
-			move || (),
-			move |()| fetch_instances(),
-			initial_value(INSTANCES_KEY),
-		);
+		let resource = Resource::local(move || (), move |()| fetch_instances());
 
 		InstancesResource { resource }
 	}

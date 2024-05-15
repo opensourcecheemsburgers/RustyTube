@@ -19,7 +19,7 @@ where
 	let toaster = expect_context::<Toaster>();
 
 	view! {
-		<div class="toast toast-center z-50">
+		<div class="toast toast-center z-[100]">
 			<For each=move || toaster.toasts.get() key=|toast| toast.clone() let:toast>
 
 				{

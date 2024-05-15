@@ -1,28 +1,32 @@
 [package]
 name = "frontend"
-version = "0.1.1"
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description.workspace = true
 
 [dependencies]
+chrono = { workspace = true }
+clone-macro = { workspace = true }
 config = { workspace = true }
 console_error_panic_hook = { workspace = true }
-chrono = { workspace = true }
 csv = { workspace = true }
 gloo = { workspace = true }
 invidious = { workspace = true }
 isocountry = { workspace = true }
-locales = { workspace = true }
 leptos = { workspace = true }
 leptos_router = { workspace = true }
+locales = { workspace = true }
 num-format = { workspace = true }
-reqwasm = { workspace = true }
 phosphor-leptos = { workspace = true }
+reqwasm = { workspace = true }
 ron = { workspace = true }
 rust-i18n = { workspace = true }
 rustytube-error = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
 serde-xml-rs = { workspace = true }
+serde_json = { workspace = true }
 sponsorblock-rs = { workspace = true }
 tauri-sys = { workspace = true }
 toml = { workspace = true }

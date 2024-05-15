@@ -32,14 +32,14 @@ pub enum Category {
 impl ToString for Category {
 	fn to_string(&self) -> String {
 		match self {
-			Category::Sponsor => "sponsor".to_string(),
-			Category::SelfPromotion => "selfpromo".to_string(),
-			Category::Interaction => "interaction".to_string(),
-			Category::Intro => "intro".to_string(),
-			Category::Outro => "outro".to_string(),
-			Category::Preview => "preview".to_string(),
-			Category::OffTopicMusic => "music_offtopic".to_string(),
-			Category::Filler => "filler".to_string(),
+			Category::Sponsor => "\"sponsor\"".to_string(),
+			Category::SelfPromotion => "\"selfpromo\"".to_string(),
+			Category::Interaction => "\"interaction\"".to_string(),
+			Category::Intro => "\"intro\"".to_string(),
+			Category::Outro => "\"outro\"".to_string(),
+			Category::Preview => "\"preview\"".to_string(),
+			Category::OffTopicMusic => "\"music_offtopic\"".to_string(),
+			Category::Filler => "\"filler\"".to_string(),
 		}
 	}
 }
@@ -57,11 +57,11 @@ pub enum Action {
 impl ToString for Action {
 	fn to_string(&self) -> String {
 		match self {
-			Action::Skip => "skip".to_string(),
-			Action::Mute => "mute".to_string(),
-			Action::Full => "full".to_string(),
-			Action::PointOfInterest => "poi".to_string(),
-			Action::Chapter => "chapter".to_string(),
+			Action::Skip => "\"skip\"".to_string(),
+			Action::Mute => "\"mute\"".to_string(),
+			Action::Full => "\"full\"".to_string(),
+			Action::PointOfInterest => "\"poi\"".to_string(),
+			Action::Chapter => "\"chapter\"".to_string(),
 		}
 	}
 }
@@ -99,21 +99,20 @@ impl Query {
 	}
 
 	pub fn url(&self) -> String {
-		let required_segments = self
-			.required_segments
-			.as_ref()
-			.map(|required_segments| format!("requiredSegments=[{}]", required_segments.join(",")));
+		let required_segments = self.required_segments.as_ref().map(|required_segments| {
+			format!("&requiredSegments=[{}]", required_segments.join("\",\""))
+		});
 
 		let categories = self.categories.as_ref().map(|categories| {
 			format!(
-				"categories=[{}]",
+				"&categories=[{}]",
 				categories.iter().map(|cat| cat.to_string()).collect::<Vec<String>>().join(",")
 			)
 		});
 
 		let actions = self.actions.as_ref().map(|actions| {
 			format!(
-				"actionTypes=[{}]",
+				"&actionTypes=[{}]",
 				actions.iter().map(|cat| cat.to_string()).collect::<Vec<String>>().join(",")
 			)
 		});
@@ -169,7 +168,7 @@ pub struct Response {
 mod tests {
 	use std::{error::Error, future::Future};
 
-	use crate::{Query, Response};
+	use crate::{Category, Query, Response};
 
 	use wasm_bindgen_test::*;
 
@@ -261,6 +260,29 @@ mod tests {
 	pub async fn fetch_response() {
 		for test_video in TEST_VIDEOS {
 			let query = Query::build(test_video.to_string());
+			query.send_query().await.unwrap();
+		}
+	}
+
+	#[wasm_bindgen_test]
+	pub async fn fetch_response_with_categories() {
+		for test_video in TEST_VIDEOS {
+			let query = Query::create(
+				test_video.to_string(),
+				None,
+				Some(vec![
+					Category::Sponsor,
+					Category::SelfPromotion,
+					Category::Intro,
+					Category::Outro,
+					Category::Interaction,
+					Category::OffTopicMusic,
+					Category::Preview,
+					Category::Filler,
+				]),
+				None,
+				None,
+			);
 			query.send_query().await.unwrap();
 		}
 	}

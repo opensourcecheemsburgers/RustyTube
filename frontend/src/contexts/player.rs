@@ -148,7 +148,7 @@ impl PlayerState {
 		let video_pause = video.pause();
 		let audio_pause = audio.pause();
 		if audio_pause.is_ok() && video_pause.is_ok() {
-			self.playback_state.set(PlaybackState::Playing);
+			self.playback_state.set(PlaybackState::Paused);
 		}
 		Ok(())
 	}
@@ -277,7 +277,7 @@ impl PlayerState {
 		if let Some(segments) = expect_context::<SponsorBlockResource>().get_segments() {
 			segments.into_iter().for_each(|segment| {
 				let range =
-					(segment.timeframe.0.round() - 1f64)..=(segment.timeframe.0.round() + 2f64);
+					(segment.timeframe.0.round() - 1f64)..=(segment.timeframe.0.round() + 1f64);
 				if range.contains(&time) {
 					self.seek(segment.timeframe.1);
 					toast(Toast::new(

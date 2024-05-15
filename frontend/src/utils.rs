@@ -1,13 +1,8 @@
 use gloo::console::debug;
-use leptos::{expect_context, window, Memo, SignalGet, SignalSetter};
+use leptos::*;
 use leptos_router::create_query_signal;
 
 use crate::contexts::RegionConfigCtx;
-
-pub type VideoQuerySignal = (Memo<Option<String>>, SignalSetter<Option<String>>);
-pub fn get_current_video_query_signal() -> VideoQuerySignal {
-	create_query_signal("id")
-}
 
 pub fn i18n(key: &'static str) -> impl Fn() -> String {
 	move || {
@@ -26,4 +21,12 @@ pub fn is_webkit() -> bool {
 		},
 		Err(_) => false,
 	}
+}
+
+pub fn go_to(page: String) {
+	let navigate = leptos_router::use_navigate();
+	let page = page.clone();
+	request_animation_frame(move || {
+		_ = navigate(&page, Default::default());
+	})
 }

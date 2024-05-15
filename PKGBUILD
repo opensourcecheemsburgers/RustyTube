@@ -1,7 +1,7 @@
 # Maintainer: Stephen Power <simpilldev@gmail.com>
 
 pkgname=rustytube
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="A youtube client written in Rust using Leptos and Tauri; Designed with DaisyUI and Tailwind."
 arch=('x86_64')

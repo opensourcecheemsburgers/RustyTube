@@ -6,7 +6,7 @@ use rustytube_error::RustyTubeError;
 
 use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
 
-use super::{initial_value, save_resource};
+use super::save_resource;
 
 static TRENDING_KEY: &'static str = "trending_videos";
 
@@ -35,10 +35,9 @@ pub struct TrendingResource {
 
 impl TrendingResource {
 	pub fn initialise(category: RwSignal<TrendingCategory>) -> Self {
-		let resource = create_local_resource_with_initial_value(
+		let resource = Resource::local(
 			move || TrendingResourceArgs::new(category),
 			move |args| fetch_trending(args),
-			initial_value(TRENDING_KEY),
 		);
 
 		TrendingResource { resource }

@@ -1,16 +1,13 @@
 use invidious::VideoShort;
 use leptos::*;
+use leptos_router::create_query_signal;
 
-use crate::{
-	components::FerrisError,
-	pages::video::page::VideoResource,
-	utils::{get_current_video_query_signal, i18n},
-};
+use crate::{components::FerrisError, resources::VideoResource, utils::i18n};
 
 #[component]
-pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
+pub fn RecommendedSection() -> impl IntoView {
 	let recommended_view = move || {
-		video_resource.get().map(|res| match res {
+		expect_context::<VideoResource>().resource.get().map(|res| match res {
 			Ok(video) => video
 				.recommended_videos
 				.into_iter()
@@ -23,7 +20,7 @@ pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-col rounded-lg bg-base-200 p-4 space-y-4">
+		<div class="flex flex-col h-auto rounded-lg bg-base-200 p-4 space-y-4">
 			<h1 class="font-semibold text-xl">{i18n("video.info.recommended")}</h1>
 			<div class="flex flex-col space-y-4 pr-4 rounded-lg bg-base-200">
 				<Suspense fallback=move || {
@@ -35,13 +32,56 @@ pub fn RecommendedSection(video_resource: VideoResource) -> impl IntoView {
 }
 
 #[component]
+pub fn RecommendedSectionCollapsible() -> impl IntoView {
+	let recommended_view = move || {
+		expect_context::<VideoResource>().resource.get().map(|res| match res {
+			Ok(video) => video
+				.recommended_videos
+				.into_iter()
+				.map(|video_short| {
+					view! { <RecommendedVideo video=video_short/> }
+				})
+				.collect_view(),
+			Err(err) => view! { <FerrisError error=err/> },
+		})
+	};
+
+	view! {
+		<div>
+			<div class="hidden lg:!flex flex-col h-auto rounded-lg bg-base-200 p-4 space-y-4">
+				<h1 class="font-semibold text-xl">{i18n("video.info.recommended")}</h1>
+				<div class="flex flex-col space-y-4 pr-4 rounded-lg bg-base-200">
+					<Suspense fallback=move || {
+						view! { <RecommendedSectionPlaceholder/> }
+					}>{recommended_view}</Suspense>
+				</div>
+			</div>
+
+			<div class="lg:hidden collapse collapse-arrow rounded-lg bg-base-200">
+				<input type="checkbox"/>
+				<div class="collapse-title text-xl font-medium">
+					<span>{i18n("video.info.recommended")}</span>
+
+				</div>
+				<div class="collapse-content">
+					<div class="flex flex-col space-y-4 pr-4 rounded-lg bg-base-200">
+						<Suspense fallback=move || {
+							view! { <RecommendedSectionPlaceholder/> }
+						}>{recommended_view}</Suspense>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+#[component]
 pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 	let src = video.thumbnails.get(4).cloned().unwrap().url;
 
 	let video_id = video.id;
-	let video_id_setter = get_current_video_query_signal().1;
 	let open_video = move |_| {
-		video_id_setter.set(Some(video_id.clone()));
+		create_query_signal::<String>("id").1.set(Some(video_id.clone()));
 	};
 
 	let img_loaded = create_rw_signal(false);

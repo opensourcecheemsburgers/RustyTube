@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::common::{CommonChannel, CommonPlaylist, CommonVideo};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 #[serde(tag = "type")]
 pub enum SearchResult {
 	#[serde(rename = "video")]

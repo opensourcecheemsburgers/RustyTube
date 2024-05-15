@@ -9,5 +9,4 @@ license.workspace = true
 gloo = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-
 wasm-bindgen-test = { workspace = true }

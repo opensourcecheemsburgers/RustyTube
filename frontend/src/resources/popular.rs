@@ -5,7 +5,7 @@ use rustytube_error::RustyTubeError;
 
 use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
 
-use super::{initial_value, save_resource};
+use super::save_resource;
 
 static POPULAR_KEY: &'static str = "popular_videos";
 
@@ -31,11 +31,8 @@ pub struct PopularResource {
 
 impl PopularResource {
 	pub fn initialise() -> Self {
-		let resource = create_local_resource_with_initial_value(
-			move || PopularResourceArgs::new(),
-			move |args| fetch_popular(args),
-			initial_value(POPULAR_KEY),
-		);
+		let resource =
+			Resource::local(move || PopularResourceArgs::new(), move |args| fetch_popular(args));
 
 		PopularResource { resource }
 	}

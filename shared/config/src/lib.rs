@@ -49,6 +49,20 @@ pub struct RegionConfig {
 	pub trending_region: isocountry::CountryCode,
 }
 
+#[derive(Clone, Deserialize, Serialize, Debug, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub struct SponsorBlockConfig {
+	pub enabled: bool,
+	pub skip_sponsors: bool,
+	pub skip_selfpromos: bool,
+	pub skip_interactions: bool,
+	pub skip_intros: bool,
+	pub skip_outros: bool,
+	pub skip_previews: bool,
+	pub skip_irrelevant_music: bool,
+	pub skip_filler: bool,
+}
+
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub struct Config {
@@ -57,6 +71,7 @@ pub struct Config {
 	pub player: PlayerConfig,
 	pub privacy: PrivacyConfig,
 	pub region: RegionConfig,
+	pub sponsorblock: SponsorBlockConfig,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -132,15 +147,32 @@ impl Default for RegionConfig {
 	}
 }
 
+impl Default for SponsorBlockConfig {
+	fn default() -> Self {
+		Self {
+			enabled: true,
+			skip_sponsors: true,
+			skip_selfpromos: false,
+			skip_interactions: false,
+			skip_intros: false,
+			skip_outros: false,
+			skip_previews: false,
+			skip_irrelevant_music: false,
+			skip_filler: false,
+		}
+	}
+}
+
 impl Default for Config {
 	fn default() -> Self {
-		let network = NetworkConfig::default();
-		let ui = UiConfig::default();
-		let player = PlayerConfig::default();
-		let privacy = PrivacyConfig::default();
-		let region = RegionConfig::default();
-
-		Self { network, ui, player, privacy, region }
+		Self {
+			network: NetworkConfig::default(),
+			ui: UiConfig::default(),
+			player: PlayerConfig::default(),
+			privacy: PrivacyConfig::default(),
+			region: RegionConfig::default(),
+			sponsorblock: SponsorBlockConfig::default(),
+		}
 	}
 }
 

@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{borrow::BorrowMut, str::FromStr};
 
 use invidious::{
 	Duration, Feature, ResponseType, SearchArgs, SearchResult, SearchResults, Sort, TimeSpan,
@@ -9,156 +9,93 @@ use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{
-		ChannelPreviewCard, FerrisError, PlaceholderCardArray, PlaylistPreviewCard,
-		VideoPreviewCard,
+		CardGrid, ChannelPreviewCard, FerrisError, GridContainer, PlaceholderCardArray,
+		PlaylistPreviewCard, VideoPreviewCard,
 	},
 	contexts::{NetworkConfigCtx, RegionConfigCtx},
-	utils::{get_current_video_query_signal, VideoQuerySignal},
+	resources::{get_search_args_from_query_map, SearchAction, SearchActionArgs, SearchResource},
+	utils::i18n,
 };
 
 #[component]
 pub fn SearchSection() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-
-	let query_map = use_query_map();
-	let search_args = move || get_search_args_from_query_map(query_map.get());
-	let search_results_resource = Resource::local(
-		move || (server.get(), search_args(), locale.get().to_invidious_lang()),
-		|(server, search_args, lang)| async move {
-			SearchResults::fetch_search_results(&server, search_args, 1, &lang).await
-		},
-	);
-
-	let title = move || search_args().query;
+	let search_args = get_search_args_from_query_map();
+	let search = SearchResource::initialise(search_args);
 
 	view! {
-		<div class="w-full flex justify-center mt-4">
-			<div class="w-[90%] flex flex-col gap-y-8">
-				<h1 class="pl-4 font-semibold text-2xl">{title}</h1>
-				// <TrendingHeader category=category/>
-				<Suspense fallback=move || {
-					view! { <PlaceholderCardArray/> }
-				}>
-					{move || {
-						search_results_resource
-							.get()
-							.map(|search_results_response| {
-								match search_results_response {
-									Ok(search_results) => {
-										view! {
-											<SearchResults
-												search_results=search_results
-												search_args=search_args()
-											/>
-										}
-									}
-									Err(err) => view! { <FerrisError error=err/> },
-								}
-							})
-					}}
+		<GridContainer>
+			<h1 class="pl-4 font-semibold text-2xl">{move || search_args.get().query}</h1>
+			<Suspense fallback=move || {
+				view! { <PlaceholderCardArray/> }
+			}>
 
-				</Suspense>
-			</div>
-		</div>
+				{move || {
+					search
+						.resource
+						.get()
+						.map(|response| {
+							match response {
+								Ok(search_results) => {
+									view! {
+										<SearchResults
+											search_results=search_results
+											search_args=search_args
+										/>
+									}
+								}
+								Err(err) => view! { <FerrisError error=err/> },
+							}
+						})
+				}}
+
+			</Suspense>
+		</GridContainer>
 	}
 }
 
 #[component]
-pub fn SearchResults(search_results: SearchResults, search_args: SearchArgs) -> impl IntoView {
-	let lang = expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang();
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-
-	let results_vec = create_rw_signal(vec![search_results.items]);
-	let fetch_search_results = create_action(|input: &SearchResultFetchArgs| {
-		let args = input.clone();
-		async move { fetch_search_results(args).await }
-	});
-	let video_id = get_current_video_query_signal();
-
-	let search_results_fetch_args = SearchResultFetchArgs {
-		search_args,
-		results_vec,
-		video_id,
-		server,
-		fetch_search_results,
-		lang,
-	};
-
-	let fetch_results = move |_| fetch_search_results.dispatch(search_results_fetch_args.clone());
-
-	let search_results_view = move || {
-		results_vec
-			.get()
-			.into_iter()
-			.map(|result_page| {
-				result_page
-					.into_iter()
-					.map(|result| match result {
-						SearchResult::Channel(channel) => {
-							view! { <ChannelPreviewCard channel=channel/> }
-						}
-						SearchResult::Video(video) => view! { <VideoPreviewCard video=video/> },
-						SearchResult::Playlist(playlist) => {
-							view! { <PlaylistPreviewCard playlist=playlist/> }
-						}
-					})
-					.collect_view()
-			})
-			.collect_view()
-	};
+pub fn SearchResults(
+	search_results: Vec<SearchResult>,
+	search_args: Signal<SearchArgs>,
+) -> impl IntoView {
+	let pages = RwSignal::new(vec![search_results]);
+	let search_action = SearchAction::new();
 
 	view! {
-		<div class="flex flex-row flex-wrap gap-y-12 h-[calc(100vh-64px-4rem-128px)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
-			{search_results_view}
-			<button class="btn btn-primary btn-outline btn-sm" on:click=fetch_results>
-				{t!("general.load_more")}
-			</button>
-		</div>
-	}
-}
+		<CardGrid>
 
-fn get_search_args_from_query_map(map: ParamsMap) -> SearchArgs {
-	let query = map.get("q").cloned().unwrap_or_default();
-	let response_type =
-		map.get("type").map(|response_type| ResponseType::from_str(response_type).ok()).flatten();
-	let sort = map.get("sort").map(|sort| Sort::from_str(sort).ok()).flatten();
-	let timespan = map.get("timespan").map(|timespan| TimeSpan::from_str(timespan).ok()).flatten();
-	let duration = map.get("duration").map(|duration| Duration::from_str(duration).ok()).flatten();
-	let features = map.get("features").map(|features| {
-		let mut features_vec = vec![];
-		features.split(',').for_each(|feature| {
-			if let Ok(feature) = Feature::from_str(feature) {
-				features_vec.push(feature)
+			{move || {
+				pages
+					.get()
+					.into_iter()
+					.map(|result_page| {
+						result_page
+							.into_iter()
+							.map(|result| match result {
+								SearchResult::Channel(channel) => {
+									view! { <ChannelPreviewCard channel=channel/> }
+								}
+								SearchResult::Video(video) => {
+									view! { <VideoPreviewCard video=video/> }
+								}
+								SearchResult::Playlist(playlist) => {
+									view! { <PlaylistPreviewCard playlist=playlist/> }
+								}
+							})
+							.collect_view()
+					})
+					.collect_view()
+			}}
+
+		</CardGrid>
+		<button
+			class="btn btn-primary btn-outline btn-sm"
+			on:click=move |_| {
+				search_action.action.dispatch(SearchActionArgs::new(search_args, pages))
 			}
-		});
-		features_vec
-	});
-	SearchArgs::new(query, sort, timespan, duration, response_type, features)
-}
+		>
 
-async fn fetch_search_results(args: SearchResultFetchArgs) -> Result<(), RustyTubeError> {
-	let page_number = (args.results_vec.get().len() + 1) as u32;
-	let search_results = SearchResults::fetch_search_results(
-		&args.server.get(),
-		args.search_args,
-		page_number,
-		&args.lang,
-	)
-	.await
-	.unwrap();
-	let mut temp = args.results_vec.get();
-	temp.push(search_results.items);
-	args.results_vec.set(temp);
-	Ok(())
-}
-
-#[derive(Clone)]
-pub struct SearchResultFetchArgs {
-	pub search_args: SearchArgs,
-	pub results_vec: RwSignal<Vec<Vec<SearchResult>>>,
-	pub server: Signal<String>,
-	pub lang: String,
-	pub video_id: VideoQuerySignal,
-	pub fetch_search_results: Action<Self, Result<(), RustyTubeError>>,
+			{i18n("general.load_more")}
+		</button>
+	}
 }

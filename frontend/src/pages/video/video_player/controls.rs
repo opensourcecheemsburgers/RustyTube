@@ -31,6 +31,7 @@ pub fn VideoPlayerControls() -> impl IntoView {
 					</div>
 					<div class="flex flex-row">
 						<FormatDropdown/>
+						// <CaptionsDropdown/>
 						<FullWindowBtn/>
 						<FullScreenBtn/>
 					</div>

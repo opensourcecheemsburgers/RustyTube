@@ -1,12 +1,16 @@
-use invidious::{ChannelVideos, CommonVideo};
+use gloo::file::Blob;
+use invidious::{ChannelVideos, CommonVideo, Subscriptions};
 use leptos::*;
 use rustytube_error::RustyTubeError;
+use wasm_bindgen::JsCast;
+use web_sys::{Event, HtmlInputElement};
 
 use crate::{
-	components::{FerrisError, PlaceholderCardArray, VideoPreviewCard},
+	components::{CardGrid, FerrisError, GridContainer, PlaceholderCardArray, VideoPreviewCard},
 	icons::FerrisWaveIcon,
-	pages::settings::ImportSubsButton,
-	resources::{SubscriptionsCtx, SubscriptionsVideosResource},
+	resources::{
+		save_subs, SubscriptionsCtx, SubscriptionsThumbnailsResource, SubscriptionsVideosResource,
+	},
 	utils::i18n,
 };
 
@@ -14,18 +18,22 @@ use crate::{
 pub fn SubscriptionsSection() -> impl IntoView {
 	let subs = expect_context::<SubscriptionsCtx>();
 
-	let subs_view = move || match subs.0.get().channels.len() == 0 {
-		true => view! { <ImportSubscriptions/> },
-		false => view! { <SubscriptionsVideos/> },
-	};
-
 	view! {
-		<div class="flex justify-center w-full mt-4">
-			<div class="w-[90%] flex flex-col gap-y-8">
-				<h1 class="text-2xl font-semibold">{i18n("sidebar.subscriptions")}</h1>
-				{subs_view}
-			</div>
-		</div>
+		<GridContainer>
+			<h1 class="text-2xl font-semibold">{i18n("sidebar.subscriptions")}</h1>
+			<Suspense fallback=move || {
+				view! { <PlaceholderCardArray/> }
+			}>
+				{move || {
+					match subs.0.get().channels.len() == 0 {
+						true => view! { <ImportSubscriptions/> },
+						false => view! { <SubscriptionsVideos/> },
+					}
+				}}
+
+			</Suspense>
+
+		</GridContainer>
 	}
 }
 
@@ -101,10 +109,8 @@ pub fn SubscriptionsVideosInner(
 	};
 
 	view! {
-		<div class="-ml-4 flex flex-col h-[calc(100vh-11.75rem)] gap-y-8 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
-			<div class="flex flex-row flex-wrap justify-between gap-y-8">{videos_view}</div>
-			{view_more_btn}
-		</div>
+		<CardGrid>{videos_view}</CardGrid>
+		{view_more_btn}
 	}
 }
 
@@ -128,7 +134,7 @@ pub fn ImportSubscriptionsTutorial() -> impl IntoView {
 	view! {
 		<a
 			target="_blank"
-			class="btn btn-lg btn-outline btn-info"
+			class="btn lg:btn-lg btn-outline btn-info"
 			href="https://docs.invidious.io/export-youtube-subscriptions/"
 		>
 			{i18n("subscriptions.tutorial")}
@@ -141,4 +147,56 @@ fn load_more_videos(visible_videos: RwSignal<Vec<CommonVideo>>, total_videos: Ve
 		let next_slice = &total_videos[(visible.len())..(visible.len() + 100)];
 		visible.extend_from_slice(next_slice);
 	});
+}
+
+#[component]
+pub fn ImportSubsButton() -> impl IntoView {
+	let subs = expect_context::<SubscriptionsCtx>();
+
+	let parse_subs_file = create_action(|input: &(SubscriptionsCtx, Event)| {
+		let subs = input.0.clone();
+		let event = input.1.clone();
+
+		get_subs_from_file(subs, event)
+	});
+
+	let on_file_upload = move |event: Event| {
+		parse_subs_file.dispatch((subs, event));
+	};
+
+	view! {
+		<div>
+			<label class="btn btn-md lg:btn-lg btn-primary" for="subs_upload">
+				{i18n("settings.import")}
+			</label>
+			<input
+				id="subs_upload"
+				type="file"
+				accept=".ron,.json,.csv"
+				multiple=false
+				on:change=on_file_upload
+				class="hidden"
+			/>
+		</div>
+	}
+}
+
+async fn get_subs_from_file(
+	subs_resource: SubscriptionsCtx,
+	event: Event,
+) -> Result<(), RustyTubeError> {
+	let input = event.target().unwrap().dyn_into::<HtmlInputElement>().unwrap();
+	let filelist = input.files().ok_or(RustyTubeError::NoFileSelected)?;
+	let file = filelist.get(0).ok_or(RustyTubeError::NoFileSelected)?;
+	let blob: Blob = file.into();
+	let mut subscriptions = Subscriptions::read_subs(blob).await?;
+	subs_resource.0.update(|subs| {
+		subs.channels.append(&mut subscriptions.channels);
+		subs.channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+		subs.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
+		save_subs(subs);
+	});
+	expect_context::<SubscriptionsVideosResource>().resource.refetch();
+	expect_context::<SubscriptionsThumbnailsResource>().resource.refetch();
+	Ok(())
 }

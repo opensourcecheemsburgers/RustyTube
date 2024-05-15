@@ -21,13 +21,13 @@ use crate::{
 	components::Page,
 	contexts::{provide_config_context_slices, provide_toaster_ctx},
 	pages::{
-		ChannelPage, PopularSection, SearchSection, SettingsPage, SubscriptionsSection,
-		TrendingSection, VideoPage,
+		ChannelPage, PlaylistsSection, PopularSection, SearchSection, SettingsPage,
+		SubscriptionsSection, TrendingSection, VideoPage,
 	},
 	resources::{
-		InstancesResource, SponsorBlockResource, SubscriptionsCtx, SubscriptionsThumbnailsResource,
-		SubscriptionsThumbnailsResourceArgs, SubscriptionsVideosResource,
-		SubscriptionsVideosResourceArgs,
+		InstancesResource, PlaylistsCtx, SponsorBlockResource, SubscriptionsCtx,
+		SubscriptionsThumbnailsResource, SubscriptionsThumbnailsResourceArgs,
+		SubscriptionsVideosResource, SubscriptionsVideosResourceArgs,
 	},
 };
 
@@ -39,12 +39,12 @@ fn App() -> impl IntoView {
 
 	provide_config_context_slices(Config::load().unwrap_or_default());
 
-	let subscriptions_resource = SubscriptionsCtx::initialise();
-
-	provide_context(subscriptions_resource);
-	provide_context(SubscriptionsVideosResource::initialise(subscriptions_resource));
-	provide_context(SubscriptionsThumbnailsResource::initialise(subscriptions_resource));
+	let subscriptions = SubscriptionsCtx::initialise();
+	provide_context(subscriptions);
+	provide_context(SubscriptionsVideosResource::initialise(subscriptions));
+	provide_context(SubscriptionsThumbnailsResource::initialise(subscriptions));
 	provide_context(InstancesResource::initialise());
+	provide_context(PlaylistsCtx::initialise());
 
 	view! {
 		<Router>
@@ -57,7 +57,8 @@ fn App() -> impl IntoView {
 					<Route path="/trending" view=move || view! { <TrendingSection/> }/>
 					<Route path="/popular" view=move || view! { <PopularSection/> }/>
 					<Route path="/search" view=move || view! { <SearchSection/> }/>
-					<Route path="/playlist" view=move || ().into_view()/>
+					<Route path="/playlist" view=move || view! { <VideoPage/> }/>
+					<Route path="/playlists" view=move || view! { <PlaylistsSection/> }/>
 					<Route path="/settings" view=move || view! { <SettingsPage/> }/>
 					<Route path="/about" view=move || ().into_view()/>
 				</Route>

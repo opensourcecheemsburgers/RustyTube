@@ -12,7 +12,7 @@ pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
 	let thumbnail_url = playlist_clone.thumbnail;
 
 	view! {
-		<div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden">
+		<div class="flex flex-col h-auto overflow-hidden">
 			<Thumbnail playlist_id=playlist.author_id.clone() url=thumbnail_url/>
 			<Info playlist=playlist/>
 		</div>
@@ -26,7 +26,7 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 	let name = playlist.title;
 	let author = playlist.author;
 	let author_id = playlist.author_id;
-	let video_count = playlist.video_count.to_formatted_string(&locale.get().to_num_fmt());
+	let video_count = move || playlist.video_count.to_formatted_string(&locale.get().to_num_fmt());
 	let verified_check = playlist.author_verified.then_some(
 		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
 	);
@@ -49,7 +49,13 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 				{verified_check}
 				<p>{"•"}</p>
 				<p>
-					{t!("playlist.videos", video_count = video_count, locale = & locale.get().id())}
+					{move || {
+						t!(
+							"playlist.videos", video_count = video_count(), locale = & locale.get()
+							.id()
+						)
+					}}
+
 				</p>
 			</div>
 		</div>

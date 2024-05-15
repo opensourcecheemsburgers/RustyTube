@@ -17,8 +17,8 @@ pub fn FormatDropdown() -> impl IntoView {
 #[component]
 pub fn DropdownBtn() -> impl IntoView {
 	view! {
-		<label tabindex="0" class="btn btn-ghost btn-xs">
-			<GearFine weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+		<label tabindex="0" class="btn btn-ghost btn-xs lg:btn-sm">
+			<GearFine weight=IconWeight::Regular class="h-4 w-4 lg:h-5 lg:w-5 base-content"/>
 		</label>
 	}
 }
@@ -54,7 +54,7 @@ pub fn FormatList() -> impl IntoView {
 				};
 
 				view! {
-					<button on:click=change_format class="btn btn-sm lowercase btn-ghost">
+					<button on:click=change_format class="btn btn-xs md:btn-sm lowercase btn-ghost">
 						{quality_str}
 					</button>
 				}
@@ -93,7 +93,7 @@ pub fn FormatList() -> impl IntoView {
 				};
 
 				view! {
-					<button on:click=change_format class="btn btn-sm lowercase btn-ghost">
+					<button on:click=change_format class="btn btn-xs md:btn-sm lowercase btn-ghost">
 						{info_str}
 					</button>
 				}
@@ -114,7 +114,7 @@ pub fn FormatList() -> impl IntoView {
 				};
 
 				view! {
-					<button on:click=change_format class="btn btn-sm lowercase btn-ghost">
+					<button on:click=change_format class="btn btn-xs md:btn-sm lowercase btn-ghost">
 						{quality_str}
 					</button>
 				}
@@ -126,17 +126,23 @@ pub fn FormatList() -> impl IntoView {
 		<div class="flex h-max w-max flex-row space-x-4 rounded-lg bg-base-200 p-2">
 			<div class="flex flex-col items-center">
 				<h1>Audio</h1>
-				<div class="my-4 flex flex-col h-64 overflow-y-scroll">{audio_formats_view}</div>
+				<div class="my-4 flex flex-col h-48 lg:h-64 overflow-y-scroll">
+					{audio_formats_view}
+				</div>
 			</div>
 
 			<div class="flex flex-col items-center">
 				<h1>Legacy</h1>
-				<div class="my-4 flex flex-col h-64 overflow-y-scroll">{legacy_formats_view}</div>
+				<div class="my-4 flex flex-col h-48 lg:h-64 overflow-y-scroll">
+					{legacy_formats_view}
+				</div>
 			</div>
 
 			<div class="flex flex-col items-center">
 				<h1>Dash</h1>
-				<div class="my-4 flex flex-col h-64 overflow-y-scroll">{adaptive_formats_view}</div>
+				<div class="my-4 flex flex-col h-48 lg:h-64 overflow-y-scroll">
+					{adaptive_formats_view}
+				</div>
 			</div>
 		</div>
 	}

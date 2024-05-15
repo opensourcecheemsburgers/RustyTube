@@ -1,26 +1,26 @@
 use invidious::{Dislikes, Formats, Video};
 use leptos::*;
+use leptos_router::create_query_signal;
 use num_format::ToFormattedString;
 use phosphor_leptos::{
 	CalendarBlank, DownloadSimple, Eye, IconWeight, ShareNetwork, ThumbsDown, ThumbsUp,
 };
 
 use crate::{
-	components::FerrisError,
+	components::{ChannelRoll, FerrisError},
 	contexts::{PlayerState, RegionConfigCtx},
-	pages::video::page::VideoResource,
-	resources::SubscriptionsCtx,
-	utils::get_current_video_query_signal,
+	resources::{SubscriptionsCtx, VideoResource},
 };
 
 #[component]
-pub fn VideoInfo(video_resource: VideoResource) -> impl IntoView {
+pub fn VideoInfo() -> impl IntoView {
 	view! {
 		<Suspense fallback=move || {
 			().into_view()
 		}>
 			{move || {
-				video_resource
+				expect_context::<VideoResource>()
+					.resource
 					.get()
 					.map(|res| match res {
 						Ok(video) => view! { <VideoInfoContent video=video/> },
@@ -42,7 +42,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 	let likes = move || video.likes.to_formatted_string(&locale.get().to_num_fmt());
 	let author = video.author;
 	let author_id = video.author_id.clone();
-	let sub_count_text = video.sub_count_text;
+	let sub_count_text = video.sub_count_text.clone();
 	let author_thumb_url = video.author_thumbnails.first().cloned().map(|thumb| thumb.url);
 	let description = video.description_html;
 
@@ -75,21 +75,12 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 		})
 	};
 
-	let channel_id = video.author_id.clone();
-	let go_to_channel_page = move |_| {
-		let navigate = leptos_router::use_navigate();
-		let channel_id = channel_id.clone();
-		request_animation_frame(move || {
-			_ = navigate(&format!("/channel?id={}", channel_id), Default::default());
-		})
-	};
-
 	view! {
 		<div class="flex h-max w-full flex-row justify-between rounded-lg bg-base-200 p-4">
 			<div class="flex w-full flex-col">
-				<h1 class="text-xl font-semibold">{title.clone()}</h1>
+				<h1 class="text-lg md:text-xl font-semibold">{title.clone()}</h1>
 
-				<div class="p-0 m-0 collapse collapse-arrow w-fit h-fit">
+				<div class="p-0 m-0 collapse collapse-arrow w-fit h-fit text-xs md:text-sm">
 					<input type="checkbox"/>
 					<div class="collapse-title pl-0 flex flex-row flex-wrap items-center gap-2 w-fit">
 						<div class="flex flex-row items-center gap-1">
@@ -119,23 +110,13 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 					</div>
 				</div>
 
-				<div class="mt-2 flex w-full flex-row items-center justify-between space-x-4">
-					<div class="flex flex-row space-x-4">
-						<img
-							on:click=go_to_channel_page
-							on:load=move |_| img_loaded.set(true)
-							src=author_thumb_url
-							class=image_classes
-						/>
-						<div class="flex flex-col space-y-2">
-							<p class="text-xl font-semibold">{author.clone()}</p>
-							<SubscribeBtn
-								author=author
-								author_id=author_id
-								sub_count_text=sub_count_text
-							/>
-						</div>
-					</div>
+				<div class="mt-2 flex w-full flex-row flex-wrap sm:flex-nowrap items-center justify-between gap-y-4">
+					<ChannelRoll
+						channel=author
+						channel_id=author_id
+						sub_count=sub_count_text
+						image_url=author_thumb_url.unwrap_or_default()
+					/>
 					<div class="flex flex-row items-end justify-center space-x-2">
 						<DownloadsDropdown formats=formats title=title.clone()/>
 						<ShareDropdown/>
@@ -149,7 +130,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 #[component]
 pub fn DownloadsDropdown(formats: Formats, title: String) -> impl IntoView {
 	view! {
-		<div class="dropdown dropdown-bottom dropdown-end z-20">
+		<div class="dropdown dropdown-bottom sm:dropdown-end z-20">
 			<div tabindex="0" role="button" class="btn btn-circle btn-accent btn-outline">
 				<DownloadSimple weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 			</div>
@@ -177,7 +158,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 					<a
 						href=format.url
 						target="_blank"
-						class="btn btn-sm lowercase btn-ghost"
+						class="btn btn-xs md:btn-sm lowercase btn-ghost"
 						download=title
 					>
 						{quality_str}
@@ -208,7 +189,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 					<a
 						href=format.url
 						target="_blank"
-						class="btn btn-sm lowercase btn-ghost"
+						class="btn btn-xs md:btn-sm lowercase btn-ghost"
 						download=title
 					>
 						{info_str}
@@ -230,7 +211,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 					<a
 						href=format.url
 						target="_blank"
-						class="btn btn-sm lowercase btn-ghost"
+						class="btn btn-xs md:btn-sm lowercase btn-ghost"
 						download=title
 					>
 						{quality_str}
@@ -277,27 +258,34 @@ pub fn ShareDropdown() -> impl IntoView {
 		include_timestamp.set(timestamp);
 	};
 
-	let video_id = get_current_video_query_signal().0.get().unwrap_or_default();
-
 	let link_type = create_rw_signal(LinkType::RustyTube);
 	let set_rt_link_type = move |_| link_type.set(LinkType::RustyTube);
 	let set_yt_link_type = move |_| link_type.set(LinkType::YouTube);
 	let current_time = expect_context::<PlayerState>().current_time;
-	let link_text = move || match link_type.get() {
-		LinkType::RustyTube => match include_timestamp.get() {
-			true => {
-				format!("https://rustytube.rs/player?id={}&time={}", video_id, current_time.get())
-			}
-			false => format!("https://rustytube.rs/player?id={}", video_id),
-		},
-		LinkType::YouTube => match include_timestamp.get() {
-			true => format!("https://youtube.com/watch?v={}&t={}s", video_id, current_time.get()),
-			false => format!("https://youtube.com/watch?v={}", video_id),
-		},
+	let link_text = move || {
+		let video_id = create_query_signal::<String>("id").0.get().unwrap_or_default();
+		match link_type.get() {
+			LinkType::RustyTube => match include_timestamp.get() {
+				true => {
+					format!(
+						"https://rustytube.rs/player?id={}&time={}",
+						video_id,
+						current_time.get()
+					)
+				}
+				false => format!("https://rustytube.rs/player?id={}", video_id),
+			},
+			LinkType::YouTube => match include_timestamp.get() {
+				true => {
+					format!("https://youtube.com/watch?v={}&t={}s", video_id, current_time.get())
+				}
+				false => format!("https://youtube.com/watch?v={}", video_id),
+			},
+		}
 	};
 
 	view! {
-		<div class="dropdown dropdown-bottom dropdown-end z-20">
+		<div class="dropdown dropdown-bottom sm:dropdown-end z-20">
 			<div tabindex="0" role="button" class="btn btn-circle btn-outline btn-accent">
 				<ShareNetwork weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 			</div>
@@ -307,10 +295,16 @@ pub fn ShareDropdown() -> impl IntoView {
 				class="dropdown-content h-max w-max mt-2 space-y-4 rounded-lg bg-base-200 p-4 shadow-dropdown"
 			>
 				<div tabindex="0" class="flex flex-row gap-2">
-					<button on:click=set_rt_link_type class="btn btn-outline btn-accent btn-sm">
+					<button
+						on:click=set_rt_link_type
+						class="btn btn-outline btn-accent btn-xs md:btn-sm"
+					>
 						RustyTube Link
 					</button>
-					<button on:click=set_yt_link_type class="btn btn-outline btn-accent btn-sm">
+					<button
+						on:click=set_yt_link_type
+						class="btn btn-outline btn-accent btn-xs md:btn-sm"
+					>
 						YouTube Link
 					</button>
 				</div>
@@ -319,7 +313,7 @@ pub fn ShareDropdown() -> impl IntoView {
 					tabindex="0"
 					class="flex h-max w-full flex-row items-center space-x-1 rounded-lg btn-accent px-3 py-1 bg-accent"
 				>
-					<p class="font-mono text-xs text-accent-content">{link_text}</p>
+					<p class="font-mono text-[8px] md:text-xs text-accent-content">{link_text}</p>
 				</div>
 
 				<div tabindex="0" class="form-control">

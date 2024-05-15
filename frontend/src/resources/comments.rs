@@ -6,24 +6,57 @@ use rustytube_error::RustyTubeError;
 
 use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct CommentsResourceArgs {
-	server: Signal<String>,
-	locale: Signal<RustyTubeLocale>,
-	video_id: Memo<Option<String>>,
+	server: String,
+	locale: RustyTubeLocale,
+	video_id: String,
+}
+
+impl CommentsResourceArgs {
+	pub fn new() -> Self {
+		Self {
+			server: expect_context::<NetworkConfigCtx>().server_slice.0.get(),
+			locale: expect_context::<RegionConfigCtx>().locale_slice.0.get(),
+			video_id: create_query_signal("id").0.get().unwrap_or_default(),
+		}
+	}
+}
+
+#[derive(Clone, Copy)]
+pub struct CommentsResource {
+	pub resource: Resource<CommentsResourceArgs, Result<Comments, RustyTubeError>>,
+}
+
+impl CommentsResource {
+	pub fn initialise() -> Self {
+		CommentsResource {
+			resource: Resource::local(
+				move || CommentsResourceArgs::new(),
+				move |args| fetch_comments(args),
+			),
+		}
+	}
+}
+
+#[derive(Clone, PartialEq, Eq)]
+pub struct CommentsActionArgs {
+	server: String,
+	locale: RustyTubeLocale,
+	video_id: String,
 	comments_vec: RwSignal<Vec<Comment>>,
 	continuation: RwSignal<Option<String>>,
 }
 
-impl CommentsResourceArgs {
-	pub fn new(
+impl CommentsActionArgs {
+	pub fn get(
 		comments_vec: RwSignal<Vec<Comment>>,
 		continuation: RwSignal<Option<String>>,
 	) -> Self {
 		Self {
-			server: expect_context::<NetworkConfigCtx>().server_slice.0,
-			locale: expect_context::<RegionConfigCtx>().locale_slice.0,
-			video_id: create_query_signal("id").0,
+			server: expect_context::<NetworkConfigCtx>().server_slice.0.get(),
+			locale: expect_context::<RegionConfigCtx>().locale_slice.0.get(),
+			video_id: create_query_signal("id").0.get().unwrap_or_default(),
 			comments_vec,
 			continuation,
 		}
@@ -31,27 +64,33 @@ impl CommentsResourceArgs {
 }
 
 #[derive(Clone, Copy)]
-pub struct CommentsResource {
-	pub resource: Resource<CommentsResourceArgs, Result<(), RustyTubeError>>,
-	pub fetch_more: Action<CommentsResourceArgs, Result<(), RustyTubeError>>,
+pub struct CommentsAction {
+	pub action: Action<CommentsActionArgs, Result<(), RustyTubeError>>,
 }
 
-impl CommentsResource {
-	pub fn initialise(args: CommentsResourceArgs) -> Self {
-		CommentsResource {
-			resource: Resource::local(move || args, move |args| fetch_comments(args)),
-			fetch_more: Action::new(|args: &CommentsResourceArgs| fetch_comments(args.clone())),
-		}
+impl CommentsAction {
+	pub fn new() -> Self {
+		Self { action: Action::new(|args: &CommentsActionArgs| fetch_more_comments(args.clone())) }
 	}
 }
 
-async fn fetch_comments(args: CommentsResourceArgs) -> Result<(), RustyTubeError> {
+async fn fetch_comments(args: CommentsResourceArgs) -> Result<Comments, RustyTubeError> {
+	Comments::fetch_comments(
+		args.server.as_str(),
+		args.video_id.as_str(),
+		None,
+		&args.locale.to_invidious_lang(),
+	)
+	.await
+}
+
+async fn fetch_more_comments(args: CommentsActionArgs) -> Result<(), RustyTubeError> {
 	if args.continuation.get().is_some() || args.comments_vec.get().len() == 0 {
 		let comments = Comments::fetch_comments(
-			args.server.get().as_str(),
-			args.video_id.get().unwrap().as_str(),
+			args.server.as_str(),
+			args.video_id.as_str(),
 			args.continuation.get().as_deref(),
-			&args.locale.get().to_invidious_lang(),
+			&args.locale.to_invidious_lang(),
 		)
 		.await
 		.unwrap();

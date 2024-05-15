@@ -70,51 +70,46 @@ where
 	x * max / offset_width
 }
 
-const PROGRESS_BAR: &'static str = "
-    peer/progress z-10
-
-    progress progress-primary bg-neutral opacity-100 h-2.5 w-full cursor-pointer
-    
-    transition-all ease-in duration-300
-
-    hover:ease-in 
-    hover:duration-300
-    hover:opacity-100
-    hover:mt-0
-    hover:h-3.5
-
-    active:ease-in 
-    active:duration-300
-    active-focus:opacity-100
+const PROGRESS_BAR: &'static str = "\
+    peer/progress z-10 \
+    \
+    progress progress-primary rounded-none bg-neutral opacity-100 h-3 w-full cursor-pointer \
+    \
+    transition-all ease-in duration-300 \
+	\
+    hover:ease-in \
+    hover:duration-300 \
+    hover:opacity-100 \
+    hover:mt-0 \
+    hover:h-4 \
+	\
+    active:ease-in \
+    active:duration-300 \
+    active-focus:opacity-100 \
     active:mt-0
-    active:rounded-none
-    active:h-3.5
-
-    focus:ease-in 
-    focus:duration-300
-    focus-focus:opacity-100
-    focus:mt-0
-    focus:rounded-none
-    focus:h-3.5
-
-    peer-active/controls:ease-in 
-    peer-active/controls:duration-300
-    peer-active/controls:opacity-100
-    peer-active/controls:mt-0
-    peer-active/controls:rounded-none
-    peer-active/controls:h-3.5
-
-    peer-hover/controls:ease-in 
-    peer-hover/controls:duration-300
-    peer-hover/controls:opacity-100
-    peer-hover/controls:mt-0
-    peer-hover/controls:rounded-none
-    peer-hover/controls:h-3.5
-
-    peer-focus/controls:ease-in 
-    peer-focus/controls:duration-300
-    peer-focus/controls:opacity-100
-    peer-focus/controls:mt-0
-    peer-focus/controls:rounded-none
-    peer-focus/controls:h-3.5
+    active:h-4
+	\
+    focus:ease-in \
+    focus:duration-300 \
+    focus-focus:opacity-100 \
+    focus:mt-0 \
+    focus:h-4 \
+	\
+    peer-active/controls:ease-in \
+    peer-active/controls:duration-300 \
+    peer-active/controls:opacity-100 \
+    peer-active/controls:mt-0 \
+    peer-active/controls:h-4 \
+	\
+    peer-hover/controls:ease-in  \
+    peer-hover/controls:duration-300 \
+    peer-hover/controls:opacity-100 \
+    peer-hover/controls:mt-0 \
+    peer-hover/controls:h-4 \
+	\
+    peer-focus/controls:ease-in  \
+    peer-focus/controls:duration-300 \
+    peer-focus/controls:opacity-100 \
+    peer-focus/controls:mt-0 \
+    peer-focus/controls:h-4 \
 ";

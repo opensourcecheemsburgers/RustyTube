@@ -14,8 +14,8 @@ leptos = { workspace = true }
 reqwasm = { workspace = true }
 ron = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
 serde-xml-rs = { workspace = true }
+serde_json = { workspace = true }
 tauri-sys = { workspace = true }
 thiserror = { workspace = true }
 toml = { workspace = true }

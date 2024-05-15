@@ -1,4 +1,5 @@
 mod channel;
+mod playlists;
 mod popular;
 mod search;
 mod settings;
@@ -7,6 +8,7 @@ mod trending;
 mod video;
 
 pub use channel::ChannelPage;
+pub use playlists::PlaylistsSection;
 pub use popular::PopularSection;
 pub use search::SearchSection;
 pub use settings::SettingsPage;

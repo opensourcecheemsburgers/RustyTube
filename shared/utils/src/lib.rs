@@ -64,7 +64,7 @@ mod utils {
 		let current_perf = performance.now();
 
 		let current_time = (current_perf as u64) / 1_000;
-		let diff = time - current_time;
+		let diff = time.saturating_sub(current_time);
 
 		let diff_duration = Duration::from_millis(diff);
 		format_duration(diff_duration).to_string()

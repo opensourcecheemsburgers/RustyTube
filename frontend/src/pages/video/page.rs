@@ -1,49 +1,49 @@
-use invidious::Video;
-use leptos::*;
-use rustytube_error::RustyTubeError;
+use std::str::FromStr;
 
-use super::{
-	comments::CommentsSection, info::VideoInfo, recommended::RecommendedSection,
-	video_player::VideoContainer,
-};
+use invidious::{LocalPlaylist, LocalPlaylistItem};
+use leptos::*;
+use leptos_router::*;
+
+use super::{comments::CommentsSection, info::VideoInfo, video_player::VideoContainer};
 use crate::{
-	contexts::{NetworkConfigCtx, PlayerState, PlayerStyle, RegionConfigCtx},
-	resources::SponsorBlockResource,
-	utils::get_current_video_query_signal,
+	components::RecommendedSectionCollapsible,
+	resources::{SponsorBlockResource, VideoResource},
 };
 
 #[component]
 pub fn VideoPage() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id = get_current_video_query_signal().0;
+	provide_context(VideoResource::initialise());
 
-	expect_context::<SponsorBlockResource>().set_video(id);
+	expect_context::<SponsorBlockResource>().set_video(create_query_signal::<String>("id").0);
 
-	let video_resource: VideoResource = Resource::local(
-		move || (server.get(), id.get().unwrap_or_default(), locale.get().to_invidious_lang()),
-		|(server, id, lang)| async move {
-			let video = Video::fetch_video(&server, &id, &lang).await;
-			video
-		},
-	);
+	let playlist_query_signal = create_query_signal::<String>("videos").0;
+	let playlist_videos = Signal::derive(move || {
+		playlist_query_signal
+			.get()
+			.map(|videos| videos.split(",").map(|video| video.to_string()).collect::<Vec<String>>())
+	});
 
 	view! {
-		<div class="flex flex-row space-x-4 px-4">
-			<div class="flex flex-col basis-4/6 item-start">
-				<VideoContainer video_resource=video_resource/>
+		<div class="flex flex-row space-x-4 mb-48 md:px-4">
+			<div class="flex flex-col basis-full lg:basis-4/6 item-start">
+				<VideoContainer/>
 				<div class="mt-5">
-					<VideoInfo video_resource=video_resource/>
+					<VideoInfo/>
 				</div>
-				<div class="mt-10">
+				<div class="lg:hidden mt-5">
+					// {move || match playlist_query_signal.get().is_some() {
+					// true => ().into_view(),
+					// false => view! { <RecommendedSectionCollapsible/> },
+					// }}
+					<RecommendedSectionCollapsible/>
+				</div>
+				<div class="mt-5 lg:mt-10">
 					<CommentsSection/>
 				</div>
 			</div>
-			<div class="flex flex-col basis-2/6">
-				<RecommendedSection video_resource=video_resource/>
+			<div class="hidden lg:!flex flex-col basis-2/6">
+				<RecommendedSectionCollapsible/>
 			</div>
 		</div>
 	}
 }
-
-pub type VideoResource = Resource<(String, String, String), Result<Video, RustyTubeError>>;

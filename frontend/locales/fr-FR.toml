@@ -16,6 +16,7 @@ light_themes = "Thèmes clairs"
 subscriptions = "Abonnements"
 trending = "Tendances"
 popular = "Populaire"
+playlists = "Listes de lecture"
 settings = "Préférences"
 donate = "Donner"
 
@@ -31,7 +32,9 @@ gaming = "Jeux vidéo"
 movies = "Films"
 
 [settings]
+data = "Data"
 subscriptions = "Abonnements"
+playlists = "Listes de lecture"
 manage = "Gérer"
 import = "Importer"
 delete_all = "Supprimer tout"

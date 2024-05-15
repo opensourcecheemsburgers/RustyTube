@@ -8,7 +8,7 @@ use crate::contexts::RegionConfigCtx;
 #[component]
 pub fn PopularPreviewCard(video: PopularItem) -> impl IntoView {
 	view! {
-		<div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden">
+		<div class="flex flex-col h-auto overflow-hidden">
 			<Thumbnail
 				video_id=video.clone().id
 				url=video.thumbnails.get(3).map(|thumb| thumb.url.clone())

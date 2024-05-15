@@ -1,15 +1,16 @@
 use invidious::{Instance, InstanceInfo, SearchArgs, Suggestions};
 use leptos::{html::Input, *};
 use phosphor_leptos::{
-	ArrowClockwise, ArrowLeft, ArrowRight, ArrowUUpLeft, HardDrives, IconWeight, Palette,
+	ArrowClockwise, ArrowLeft, ArrowRight, ArrowUUpLeft, HardDrives, IconWeight, List, Palette,
 };
 use rustytube_error::RustyTubeError;
-use web_sys::KeyboardEvent;
+use wasm_bindgen::JsCast;
+use web_sys::{HtmlButtonElement, KeyboardEvent, MouseEvent};
 
 use crate::{
-	components::FerrisError,
+	components::{drawer::DRAWER_ID, FerrisError},
 	contexts::{NetworkConfigCtx, RegionConfigCtx, UiConfigCtx},
-	resources::InstancesResource,
+	resources::{InstancesResource, SearchResource, SearchSuggestions},
 	themes::*,
 	utils::*,
 };
@@ -17,16 +18,24 @@ use crate::{
 #[component]
 pub fn Header() -> impl IntoView {
 	view! {
-		<div class="navbar bg-base-100">
-			<div class="navbar-start">
-				<BackBtn/>
-				<ForwardBtn/>
-				<ReloadBtn/>
+		<div class="navbar bg-base-100 w-full justify-between">
+			<div class="flex flex-row items-center justify-start">
+				<label
+					class="landscape:lg:hidden btn btn-xs sm:btn-sm md:btn-md btn-ghost"
+					for=DRAWER_ID
+				>
+					<List weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+				</label>
+				<div class="hidden lg:landscape:!flex flex-row items-center">
+					<BackBtn/>
+					<ForwardBtn/>
+					<ReloadBtn/>
+				</div>
 			</div>
-			<div class="navbar-center">
+			<div class="flex justify-center flex-row items-center">
 				<Search/>
 			</div>
-			<div class="navbar-end">
+			<div class="flex justify-end flex-row items-center">
 				<InstanceSelectDropdown/>
 				<ThemeSelectDropdown/>
 			</div>
@@ -37,9 +46,12 @@ pub fn Header() -> impl IntoView {
 #[component]
 pub fn BackBtn() -> impl IntoView {
 	view! {
-		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.back")>
+		<div
+			class="lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
+			data-tip=i18n("header.back")
+		>
 			<button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
-				<ArrowLeft weight=IconWeight::Regular class="base-content" size="24px"/>
+				<ArrowLeft weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 			</button>
 		</div>
 	}
@@ -52,9 +64,12 @@ fn back() -> Result<(), RustyTubeError> {
 #[component]
 pub fn ForwardBtn() -> impl IntoView {
 	view! {
-		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.forward")>
+		<div
+			class="lg:landscape:lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
+			data-tip=i18n("header.forward")
+		>
 			<button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
-				<ArrowRight weight=IconWeight::Regular class="base-content" size="24px"/>
+				<ArrowRight weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 			</button>
 		</div>
 	}
@@ -67,9 +82,12 @@ fn forward() -> Result<(), RustyTubeError> {
 #[component]
 pub fn ReloadBtn() -> impl IntoView {
 	view! {
-		<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.force_reload")>
+		<div
+			class="lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
+			data-tip=i18n("header.force_reload")
+		>
 			<button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
-				<ArrowClockwise weight=IconWeight::Regular class="base-content" size="24px"/>
+				<ArrowClockwise weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 			</button>
 		</div>
 	}
@@ -83,87 +101,90 @@ fn reload() -> Result<(), RustyTubeError> {
 pub fn Search() -> impl IntoView {
 	let search_bar = create_node_ref::<Input>();
 
-	let on_search = move |_| {
-		let query = search_bar.get().unwrap().value();
-		if !query.is_empty() {
-			search(query);
-		}
+	let query = RwSignal::new(String::new());
+	let search_args = RwSignal::new(SearchArgs::from_str("".to_string()));
+
+	let search = move |_| {
+		go_to(format!("/search{}", search_args.get().to_url()));
 	};
 
 	let check_for_enter_key = move |keyboard_event: KeyboardEvent| {
 		if keyboard_event.key_code() == 13 {
-			let query = search_bar.get().unwrap().value();
-			if !query.is_empty() {
-				search(query);
+			if !query.get().trim().is_empty() {
+				go_to(format!("/search{}", search_args.get().to_url()));
 			}
 		}
 	};
 
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let query = RwSignal::new(String::default());
-	let set_query = move |_| query.set(search_bar.get().unwrap().value());
-
-	let suggestions = Resource::local(
-		move || (query.get(), server.get(), locale.get().to_invidious_lang()),
-		|(query, server, lang)| async move {
-			Suggestions::fetch_suggestions(&query, &server, &lang).await
-		},
-	);
-
-	let suggestions_view = move || {
-		suggestions.get().map(|suggestions| match suggestions {
-			Ok(suggestions) => suggestions
-				.suggestions
-				.into_iter()
-				.map(|suggestion| {
-					let query = suggestion.clone();
-					let on_click = move |_| search(query.clone());
-					view! {
-						<li>
-							<button on:click=on_click>{suggestion}</button>
-						</li>
-					}
-				})
-				.collect_view(),
-			Err(err) => view! { <FerrisError error=err/> },
-		})
+	let suggestions = SearchSuggestions::initialise(query);
+	let on_input = move |_| {
+		if let Some(search_bar) = search_bar.get() {
+			query.set(search_bar.value());
+			search_args.update(|args| args.query = search_bar.value());
+		}
 	};
 
 	view! {
 		<div class="z-20 dropdown dropdown-bottom dropdown-end">
-			<div class="join">
-				<input
-					on:input=set_query
-					on:keydown=check_for_enter_key
-					_ref=search_bar
+			<div class="flex">
+				<div class="join">
+					<input
+						on:input=on_input
+						on:keydown=check_for_enter_key
+						_ref=search_bar
+						tabindex="0"
+						id="search"
+						type="text"
+						placeholder=i18n("header.search_placeholder")
+						class="input input-sm md:input-md input-bordered input-primary sm:join-item w-48 md:w-60 lg:w-72 xl:w-84 2xl:w-96"
+					/>
+					<button
+						class="hidden sm:!flex btn btn-xs sm:btn-sm md:btn-md btn-primary join-item"
+						on:click=search
+					>
+						{i18n("header.search")}
+					</button>
+				</div>
+				<ul
 					tabindex="0"
-					id="search"
-					type="text"
-					placeholder=i18n("header.search_placeholder")
-					class="input input-bordered input-primary w-96 join-item"
-				/>
-				<button class="btn btn-primary join-item" on:click=on_search>
-					{i18n("header.search")}
-				</button>
+					class="w-full p-2 rounded-b-lg dropdown-content menu bg-base-200 shadow-dropdown"
+				>
+					{move || {
+						suggestions
+							.resource
+							.get()
+							.map(|suggestions| match suggestions {
+								Ok(suggestions) => {
+									view! {
+										<For
+											each=move || suggestions.suggestions.clone()
+											key=|suggestion| suggestion.clone()
+											let:suggestion
+										>
+											<li>
+												<button on:click={
+													let suggestion = suggestion.clone();
+													move |_| {
+														if let Some(search_bar) = search_bar.get() {
+															search_bar.set_value(&suggestion.clone());
+														}
+														query.set(suggestion.clone());
+														search_args.update(|args| args.query = suggestion.clone());
+														go_to(format!("/search{}", search_args.get().to_url()));
+													}
+												}>{suggestion}</button>
+											</li>
+										</For>
+									}
+								}
+								Err(err) => view! { <FerrisError error=err/> },
+							})
+					}}
+
+				</ul>
 			</div>
-			<ul
-				tabindex="0"
-				class="w-full p-2 rounded-b-lg dropdown-content menu bg-base-200 shadow-dropdown"
-			>
-				{suggestions_view}
-			</ul>
 		</div>
 	}
-}
-
-fn search(query: String) {
-	let search_args = SearchArgs::from_str(query);
-
-	let navigate = leptos_router::use_navigate();
-	request_animation_frame(move || {
-		_ = navigate(&format!("/search{}", search_args.to_url()), Default::default());
-	})
 }
 
 #[component]
@@ -173,18 +194,18 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 	move || {
 		instances.get().map(|instances| {
 			view! {
-				<div class="dropdown dropdown-end">
+				<div class="dropdown dropdown-end z-50">
 					<div
-						class="tooltip tooltip-bottom tooltip-info"
+						class="flex flex-row items-center lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
 						data-tip=i18n("header.instances")
 					>
 
-						<label tabindex="0" class="btn btn-ghost rounded-btn">
-							<HardDrives
-								weight=IconWeight::Regular
-								class="base-content"
-								size="24px"
-							/>
+						<label
+							tabindex="0"
+							class="btn btn-xs sm:btn-sm md:btn-md btn-ghost rounded-btn"
+						>
+							<HardDrives weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+
 						</label>
 					</div>
 					<ul
@@ -318,11 +339,14 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 		.collect_view();
 
 	view! {
-		<div class="dropdown dropdown-end">
-			<div class="tooltip tooltip-bottom tooltip-info" data-tip=i18n("header.themes")>
+		<div class="dropdown dropdown-end z-50">
+			<div
+				class="flex flex-row items-center lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
+				data-tip=i18n("header.themes")
+			>
 
-				<label tabindex="0" class="btn btn-ghost rounded-btn">
-					<Palette weight=IconWeight::Regular class="base-content" size="24px"/>
+				<label tabindex="0" class="btn btn-xs sm:btn-sm md:btn-md btn-ghost rounded-btn">
+					<Palette weight=IconWeight::Regular class="h-6 w-6 base-content"/>
 				</label>
 			</div>
 			<ul

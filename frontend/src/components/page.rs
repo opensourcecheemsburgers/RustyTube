@@ -1,8 +1,9 @@
 use leptos::*;
 use leptos_router::Outlet;
+use phosphor_leptos::{Chat, IconWeight};
 
 use crate::{
-	components::{Header, Sidebar, Toaster},
+	components::{Drawer, ExpandedCtx, Header, Sidebar, Toaster},
 	contexts::{Toast, UiConfigCtx},
 };
 
@@ -10,22 +11,28 @@ use crate::{
 pub fn Page() -> impl IntoView {
 	let theme = expect_context::<UiConfigCtx>().theme_slice.0;
 
-	let expanded = create_rw_signal(true.to_string());
-	provide_context(expanded);
+	let expanded = RwSignal::new(false.to_string());
+	provide_context(ExpandedCtx(expanded));
 
 	view! {
 		<div
 			data-theme=theme
-			class="flex flex-row min-h-screen max-h-screen bg-base-100 min-w-screen max-w-screen"
+			class="flex flex-row h-svh min-h-svh w-svw lg:h-screen lg:min-h-screen lg:w-screen"
 		>
-			<Sidebar/>
-			<div data-expanded=expanded class=PAGE_CLASSES>
-				<Header/>
-				<div class="min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] min-w-screen max-w-screen bg-base-100 overflow-y-auto no-scrollbar">
-					<Outlet/>
-					<RustyTubeToaster/>
+			<Drawer>
+				<Sidebar/>
+				<div
+					data-expanded=expanded
+					class="data-[expanded=false]:w-[calc(100vw-16px)] data-[expanded=true]:w-[calc(100vw-64px)]
+					"
+				>
+					<Header/>
+					<div class="bg-base-100 h-[calc(100svh-64px)] min-h-[calc(100svh-64px)] w-full overflow-x-hidden overflow-y-visible scroll-smooth">
+						<Outlet/>
+						<RustyTubeToaster/>
+					</div>
 				</div>
-			</div>
+			</Drawer>
 		</div>
 	}
 }
@@ -70,8 +77,8 @@ fn RustyTubeToaster() -> impl IntoView {
 }
 
 pub const PAGE_CLASSES: &'static str = "
-flex flex-col
+flex flex-col w-svw h-svw
 
-data-[expanded=false]:w-[calc(100vw-16px)]
-data-[expanded=true]:w-[calc(100vw-64px)]
+lg:data-[expanded=false]:w-[calc(100vw-16px)]
+lg:data-[expanded=true]:w-[calc(100vw-64px)]
 ";

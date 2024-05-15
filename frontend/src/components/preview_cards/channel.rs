@@ -20,10 +20,7 @@ pub fn ChannelPreviewCard(channel: CommonChannel) -> impl IntoView {
 	};
 
 	view! {
-		<div
-			on:click=open_channel
-			class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden"
-		>
+		<div on:click=open_channel class="flex flex-col h-auto px-4 overflow-hidden">
 			<Thumbnail url=thumbnail_url/>
 			<Info channel=channel/>
 		</div>

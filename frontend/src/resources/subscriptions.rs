@@ -6,7 +6,7 @@ use rustytube_error::RustyTubeError;
 
 use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
 
-use super::{initial_value, load_resource, save_resource};
+use super::save_resource;
 
 static SUBSCRIPTIONS_KEY: &'static str = "subscriptions";
 
@@ -15,33 +15,41 @@ pub struct SubscriptionsCtx(pub RwSignal<Subscriptions>);
 
 impl SubscriptionsCtx {
 	pub fn initialise() -> Self {
-		let subs = initial_value::<Subscriptions>(SUBSCRIPTIONS_KEY).unwrap_or_default();
-		Self(RwSignal::new(subs))
+		Self(RwSignal::new(get_subs(SUBSCRIPTIONS_KEY).unwrap_or_default()))
 	}
 
 	pub async fn add_subscription(&self, id: &str, name: &str) -> Result<(), RustyTubeError> {
 		self.0.update(|subs| {
 			let sub = Subscription::new(id, name);
-			subs.channels.push(sub);
+			if subs.channels.iter().find(|sub| sub.id.eq_ignore_ascii_case(id)).is_none() {
+				subs.channels.push(sub);
+				subs.channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+				subs.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
+				save_subs(subs);
+			}
 		});
-		save_resource(SUBSCRIPTIONS_KEY, self.0.get()).await
+		Ok(())
 	}
 
 	pub async fn remove_subscription(&self, id: &str) -> Result<(), RustyTubeError> {
-		self.0.update(|subs| subs.channels.retain(|channel| !channel.id.eq_ignore_ascii_case(id)));
-		save_resource(SUBSCRIPTIONS_KEY, self.0.get()).await
-	}
-
-	pub async fn save(&self) -> Result<(), RustyTubeError> {
-		save_resource(SUBSCRIPTIONS_KEY, self.0.get()).await
+		self.0.update(|subs| {
+			subs.channels.retain(|channel| !channel.id.eq_ignore_ascii_case(id));
+			subs.channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+			subs.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
+			save_subs(subs);
+		});
+		Ok(())
 	}
 }
 
-async fn fetch_subs() -> Subscriptions {
-	load_resource(SUBSCRIPTIONS_KEY).await.unwrap_or_default()
+pub fn get_subs(key: &'static str) -> Result<Subscriptions, RustyTubeError> {
+	Ok(LocalStorage::get::<Subscriptions>(key)?)
 }
 
-static SUBSCRIPTIONS_VIDEOS_KEY: &'static str = "subscriptions_videos";
+pub fn save_subs(subs: &mut Subscriptions) -> Result<(), RustyTubeError> {
+	LocalStorage::set(SUBSCRIPTIONS_KEY, subs);
+	Ok(())
+}
 
 #[derive(Clone, PartialEq)]
 pub struct SubscriptionsVideosResourceArgs {
@@ -68,10 +76,9 @@ pub struct SubscriptionsVideosResource {
 impl SubscriptionsVideosResource {
 	pub fn initialise(subscriptions: SubscriptionsCtx) -> Self {
 		SubscriptionsVideosResource {
-			resource: create_local_resource_with_initial_value(
+			resource: Resource::local(
 				move || SubscriptionsVideosResourceArgs::new(subscriptions),
 				move |args| fetch_subs_videos(args),
-				initial_value(SUBSCRIPTIONS_KEY),
 			),
 		}
 	}
@@ -111,10 +118,9 @@ pub struct SubscriptionsThumbnailsResource {
 impl SubscriptionsThumbnailsResource {
 	pub fn initialise(args: SubscriptionsCtx) -> Self {
 		SubscriptionsThumbnailsResource {
-			resource: create_local_resource_with_initial_value(
+			resource: Resource::local(
 				move || SubscriptionsThumbnailsResourceArgs::new(args),
 				move |args| fetch_subs_thumbnails(args),
-				initial_value(SUBSCRIPTIONS_THUMBNAILS_KEY),
 			),
 		}
 	}
@@ -122,6 +128,5 @@ impl SubscriptionsThumbnailsResource {
 
 async fn fetch_subs_thumbnails(args: SubscriptionsThumbnailsResourceArgs) -> SubsThumbsResult {
 	let thumbs = args.subscriptions.fetch_channel_thumbs(&args.server).await;
-	save_resource(SUBSCRIPTIONS_THUMBNAILS_KEY, &thumbs.clone().unwrap()).await?;
 	thumbs
 }

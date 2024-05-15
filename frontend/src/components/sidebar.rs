@@ -1,6 +1,6 @@
 use invidious::{ChannelThumb, Subscription, Subscriptions};
 use leptos::*;
-use phosphor_leptos::{FireSimple, GearSix, Heart, IconWeight, RssSimple, TrendUp};
+use phosphor_leptos::{FireSimple, GearSix, Heart, IconWeight, Queue, RssSimple, TrendUp};
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
 use web_sys::HtmlDialogElement;
@@ -16,12 +16,11 @@ use crate::{
 };
 
 #[derive(Clone, Copy)]
-pub struct ExpandedCtx(RwSignal<String>);
+pub struct ExpandedCtx(pub RwSignal<String>);
 
 #[component]
 pub fn Sidebar() -> impl IntoView {
-	let expanded = create_rw_signal(false.to_string());
-	provide_context(ExpandedCtx(expanded));
+	let expanded = expect_context::<ExpandedCtx>().0;
 
 	view! {
 		<div data-expanded=expanded class=SIDEBAR_CLASSES>
@@ -31,6 +30,7 @@ pub fn Sidebar() -> impl IntoView {
 					<SubscriptionsButton/>
 					<TrendingButton/>
 					<PopularButton/>
+				// <PlaylistsButton/>
 				</div>
 				<Subs/>
 				<div class="border-t-[1px] border-t-primary">
@@ -44,7 +44,7 @@ pub fn Sidebar() -> impl IntoView {
 }
 
 #[component]
-fn SidebarHeader() -> impl IntoView {
+pub fn SidebarHeader() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 	let is_open = move || expanded.get().parse::<bool>().unwrap_or_default();
 	let toggle = move |_| expanded.set((!is_open()).to_string());
@@ -65,7 +65,7 @@ fn SidebarHeader() -> impl IntoView {
 }
 
 #[component]
-fn SubscriptionsButton() -> impl IntoView {
+pub fn SubscriptionsButton() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_subs = move |_| {
@@ -91,7 +91,7 @@ fn SubscriptionsButton() -> impl IntoView {
 }
 
 #[component]
-fn TrendingButton() -> impl IntoView {
+pub fn TrendingButton() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_trending = move |_| {
@@ -114,7 +114,7 @@ fn TrendingButton() -> impl IntoView {
 }
 
 #[component]
-fn PopularButton() -> impl IntoView {
+pub fn PopularButton() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_popular = move |_| {
@@ -137,7 +137,34 @@ fn PopularButton() -> impl IntoView {
 }
 
 #[component]
-fn Subs() -> impl IntoView {
+pub fn PlaylistsButton() -> impl IntoView {
+	let expanded = expect_context::<ExpandedCtx>().0;
+
+	let go_to_playlists = move |_| {
+		let navigate = leptos_router::use_navigate();
+		request_animation_frame(move || {
+			_ = navigate("/playlists", Default::default());
+		})
+	};
+
+	view! {
+		<div
+			data-expanded=expanded
+			data-tip=i18n("sidebar.playlists")
+			class=SIDEBAR_TOOLTIP_CLASSES
+		>
+			<button on:click=go_to_playlists data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
+				<Queue weight=IconWeight::Regular class="base-content" size="24px"/>
+				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
+					{i18n("sidebar.playlists")}
+				</p>
+			</button>
+		</div>
+	}
+}
+
+#[component]
+pub fn Subs() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 	let channel_thumbs_ctx = expect_context::<SubscriptionsThumbnailsResource>().resource;
 
@@ -189,7 +216,7 @@ pub fn ChannelButton(channel: ChannelThumb) -> impl IntoView {
 }
 
 #[component]
-fn ChannelButtonPlaceholder(sub: Subscription) -> impl IntoView {
+pub fn ChannelButtonPlaceholder(sub: Subscription) -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	view! {
@@ -203,7 +230,7 @@ fn ChannelButtonPlaceholder(sub: Subscription) -> impl IntoView {
 }
 
 #[component]
-fn SettingsButton() -> impl IntoView {
+pub fn SettingsButton() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let go_to_settings = move |_| {
@@ -231,7 +258,7 @@ fn SettingsButton() -> impl IntoView {
 }
 
 #[component]
-fn DonateButton() -> impl IntoView {
+pub fn DonateButton() -> impl IntoView {
 	let expanded = expect_context::<ExpandedCtx>().0;
 
 	let open_donate_modal = move |_| {
@@ -246,7 +273,7 @@ fn DonateButton() -> impl IntoView {
 			<button on:click=open_donate_modal data-expanded=expanded class=SIDEBAR_ITEM_CLASSES>
 				<Heart weight=IconWeight::Regular class="base-content" size="24px"/>
 				<p data-expanded=expanded class=SIDEBAR_ITEM_TEXT_CLASSES>
-					{i18n("settings.donate")}
+					{i18n("sidebar.donate")}
 				</p>
 			</button>
 		</div>
@@ -254,7 +281,8 @@ fn DonateButton() -> impl IntoView {
 }
 
 pub const SIDEBAR_CLASSES: &'static str = "
-flex flex-col min-h-screen max-h-screen bg-base-200 transition-all duration-300
+hidden lg:landscape:!flex flex-col min-h-screen max-h-screen bg-base-200 transition-all \
+                                           duration-300
 
 data-[expanded=false]:w-16
 data-[expanded=true]:w-64
@@ -318,7 +346,7 @@ data-[expanded=true]:transition-opacity
 data-[expanded=true]:duration-1000
 ";
 pub const SIDEBAR_SUBS_CLASSES: &'static str = "
-min-h-[calc(100vh-19.25rem)] max-h-[calc(100vh-19.25rem)] scroll-smooth
+h-[calc(100svh-19.25rem)] min-h-[calc(100svh-19.25rem)] max-h-[calc(100svh-19.25rem)] scroll-smooth
 
 overflow-y-hidden hover:overflow-y-scroll
 overflow-x-hidden

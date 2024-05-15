@@ -1,4 +1,4 @@
-use invidious::Comment;
+use invidious::{Comment, Comments};
 use leptos::*;
 use num_format::ToFormattedString;
 use phosphor_leptos::{Chat, IconWeight, ThumbsUp};
@@ -6,60 +6,73 @@ use phosphor_leptos::{Chat, IconWeight, ThumbsUp};
 use crate::{
 	components::FerrisError,
 	contexts::RegionConfigCtx,
-	resources::{CommentsResource, CommentsResourceArgs, RepliesResource, RepliesResourceArgs},
+	resources::{
+		CommentsAction, CommentsActionArgs, CommentsResource, CommentsResourceArgs,
+		RepliesResource, RepliesResourceArgs,
+	},
 	utils::i18n,
 };
 
 #[component]
 pub fn CommentsSection() -> impl IntoView {
-	let comments_vec = RwSignal::new(vec![]);
-	let continuation = RwSignal::new(None);
-	let args = CommentsResourceArgs::new(comments_vec, continuation);
-	let comments_resource = CommentsResource::initialise(args);
+	let comments_resource = CommentsResource::initialise();
 
 	view! {
 		<Suspense fallback=move || {
 			view! { <CommentsSectionPlaceholder/> }
 		}>
+
 			{move || {
 				comments_resource
 					.resource
 					.get()
 					.map(|comments| {
 						match comments {
-							Ok(_) => {
-								view! {
-									<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
-										<div class="flex flex-col space-y-8">
-											<For
-												each=move || comments_vec.get()
-												key=|comment| comment.id.clone()
-												let:comment
-											>
-												<Comment comment=comment/>
-											</For>
-										</div>
-										<Show when=move || continuation.get().is_some()>
-											<button
-												class="btn btn-primary btn-outline btn-sm"
-												on:click=move |_| {
-													comments_resource.fetch_more.dispatch(args)
-												}
-											>
-
-												{i18n("general.load_more")}
-											</button>
-										</Show>
-									</div>
-								}
-									.into_view()
+							Ok(comments) => {
+								view! { <CommentsSectionInner comments=comments/> }
 							}
-							Err(err) => view! { <FerrisError error=err/> },
+							Err(err) => {
+								view! { <FerrisError error=err/> }
+							}
 						}
 					})
 			}}
 
 		</Suspense>
+	}
+}
+
+#[component]
+pub fn CommentsSectionInner(comments: Comments) -> impl IntoView {
+	let comments_vec = RwSignal::new(comments.comments);
+	let continuation = RwSignal::new(comments.continuation);
+	let comments_action = CommentsAction::new();
+
+	view! {
+		<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
+			<div class="flex flex-col space-y-8">
+				<For
+					each=move || comments_vec.get()
+					key=|comment: &Comment| comment.clone()
+					let:comment
+				>
+					<Comment comment=comment/>
+				</For>
+			</div>
+			<Show when=move || continuation.get().is_some()>
+				<button
+					class="btn btn-primary btn-outline btn-sm"
+					on:click=move |_| {
+						comments_action
+							.action
+							.dispatch(CommentsActionArgs::get(comments_vec, continuation))
+					}
+				>
+
+					{i18n("general.load_more")}
+				</button>
+			</Show>
+		</div>
 	}
 }
 
@@ -78,7 +91,9 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 	let replies_vec = RwSignal::new(vec![]);
 	let continuation = RwSignal::new(reply_continuation);
 	let args = RepliesResourceArgs::new(replies_vec, continuation);
-	let replies = RepliesResource::initialise(args);
+	let args_button = args.clone();
+	let args_load_button = args.clone();
+	let replies = RepliesResource::initialise(args.clone());
 
 	let replies_visible = RwSignal::new(false);
 
@@ -86,6 +101,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 		<div class="flex flex-col space-y-4 h-max">
 			<div class="flex flex-row w-full items-start space-x-4">
 				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
+
 				<div class="flex flex-col text-sm">
 					<div class="flex flex-row gap-1">
 						<p class="font-semibold">{author}</p>
@@ -99,8 +115,12 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 						<p>{"•"}</p>
 						<div
 							class="flex flex-row gap-1 items-center"
-							on:click=move |_| replies_visible.set(!replies_visible.get())
+							on:click=move |_| {
+								replies.fetch_more.dispatch(args_button.clone());
+								replies_visible.set(!replies_visible.get())
+							}
 						>
+
 							<Chat weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 							<p>{reply_count}</p>
 						</div>
@@ -111,19 +131,33 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 				<div class="pl-2 flex flex-row h-max space-x-3">
 					<div class="w-0.5 h-full bg-primary rounded-xl"></div>
 					<div class="flex flex-col w-full h-max space-y-4">
-						<div class="flex flex-col space-y-4">
-							<For
-								each=move || replies_vec.get()
-								key=|reply| reply.id.clone()
-								let:reply
-							>
-								<Reply reply=reply/>
-							</For>
-						</div>
+						{move || {
+							replies
+								.resource
+								.get()
+								.map(|replies| {
+									view! {
+										<div class="flex flex-col space-y-4">
+											<For
+												each=move || replies_vec.get()
+												key=|reply| reply.id.clone()
+												let:reply
+											>
+												<Reply reply=reply/>
+											</For>
+										</div>
+									}
+								})
+						}}
 						<button
+							class:hidden=move || continuation.get().is_none()
 							class="btn btn-primary btn-outline btn-sm"
-							on:click=move |_| replies.fetch_more.dispatch(args)
+							on:click={
+								let args = args_load_button.clone();
+								move |_| replies.fetch_more.dispatch(args.clone())
+							}
 						>
+
 							{i18n("general.load_more")}
 						</button>
 					</div>
@@ -141,13 +175,13 @@ pub fn CommenterIcon(url: String) -> impl IntoView {
 	view! {
 		<div
 			data-loaded=loaded
-			class="data-[loaded=true]:hidden bg-neutral animate-pulse w-6 h-6 rounded-full"
+			class="hidden md:data-[loaded=false]:!flex bg-neutral animate-pulse w-6 h-6 rounded-full"
 		></div>
 		<img
 			on:load=show_image
 			data-loaded=loaded
 			src=url
-			class="data-[loaded=false]:hidden w-12 h-12 rounded-full mt-1"
+			class="hidden md:data-[loaded=true]:flex w-12 h-12 rounded-full mt-1"
 		/>
 	}
 }

@@ -1,17 +1,15 @@
 use invidious::VideoShort;
 use leptos::*;
+use leptos_router::create_query_signal;
 use phosphor_leptos::{Eye, IconWeight};
-
-use crate::utils::get_current_video_query_signal;
 
 #[component]
 pub fn RecommendedPreviewCard(video: VideoShort) -> impl IntoView {
 	let thumbnail_url = video.thumbnails.get(4).map(|thumb| thumb.url.clone());
 
 	let video_id = video.id;
-	let video_id_query_signal_setter = get_current_video_query_signal().1;
 	let open_video = move |_| {
-		video_id_query_signal_setter.set(Some(video_id.clone()));
+		create_query_signal("id").1.set(Some(video_id.clone()));
 	};
 
 	view! {

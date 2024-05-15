@@ -4,12 +4,22 @@ use invidious::{
 };
 use leptos::*;
 use leptos_router::create_query_signal;
+use num_format::ToFormattedString;
 use rustytube_error::RustyTubeError;
 
 use crate::{
-	components::{FerrisError, PlaceholderCardArray, PlaylistPreviewCard, VideoPreviewCard},
+	components::{
+		CardGrid, ChannelRoll, FerrisError, GridContainer, PlaceholderCardArray,
+		PlaylistPreviewCard, VideoPreviewCard,
+	},
 	contexts::{NetworkConfigCtx, RegionConfigCtx},
-	resources::SubscriptionsCtx,
+	resources::{
+		ChannelLivestreamsAction, ChannelLivestreamsActionArgs, ChannelLivestreamsResource,
+		ChannelPlaylistsAction, ChannelPlaylistsActionArgs, ChannelPlaylistsResource,
+		ChannelResource, ChannelShortsAction, ChannelShortsActionArgs, ChannelShortsResource,
+		ChannelVideosAction, ChannelVideosActionArgs, ChannelVideosResource, SubscriptionsCtx,
+	},
+	utils::i18n,
 };
 
 #[derive(Clone)]
@@ -22,16 +32,7 @@ enum ContentCategory {
 
 #[component]
 pub fn ChannelPage() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id_query: Memo<Option<String>> = create_query_signal("id").0;
-
-	let channel = Resource::local(
-		move || {
-			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
-		},
-		|(server, id, lang)| async move { Channel::fetch_channel(&server, &id, &lang).await },
-	);
+	let channel = ChannelResource::initialise();
 
 	view! {
 		<Suspense fallback=move || {
@@ -39,6 +40,7 @@ pub fn ChannelPage() -> impl IntoView {
 		}>
 			{move || {
 				channel
+					.resource
 					.get()
 					.map(|channel_result| {
 						match channel_result {
@@ -58,30 +60,33 @@ fn ChannelPageInner(channel: Channel) -> impl IntoView {
 	provide_context(RwSignal::new(ContentCategory::Videos));
 
 	view! {
-		<div class="w-full flex justify-center mt-4">
-			<div class="w-[90%] flex flex-col gap-y-8">
-				<Header/>
-				<ContentCategoryButtons/>
-				<Content/>
-			</div>
-		</div>
+		<GridContainer>
+			<Header/>
+			<ContentCategoryButtons/>
+			<Content/>
+		</GridContainer>
 	}
 }
 
 #[component]
 fn Header() -> impl IntoView {
+	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 	let channel = expect_context::<Channel>();
+
+	let sub_count = move || channel.subscribers.to_formatted_string(&locale.get().to_num_fmt());
 
 	view! {
 		<div class="flex flex-col space-y-8 self-center">
 			<Banner/>
-			<div class="flex flex-row items-center space-x-4">
-				<ChannelAvatar/>
-				<div class="flex h-16 flex-col justify-around">
-					<h1 class="font-semibold text-lg">{channel.name}</h1>
-					<SubscribeBtn/>
-				</div>
-			</div>
+			<ChannelRoll
+				channel=channel.name
+				channel_id=channel.id
+				sub_count=sub_count()
+				image_url=channel
+					.thumbnails
+					.first()
+					.map_or(String::default(), |thumb| thumb.url.clone())
+			/>
 		</div>
 	}
 }
@@ -184,27 +189,27 @@ fn ContentCategoryButtons() -> impl IntoView {
 		<div class="flex flex-row gap-x-3">
 			<button
 				on:click=move |_| content_category.set(ContentCategory::Videos)
-				class="btn btn-outline btn-sm rounded-lg font-normal normal-case"
+				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
-				Videos
+				{i18n("channel.videos")}
 			</button>
 			<button
 				on:click=move |_| content_category.set(ContentCategory::Shorts)
-				class="btn btn-outline btn-sm rounded-lg font-normal normal-case"
+				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
-				Shorts
+				{i18n("channel.shorts")}
 			</button>
 			<button
 				on:click=move |_| content_category.set(ContentCategory::Livestreams)
-				class="btn btn-outline btn-sm rounded-lg font-normal normal-case"
+				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
-				Livestreams
+				{i18n("channel.livestreams")}
 			</button>
 			<button
 				on:click=move |_| content_category.set(ContentCategory::Playlists)
-				class="btn btn-outline btn-sm rounded-lg font-normal normal-case"
+				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
-				Playlists
+				{i18n("channel.playlists")}
 			</button>
 		</div>
 	}
@@ -223,28 +228,8 @@ fn Content() -> impl IntoView {
 }
 
 #[component]
-fn ContentContainer(children: Children) -> impl IntoView {
-	view! {
-		<div class="-ml-4 flex flex-row flex-wrap gap-y-12 pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
-			{children()}
-		</div>
-	}
-}
-
-#[component]
 fn Videos() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id_query: Memo<Option<String>> = create_query_signal("id").0;
-
-	let videos = Resource::local(
-		move || {
-			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
-		},
-		|(server, id, lang)| async move {
-			Channel::fetch_channel_videos(&server, &id, None, &lang).await
-		},
-	);
+	let videos = ChannelVideosResource::initialise();
 
 	view! {
 		<Suspense fallback=move || {
@@ -252,9 +237,10 @@ fn Videos() -> impl IntoView {
 		}>
 			{move || {
 				videos
+					.resource
 					.get()
 					.map(|videos| match videos {
-						Ok(videos) => view! { <VideosInner videos=videos/> },
+						Ok(videos) => view! { <VideosInner channel_videos=videos/> },
 						Err(err) => view! { <FerrisError error=err/> }.into_view(),
 					})
 			}}
@@ -264,69 +250,37 @@ fn Videos() -> impl IntoView {
 }
 
 #[component]
-fn VideosInner(videos: ChannelVideos) -> impl IntoView {
-	let lang = StoredValue::new(
-		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
-	);
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
-	let continuation = RwSignal::new(videos.continuation);
-	let videos_vec = RwSignal::new(videos.videos);
-	let fetch_more_videos = create_action(|args: &VideosFetchArgs| fetch_more_videos(*args));
-
-	let video_fetch_args =
-		VideosFetchArgs::new(videos_vec, server, lang, id, continuation, fetch_more_videos);
-
-	let videos_view = move || {
-		videos_vec.get().into_iter().map(|video| view! { <VideoPreviewCard video/> }).collect_view()
-	};
-
-	let load_more_videos = move |_| fetch_more_videos.dispatch(video_fetch_args);
-	let fetch_more_btn = move || match continuation.get() {
-		None => ().into_view(),
-		Some(_) => view! {
-			<button class="btn btn-primary btn-outline btn-sm" on:click=load_more_videos>
-				{"Load more"}
-			</button>
-		}
-		.into_view(),
-	};
+fn VideosInner(channel_videos: ChannelVideos) -> impl IntoView {
+	let videos_vec = RwSignal::new(channel_videos.videos);
+	let continuation = RwSignal::new(channel_videos.continuation);
+	let channel_videos_action = ChannelVideosAction::new();
 
 	view! {
-		<div class="pb-12">
-			<ContentContainer>{videos_view}</ContentContainer>
-			{fetch_more_btn}
-		</div>
-	}
-}
+		<CardGrid>
+			<For each=move || videos_vec.get() key=|video: &CommonVideo| video.id.clone() let:video>
+				<VideoPreviewCard video=video/>
+			</For>
+		</CardGrid>
 
-async fn fetch_more_videos(args: VideosFetchArgs) -> Result<(), RustyTubeError> {
-	let mut channel_videos = Channel::fetch_channel_videos(
-		&args.server.get(),
-		&args.id.get(),
-		args.continuation.get().as_deref(),
-		&args.lang.get_value(),
-	)
-	.await?;
-	args.videos_vec.update(|videos| videos.append(&mut channel_videos.videos));
-	args.continuation.set(channel_videos.continuation);
-	Ok(())
+		<Show when=move || continuation.get().is_some()>
+			<button
+				class="btn btn-primary btn-outline btn-sm"
+				on:click=move |_| {
+					channel_videos_action
+						.action
+						.dispatch(ChannelVideosActionArgs::get(videos_vec, continuation))
+				}
+			>
+
+				{i18n("general.load_more")}
+			</button>
+		</Show>
+	}
 }
 
 #[component]
 fn Shorts() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id_query: Memo<Option<String>> = create_query_signal("id").0;
-
-	let shorts = Resource::local(
-		move || {
-			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
-		},
-		|(server, id, lang)| async move {
-			Channel::fetch_channel_shorts(&server, &id, None, &lang).await
-		},
-	);
+	let shorts = ChannelShortsResource::initialise();
 
 	view! {
 		<Suspense fallback=move || {
@@ -334,9 +288,10 @@ fn Shorts() -> impl IntoView {
 		}>
 			{move || {
 				shorts
+					.resource
 					.get()
 					.map(|shorts| match shorts {
-						Ok(shorts) => view! { <ShortsInner shorts=shorts/> },
+						Ok(shorts) => view! { <ShortsInner channel_shorts=shorts/> },
 						Err(err) => view! { <FerrisError error=err/> }.into_view(),
 					})
 			}}
@@ -346,73 +301,37 @@ fn Shorts() -> impl IntoView {
 }
 
 #[component]
-fn ShortsInner(shorts: ChannelShorts) -> impl IntoView {
-	let lang = StoredValue::new(
-		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
-	);
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
-	let continuation = RwSignal::new(shorts.continuation);
-	let shorts_vec = RwSignal::new(shorts.shorts);
-	let fetch_more_shorts = create_action(|args: &ShortsFetchArgs| fetch_more_shorts(*args));
-
-	let shorts_fetch_args =
-		ShortsFetchArgs::new(shorts_vec, server, lang, id, continuation, fetch_more_shorts);
-
-	let shorts_view = move || {
-		shorts_vec
-			.get()
-			.into_iter()
-			.map(|short| view! { <VideoPreviewCard video=short/> })
-			.collect_view()
-	};
-
-	let load_more_shorts = move |_| fetch_more_shorts.dispatch(shorts_fetch_args);
-	let fetch_more_btn = move || match continuation.get() {
-		None => ().into_view(),
-		Some(_) => view! {
-			<button class="btn btn-primary btn-outline btn-sm" on:click=load_more_shorts>
-				{"Load more"}
-			</button>
-		}
-		.into_view(),
-	};
+fn ShortsInner(channel_shorts: ChannelShorts) -> impl IntoView {
+	let shorts_vec = RwSignal::new(channel_shorts.shorts);
+	let continuation = RwSignal::new(channel_shorts.continuation);
+	let channel_shorts_action = ChannelShortsAction::new();
 
 	view! {
-		<div class="pb-12">
-			<ContentContainer>{shorts_view}</ContentContainer>
-			{fetch_more_btn}
-		</div>
-	}
-}
+		<CardGrid>
+			<For each=move || shorts_vec.get() key=|video: &CommonVideo| video.id.clone() let:video>
+				<VideoPreviewCard video=video/>
+			</For>
+		</CardGrid>
 
-async fn fetch_more_shorts(args: ShortsFetchArgs) -> Result<(), RustyTubeError> {
-	let mut channel_shorts = Channel::fetch_channel_shorts(
-		&args.server.get(),
-		&args.id.get(),
-		args.continuation.get().as_deref(),
-		&args.lang.get_value(),
-	)
-	.await?;
-	args.shorts_vec.update(|shorts| shorts.append(&mut channel_shorts.shorts));
-	args.continuation.set(channel_shorts.continuation);
-	Ok(())
+		<Show when=move || continuation.get().is_some()>
+			<button
+				class="btn btn-primary btn-outline btn-sm"
+				on:click=move |_| {
+					channel_shorts_action
+						.action
+						.dispatch(ChannelShortsActionArgs::get(shorts_vec, continuation))
+				}
+			>
+
+				{i18n("general.load_more")}
+			</button>
+		</Show>
+	}
 }
 
 #[component]
 fn Livestreams() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id_query: Memo<Option<String>> = create_query_signal("id").0;
-
-	let livestreams = Resource::local(
-		move || {
-			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
-		},
-		|(server, id, lang)| async move {
-			Channel::fetch_channel_livestreams(&server, &id, None, &lang).await
-		},
-	);
+	let livestreams = ChannelLivestreamsResource::initialise();
 
 	view! {
 		<Suspense fallback=move || {
@@ -420,12 +339,13 @@ fn Livestreams() -> impl IntoView {
 		}>
 			{move || {
 				livestreams
+					.resource
 					.get()
-					.map(|videos| match videos {
-						Ok(channel_livestreams) => {
-							view! { <LivestreamsInner livestreams=channel_livestreams/> }
+					.map(|livestreams| match livestreams {
+						Ok(livestreams) => {
+							view! { <LivestreamsInner channel_livestreams=livestreams/> }
 						}
-						Err(err) => view! { <FerrisError error=err/> },
+						Err(err) => view! { <FerrisError error=err/> }.into_view(),
 					})
 			}}
 
@@ -434,80 +354,41 @@ fn Livestreams() -> impl IntoView {
 }
 
 #[component]
-fn LivestreamsInner(livestreams: ChannelLivestreams) -> impl IntoView {
-	let lang = StoredValue::new(
-		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
-	);
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
-	let continuation = RwSignal::new(livestreams.continuation);
-	let livestreams_vec = RwSignal::new(livestreams.livestreams);
-	let fetch_more_livestreams =
-		create_action(|args: &LivestreamsFetchArgs| fetch_more_livestreams(*args));
-
-	let livestream_fetch_args = LivestreamsFetchArgs::new(
-		livestreams_vec,
-		server,
-		lang,
-		id,
-		continuation,
-		fetch_more_livestreams,
-	);
-
-	let livestreams_view = move || {
-		livestreams_vec
-			.get()
-			.into_iter()
-			.map(|livestream| view! { <VideoPreviewCard video=livestream/> })
-			.collect_view()
-	};
-
-	let load_more_livestreams = move |_| fetch_more_livestreams.dispatch(livestream_fetch_args);
-	let fetch_more_btn = move || match continuation.get() {
-		None => ().into_view(),
-		Some(_) => view! {
-			<button class="btn btn-primary btn-outline btn-sm" on:click=load_more_livestreams>
-				{"Load more"}
-			</button>
-		}
-		.into_view(),
-	};
+fn LivestreamsInner(channel_livestreams: ChannelLivestreams) -> impl IntoView {
+	let livestreams_vec = RwSignal::new(channel_livestreams.livestreams);
+	let continuation = RwSignal::new(channel_livestreams.continuation);
+	let channel_livestreams_action = ChannelLivestreamsAction::new();
 
 	view! {
-		<div class="pb-12">
-			<ContentContainer>{livestreams_view}</ContentContainer>
-			{fetch_more_btn}
-		</div>
-	}
-}
+		<CardGrid>
+			<For
+				each=move || livestreams_vec.get()
+				key=|video: &CommonVideo| video.id.clone()
+				let:video
+			>
+				<VideoPreviewCard video=video/>
+			</For>
+		</CardGrid>
 
-async fn fetch_more_livestreams(args: LivestreamsFetchArgs) -> Result<(), RustyTubeError> {
-	let mut channel_livestreams = Channel::fetch_channel_livestreams(
-		&args.server.get(),
-		&args.id.get(),
-		args.continuation.get().as_deref(),
-		&args.lang.get_value(),
-	)
-	.await?;
-	args.livestreams_vec.update(|shorts| shorts.append(&mut channel_livestreams.livestreams));
-	args.continuation.set(channel_livestreams.continuation);
-	Ok(())
+		<Show when=move || continuation.get().is_some()>
+			<button
+				class="btn btn-primary btn-outline btn-sm"
+				on:click=move |_| {
+					channel_livestreams_action
+						.action
+						.dispatch(ChannelLivestreamsActionArgs::get(livestreams_vec, continuation))
+				}
+			>
+
+				{i18n("general.load_more")}
+			</button>
+		</Show>
+	}
 }
 
 #[component]
 fn Playlists() -> impl IntoView {
-	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id_query: Memo<Option<String>> = create_query_signal("id").0;
-
-	let playlists = Resource::local(
-		move || {
-			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
-		},
-		|(server, id, lang)| async move {
-			Channel::fetch_channel_playlists(&server, &id, None, &lang).await
-		},
-	);
+	let playlists = ChannelPlaylistsResource::initialise();
 
 	view! {
 		<Suspense fallback=move || {
@@ -515,10 +396,13 @@ fn Playlists() -> impl IntoView {
 		}>
 			{move || {
 				playlists
+					.resource
 					.get()
-					.map(|playlists_result| match playlists_result {
-						Ok(playlists) => view! { <PlaylistsInner playlists=playlists/> },
-						Err(err) => view! { <FerrisError error=err/> },
+					.map(|playlists| match playlists {
+						Ok(playlists) => {
+							view! { <PlaylistsInner channel_playlists=playlists/> }
+						}
+						Err(err) => view! { <FerrisError error=err/> }.into_view(),
 					})
 			}}
 
@@ -527,64 +411,36 @@ fn Playlists() -> impl IntoView {
 }
 
 #[component]
-fn PlaylistsInner(playlists: ChannelPlaylists) -> impl IntoView {
-	let lang = StoredValue::new(
-		expect_context::<RegionConfigCtx>().locale_slice.0.get().to_invidious_lang(),
-	);
-	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
-	let id = RwSignal::new(create_query_signal::<String>("id").0.get().unwrap_or_default());
-	let continuation = RwSignal::new(playlists.continuation);
-	let playlists_vec = RwSignal::new(playlists.playlists);
-	let fetch_more_playlists =
-		create_action(|args: &PlaylistsFetchArgs| fetch_more_playlists(*args));
-
-	let playlists_fetch_args = PlaylistsFetchArgs::new(
-		playlists_vec,
-		server,
-		lang,
-		id,
-		continuation,
-		fetch_more_playlists,
-	);
-
-	let playlists_view = move || {
-		playlists_vec
-			.get()
-			.into_iter()
-			.map(|playlist| view! { <PlaylistPreviewCard playlist=playlist/> })
-			.collect_view()
-	};
-
-	let load_more_playlists = move |_| fetch_more_playlists.dispatch(playlists_fetch_args);
-	let fetch_more_btn = move || match continuation.get() {
-		None => ().into_view(),
-		Some(_) => view! {
-			<button class="btn btn-primary btn-outline btn-sm" on:click=load_more_playlists>
-				{"Load more"}
-			</button>
-		}
-		.into_view(),
-	};
+fn PlaylistsInner(channel_playlists: ChannelPlaylists) -> impl IntoView {
+	let playlists_vec = RwSignal::new(channel_playlists.playlists);
+	let continuation = RwSignal::new(channel_playlists.continuation);
+	let channel_playlists_action = ChannelPlaylistsAction::new();
 
 	view! {
-		<div class="pb-12">
-			<ContentContainer>{playlists_view}</ContentContainer>
-			{fetch_more_btn}
-		</div>
-	}
-}
+		<CardGrid>
+			<For
+				each=move || playlists_vec.get()
+				key=|playlist: &CommonPlaylist| playlist.id.clone()
+				let:playlist
+			>
+				<PlaylistPreviewCard playlist=playlist/>
+			</For>
+		</CardGrid>
 
-async fn fetch_more_playlists(args: PlaylistsFetchArgs) -> Result<(), RustyTubeError> {
-	let mut channel_playlists = Channel::fetch_channel_playlists(
-		&args.server.get(),
-		&args.id.get(),
-		args.continuation.get().as_deref(),
-		&args.lang.get_value(),
-	)
-	.await?;
-	args.playlists_vec.update(|shorts| shorts.append(&mut channel_playlists.playlists));
-	args.continuation.set(channel_playlists.continuation);
-	Ok(())
+		<Show when=move || continuation.get().is_some()>
+			<button
+				class="btn btn-primary btn-outline btn-sm"
+				on:click=move |_| {
+					channel_playlists_action
+						.action
+						.dispatch(ChannelPlaylistsActionArgs::get(playlists_vec, continuation))
+				}
+			>
+
+				{i18n("general.load_more")}
+			</button>
+		</Show>
+	}
 }
 
 #[component]
@@ -614,97 +470,5 @@ fn ChannelSectionPlaceholder() -> impl IntoView {
 				<div class="h-8 w-24 rounded-lg bg-neutral"></div>
 			</div>
 		</div>
-	}
-}
-
-#[derive(Clone, Copy)]
-struct VideosFetchArgs {
-	pub videos_vec: RwSignal<Vec<CommonVideo>>,
-	pub server: Signal<String>,
-	pub lang: StoredValue<String>,
-	pub id: RwSignal<String>,
-	pub continuation: RwSignal<Option<String>>,
-	pub fetch_more_videos: Action<Self, Result<(), RustyTubeError>>,
-}
-
-impl VideosFetchArgs {
-	fn new(
-		videos_vec: RwSignal<Vec<CommonVideo>>,
-		server: Signal<String>,
-		lang: StoredValue<String>,
-		id: RwSignal<String>,
-		continuation: RwSignal<Option<String>>,
-		fetch_more_videos: Action<Self, Result<(), RustyTubeError>>,
-	) -> Self {
-		Self { videos_vec, server, lang, id, continuation, fetch_more_videos }
-	}
-}
-
-#[derive(Clone, Copy)]
-struct ShortsFetchArgs {
-	pub shorts_vec: RwSignal<Vec<CommonVideo>>,
-	pub server: Signal<String>,
-	pub lang: StoredValue<String>,
-	pub id: RwSignal<String>,
-	pub continuation: RwSignal<Option<String>>,
-	pub fetch_more_shorts: Action<Self, Result<(), RustyTubeError>>,
-}
-
-impl ShortsFetchArgs {
-	fn new(
-		shorts_vec: RwSignal<Vec<CommonVideo>>,
-		server: Signal<String>,
-		lang: StoredValue<String>,
-		id: RwSignal<String>,
-		continuation: RwSignal<Option<String>>,
-		fetch_more_shorts: Action<Self, Result<(), RustyTubeError>>,
-	) -> Self {
-		Self { shorts_vec, server, lang, id, continuation, fetch_more_shorts }
-	}
-}
-
-#[derive(Clone, Copy)]
-struct LivestreamsFetchArgs {
-	pub livestreams_vec: RwSignal<Vec<CommonVideo>>,
-	pub server: Signal<String>,
-	pub lang: StoredValue<String>,
-	pub id: RwSignal<String>,
-	pub continuation: RwSignal<Option<String>>,
-	pub fetch_more_livestreams: Action<Self, Result<(), RustyTubeError>>,
-}
-
-impl LivestreamsFetchArgs {
-	fn new(
-		livestreams_vec: RwSignal<Vec<CommonVideo>>,
-		server: Signal<String>,
-		lang: StoredValue<String>,
-		id: RwSignal<String>,
-		continuation: RwSignal<Option<String>>,
-		fetch_more_livestreams: Action<Self, Result<(), RustyTubeError>>,
-	) -> Self {
-		Self { livestreams_vec, server, lang, id, continuation, fetch_more_livestreams }
-	}
-}
-
-#[derive(Clone, Copy)]
-struct PlaylistsFetchArgs {
-	pub playlists_vec: RwSignal<Vec<CommonPlaylist>>,
-	pub server: Signal<String>,
-	pub lang: StoredValue<String>,
-	pub id: RwSignal<String>,
-	pub continuation: RwSignal<Option<String>>,
-	pub fetch_more_playlists: Action<Self, Result<(), RustyTubeError>>,
-}
-
-impl PlaylistsFetchArgs {
-	fn new(
-		playlists_vec: RwSignal<Vec<CommonPlaylist>>,
-		server: Signal<String>,
-		lang: StoredValue<String>,
-		id: RwSignal<String>,
-		continuation: RwSignal<Option<String>>,
-		fetch_more_playlists: Action<Self, Result<(), RustyTubeError>>,
-	) -> Self {
-		Self { playlists_vec, server, lang, id, continuation, fetch_more_playlists }
 	}
 }

@@ -63,7 +63,7 @@ impl SearchArgs {
 impl SearchResults {
 	pub async fn fetch_search_results(
 		server: &str,
-		args: SearchArgs,
+		args: &SearchArgs,
 		page_number: u32,
 		lang: &str,
 	) -> Result<Self, RustyTubeError> {

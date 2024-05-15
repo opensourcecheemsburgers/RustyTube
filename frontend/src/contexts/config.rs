@@ -4,7 +4,7 @@ use leptos::*;
 use locales::RustyTubeLocale;
 
 pub fn provide_config_context_slices(config: Config) {
-	let config = create_rw_signal(config);
+	let config = RwSignal::new(config);
 	create_effect(move |_| config.get().save());
 
 	let server_ctx = NetworkConfigCtx {
@@ -35,14 +35,27 @@ pub fn provide_config_context_slices(config: Config) {
 
 	let privacy_ctx = PrivacyConfigCtx { keep_history_slice: slice!(config.privacy.keep_history) };
 
+	let sponsorblock_ctx = SponsorBlockConfigCtx {
+		enabled: slice!(config.sponsorblock.enabled),
+		skip_sponsors: slice!(config.sponsorblock.skip_sponsors),
+		skip_selfpromos: slice!(config.sponsorblock.skip_selfpromos),
+		skip_interactions: slice!(config.sponsorblock.skip_interactions),
+		skip_intros: slice!(config.sponsorblock.skip_intros),
+		skip_outros: slice!(config.sponsorblock.skip_outros),
+		skip_previews: slice!(config.sponsorblock.skip_previews),
+		skip_irrelevant_music: slice!(config.sponsorblock.skip_irrelevant_music),
+		skip_filler: slice!(config.sponsorblock.skip_filler),
+	};
+
 	provide_context(server_ctx);
 	provide_context(ui_ctx);
 	provide_context(player_ctx);
 	provide_context(region_ctx);
 	provide_context(privacy_ctx);
+	provide_context(sponsorblock_ctx);
 }
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct NetworkConfigCtx {
 	pub server_slice: (Signal<String>, SignalSetter<String>),
 	pub custom_servers_slice: (Signal<Option<Vec<String>>>, SignalSetter<Option<Vec<String>>>),
@@ -50,13 +63,13 @@ pub struct NetworkConfigCtx {
 	pub fetch_rss_slice: (Signal<bool>, SignalSetter<bool>),
 }
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct UiConfigCtx {
 	pub theme_slice: (Signal<String>, SignalSetter<String>),
 	pub homepage_slice: (Signal<HomepageCategory>, SignalSetter<HomepageCategory>),
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct PlayerConfigCtx {
 	pub auto_play_slice: (Signal<bool>, SignalSetter<bool>),
 	pub fast_forward_interval_slice: (Signal<u8>, SignalSetter<u8>),
@@ -66,14 +79,27 @@ pub struct PlayerConfigCtx {
 	pub volume_slice: (Signal<f64>, SignalSetter<f64>),
 }
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct RegionConfigCtx {
 	pub locale_slice: (Signal<RustyTubeLocale>, SignalSetter<RustyTubeLocale>),
 	pub trending_region_slice:
 		(Signal<isocountry::CountryCode>, SignalSetter<isocountry::CountryCode>),
 }
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct PrivacyConfigCtx {
 	pub keep_history_slice: (Signal<bool>, SignalSetter<bool>),
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SponsorBlockConfigCtx {
+	pub enabled: (Signal<bool>, SignalSetter<bool>),
+	pub skip_sponsors: (Signal<bool>, SignalSetter<bool>),
+	pub skip_selfpromos: (Signal<bool>, SignalSetter<bool>),
+	pub skip_interactions: (Signal<bool>, SignalSetter<bool>),
+	pub skip_intros: (Signal<bool>, SignalSetter<bool>),
+	pub skip_outros: (Signal<bool>, SignalSetter<bool>),
+	pub skip_previews: (Signal<bool>, SignalSetter<bool>),
+	pub skip_irrelevant_music: (Signal<bool>, SignalSetter<bool>),
+	pub skip_filler: (Signal<bool>, SignalSetter<bool>),
 }

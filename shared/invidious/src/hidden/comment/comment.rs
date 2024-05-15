@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{common::CommonImage, fetch};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct Comment {
 	#[serde(default)]
 	pub verified: bool,
@@ -44,7 +44,7 @@ impl PartialEq for Comment {
 	}
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Clone, PartialEq, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct CreatorHeart {
 	#[serde(rename = "creatorThumbnail")]
 	pub thumbnail: String,
@@ -52,25 +52,32 @@ pub struct CreatorHeart {
 	pub name: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct RepliesInfo {
 	#[serde(rename = "replyCount")]
 	pub replies: u32,
 	pub continuation: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+impl PartialEq for RepliesInfo {
+	fn eq(&self, other: &Self) -> bool {
+		self.continuation.eq_ignore_ascii_case(&other.continuation)
+	}
+}
+
+#[derive(Clone, PartialEq, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct Replies {
 	#[serde(rename = "videoId")]
 	pub id: String,
 	pub comments: Vec<Comment>,
 	pub continuation: Option<String>,
 }
+
 impl Replies {
 	pub async fn fetch_replies(
-		continuation: &str,
 		server: &str,
 		id: &str,
+		continuation: &str,
 		lang: &str,
 	) -> Result<Replies, RustyTubeError> {
 		let comments_url =
@@ -78,11 +85,5 @@ impl Replies {
 		let comments_json = fetch(&comments_url).await?;
 		let replies: Replies = serde_json::from_str(&comments_json)?;
 		Ok(replies)
-	}
-}
-
-impl PartialEq for RepliesInfo {
-	fn eq(&self, other: &Self) -> bool {
-		self.continuation.eq_ignore_ascii_case(&other.continuation)
 	}
 }

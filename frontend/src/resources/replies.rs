@@ -6,11 +6,11 @@ use rustytube_error::RustyTubeError;
 
 use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct RepliesResourceArgs {
-	server: Signal<String>,
-	locale: Signal<RustyTubeLocale>,
-	video_id: Memo<Option<String>>,
+	server: String,
+	locale: RustyTubeLocale,
+	video_id: String,
 	replies_vec: RwSignal<Vec<Comment>>,
 	continuation: RwSignal<Option<String>>,
 }
@@ -21,9 +21,9 @@ impl RepliesResourceArgs {
 		continuation: RwSignal<Option<String>>,
 	) -> Self {
 		Self {
-			server: expect_context::<NetworkConfigCtx>().server_slice.0,
-			locale: expect_context::<RegionConfigCtx>().locale_slice.0,
-			video_id: create_query_signal("id").0,
+			server: expect_context::<NetworkConfigCtx>().server_slice.0.get(),
+			locale: expect_context::<RegionConfigCtx>().locale_slice.0.get(),
+			video_id: create_query_signal("id").0.get().unwrap_or_default(),
 			replies_vec,
 			continuation,
 		}
@@ -39,7 +39,10 @@ pub struct RepliesResource {
 impl RepliesResource {
 	pub fn initialise(args: RepliesResourceArgs) -> Self {
 		RepliesResource {
-			resource: Resource::local(move || args, move |args| fetch_replies(args)),
+			resource: Resource::local(
+				move || args.clone(),
+				move |args| fetch_replies(args.clone()),
+			),
 			fetch_more: Action::new(|args: &RepliesResourceArgs| fetch_replies(args.clone())),
 		}
 	}
@@ -47,18 +50,19 @@ impl RepliesResource {
 
 async fn fetch_replies(args: RepliesResourceArgs) -> Result<(), RustyTubeError> {
 	if let Some(token) = args.continuation.get() {
-		let replies = Replies::fetch_replies(
-			args.server.get().as_str(),
-			args.video_id.get().unwrap().as_str(),
+		if let Ok(replies) = Replies::fetch_replies(
+			args.server.as_str(),
+			args.video_id.as_str(),
 			token.as_str(),
-			&args.locale.get().to_invidious_lang(),
+			&args.locale.to_invidious_lang(),
 		)
 		.await
-		.unwrap();
-		args.continuation.set(replies.continuation);
-		let mut temp = args.replies_vec.get();
-		temp.append(replies.comments.clone().as_mut());
-		args.replies_vec.set(temp);
+		{
+			args.continuation.set(replies.continuation);
+			let mut temp = args.replies_vec.get();
+			temp.append(replies.comments.clone().as_mut());
+			args.replies_vec.set(temp);
+		}
 	}
 	Ok(())
 }

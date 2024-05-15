@@ -2,7 +2,7 @@ use invidious::{Trending, TrendingCategory};
 use leptos::*;
 
 use crate::{
-	components::{FerrisError, PlaceholderCardArray, VideoPreviewCard},
+	components::{CardGrid, FerrisError, GridContainer, PlaceholderCardArray, VideoPreviewCard},
 	contexts::{NetworkConfigCtx, RegionConfigCtx},
 	resources::TrendingResource,
 	utils::i18n,
@@ -14,39 +14,37 @@ pub fn TrendingSection() -> impl IntoView {
 	let trending = TrendingResource::initialise(category);
 
 	view! {
-		<div class="w-full flex justify-center mt-4">
-			<div class="w-[90%] flex flex-col gap-y-8">
-				<h1 class="font-semibold text-2xl">{i18n("trending.trending")}</h1>
-				<TrendingHeader category=category/>
-				<Suspense fallback=move || {
-					view! { <PlaceholderCardArray/> }
-				}>
-					{move || {
-						trending
-							.resource
-							.get()
-							.map(|trending| match trending {
-								Ok(trending) => {
-									view! {
-										<div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
-											<For
-												each=move || trending.videos.clone()
-												key=|video| video.id.clone()
-												let:video
-											>
-												<VideoPreviewCard video=video/>
-											</For>
-										</div>
-									}
-										.into_view()
+		<GridContainer>
+			<h1 class="font-semibold text-2xl">{i18n("trending.trending")}</h1>
+			<TrendingHeader category=category/>
+			<Suspense fallback=move || {
+				view! { <PlaceholderCardArray/> }
+			}>
+				{move || {
+					trending
+						.resource
+						.get()
+						.map(|trending| match trending {
+							Ok(trending) => {
+								view! {
+									<CardGrid>
+										<For
+											each=move || trending.videos.clone()
+											key=|video| video.id.clone()
+											let:video
+										>
+											<VideoPreviewCard video=video/>
+										</For>
+									</CardGrid>
 								}
-								Err(err) => view! { <FerrisError error=err/> },
-							})
-					}}
+									.into_view()
+							}
+							Err(err) => view! { <FerrisError error=err/> },
+						})
+				}}
 
-				</Suspense>
-			</div>
-		</div>
+			</Suspense>
+		</GridContainer>
 	}
 }
 
@@ -87,10 +85,12 @@ pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
 #[component]
 pub fn TrendingVideos(trending: Trending) -> impl IntoView {
 	view! {
-		<div class="-ml-4 flex flex-row flex-wrap gap-y-12 h-[calc(100vh-15.75rem)] pb-12 overflow-y-hidden hover:overflow-y-auto scroll-smooth">
-			<For each=move || trending.videos.clone() key=|video| video.id.clone() let:video>
-				<VideoPreviewCard video=video/>
-			</For>
+		<div class="h-[calc(100vh-15.75rem)] overflow-y-hidden hover:overflow-y-auto scroll-smooth">
+			<CardGrid>
+				<For each=move || trending.videos.clone() key=|video| video.id.clone() let:video>
+					<VideoPreviewCard video=video/>
+				</For>
+			</CardGrid>
 		</div>
 	}
 }

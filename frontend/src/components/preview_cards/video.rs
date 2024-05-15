@@ -8,7 +8,7 @@ use crate::contexts::RegionConfigCtx;
 #[component]
 pub fn VideoPreviewCard(video: CommonVideo) -> impl IntoView {
 	view! {
-		<div class="basis-1/3 lg:basis-1/4 flex flex-col h-auto px-4 overflow-hidden">
+		<div class="flex flex-col overflow-hidden">
 			<Thumbnail
 				video_id=video.id.clone()
 				url=video.thumbnails.get(3).map(|thumb| thumb.url.clone())
@@ -29,7 +29,10 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 	let views = move || video.views.to_formatted_string(&locale.get().to_num_fmt());
 
 	let published = match video.upcoming {
-		true => utils::get_time_until(video.premiere_timestamp),
+		true => match video.premiere_timestamp <= 0 {
+			true => video.published_text,
+			false => utils::get_time_until(video.published),
+		},
 		false => video.published_text,
 	};
 

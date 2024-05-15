@@ -1,7 +1,7 @@
 use leptos::*;
 use phosphor_leptos::{FrameCorners, IconWeight};
 use utils::get_element_by_id;
-use web_sys::HtmlDivElement;
+use web_sys::{HtmlDivElement, OrientationLockType};
 
 use crate::contexts::{PlayerStyle, VIDEO_CONTAINER_ID};
 
@@ -16,14 +16,15 @@ pub fn FullScreenBtn() -> impl IntoView {
 				.unwrap()
 				.request_fullscreen();
 			if fullscreen.is_ok() {
+				window().screen().unwrap().orientation().lock(OrientationLockType::Landscape);
 				style.fullscreen.set(true);
 			}
 		}
 	};
 
 	view! {
-		<button on:click=fullscreen class="btn btn-ghost btn-xs">
-			<FrameCorners weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+		<button on:click=fullscreen class="btn btn-ghost btn-xs lg:btn-sm">
+			<FrameCorners weight=IconWeight::Regular class="h-4 w-4 lg:h-5 lg:w-5 base-content"/>
 		</button>
 	}
 }

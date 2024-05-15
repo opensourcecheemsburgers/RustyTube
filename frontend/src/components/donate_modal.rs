@@ -14,7 +14,7 @@ pub fn DonateModal() -> impl IntoView {
 							RustyTube is a free and
 							<a
 								href="https://github.com/opensourcecheemsburgers/RustyTube"
-								class="link link-primary no-underline"
+								class="link link-primary no-underline px-2"
 							>
 								open-source
 							</a>
@@ -39,11 +39,11 @@ pub fn DonateModal() -> impl IntoView {
 							</p>
 						</div>
 					</div>
+					<form method="dialog">
+						<button class="btn btn-md btn-primary btn-block">Got it.</button>
+					</form>
 				</div>
 			</div>
-			<form method="dialog" class="modal-backdrop">
-				<button>close</button>
-			</form>
 		</dialog>
 	}
 }

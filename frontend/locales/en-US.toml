@@ -16,6 +16,7 @@ light_themes = "Light themes"
 subscriptions = "Subscriptions"
 trending = "Trending"
 popular = "Popular"
+playlist = "Playlists"
 settings = "Settings"
 donate = "Donate"
 
@@ -23,16 +24,17 @@ donate = "Donate"
 import_subscriptions = "Import subscriptions"
 tutorial = "Tutorial"
 
+[trending]
 trending = "Trending"
-
-[trending.headers]
 all = "All"
 music = "Music"
 gaming = "Gaming"
 movies = "Movies"
 
 [settings]
+data = "Data"
 subscriptions = "Subscriptions"
+playlists = "Playlists"
 manage = "Manage"
 import = "Import"
 delete_all = "Delete all"

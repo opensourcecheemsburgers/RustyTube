@@ -2,15 +2,21 @@ use serde::{Deserialize, Serialize};
 
 use crate::{channel::Channel, hidden::PlaylistItem, universal::Playlist, video::Video};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct CommonImage {
 	pub url: String,
 	pub width: u32,
 	pub height: u32,
 }
 
+impl PartialEq for CommonImage {
+	fn eq(&self, other: &Self) -> bool {
+		self.url.eq_ignore_ascii_case(&other.url)
+	}
+}
+
 /// Shared thumbnail object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct CommonThumbnail {
 	#[serde(default)]
 	pub quality: String,
@@ -19,11 +25,17 @@ pub struct CommonThumbnail {
 	pub height: u32,
 }
 
+impl PartialEq for CommonThumbnail {
+	fn eq(&self, other: &Self) -> bool {
+		self.url.eq_ignore_ascii_case(&other.url)
+	}
+}
+
 // https://docs.invidious.io/api/common_types/#videoobject
 
 /// Shared image object as specified in https://docs.invidious.io/api/common_types/
 /// Shared video object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct CommonVideo {
 	pub title: String,
 	#[serde(rename = "videoId")]
@@ -66,8 +78,14 @@ pub struct CommonVideo {
 	pub upcoming: bool,
 }
 
+impl PartialEq for CommonVideo {
+	fn eq(&self, other: &Self) -> bool {
+		self.id.eq_ignore_ascii_case(&other.id)
+	}
+}
+
 /// Shared channel object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct CommonChannel {
 	#[serde(rename = "author")]
 	pub name: String,
@@ -92,8 +110,14 @@ pub struct CommonChannel {
 	pub description_html: String,
 }
 
+impl PartialEq for CommonChannel {
+	fn eq(&self, other: &Self) -> bool {
+		self.id.eq_ignore_ascii_case(&other.id)
+	}
+}
+
 /// Shared playlist object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct CommonPlaylist {
 	pub title: String,
 	#[serde(rename = "playlistId")]
@@ -116,8 +140,14 @@ pub struct CommonPlaylist {
 	pub videos: Vec<CommonPlaylistVideo>,
 }
 
+impl PartialEq for CommonPlaylist {
+	fn eq(&self, other: &Self) -> bool {
+		self.id.eq_ignore_ascii_case(&other.id)
+	}
+}
+
 /// Playlist video struct used in CommonPlaylist
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
 pub struct CommonPlaylistVideo {
 	pub title: String,
 	#[serde(rename = "videoId")]
@@ -126,6 +156,12 @@ pub struct CommonPlaylistVideo {
 	pub length: u32,
 	#[serde(rename = "videoThumbnails")]
 	pub thumbnails: Vec<CommonThumbnail>,
+}
+
+impl PartialEq for CommonPlaylistVideo {
+	fn eq(&self, other: &Self) -> bool {
+		self.id.eq_ignore_ascii_case(&other.id)
+	}
 }
 
 impl From<Video> for CommonVideo {
@@ -174,7 +210,7 @@ impl From<Playlist> for CommonPlaylist {
 			author_id: value.author_id,
 			video_count: value.video_count,
 			videos: value.videos.into_iter().map(CommonPlaylistVideo::from).collect(),
-			..Default::default()
+			author_verified: false,
 		}
 	}
 }
@@ -190,7 +226,8 @@ impl From<Channel> for CommonChannel {
 			subscribers: value.subscribers,
 			description: value.description,
 			description_html: value.description_html,
-			..Default::default()
+			verified: false,
+			video_count: 0,
 		}
 	}
 }

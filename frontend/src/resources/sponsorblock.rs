@@ -1,6 +1,8 @@
 use leptos::*;
 use rustytube_error::RustyTubeError;
-use sponsorblock_rs::{Query, Response, Segment};
+use sponsorblock_rs::{Category, Query, Response, Segment};
+
+use crate::contexts::SponsorBlockConfigCtx;
 
 #[derive(Clone, Copy)]
 pub struct SponsorBlockResource {
@@ -25,5 +27,20 @@ impl SponsorBlockResource {
 }
 
 async fn fetch_sponsorblock_segments(id: String) -> Result<Option<Response>, RustyTubeError> {
-	Ok(Query::build(id).send_query().await.unwrap())
+	let categories = move || {
+		let ctx = expect_context::<SponsorBlockConfigCtx>();
+
+		let mut vec = vec![];
+		ctx.skip_sponsors.0.get().then(|| vec.push(Category::Sponsor));
+		ctx.skip_selfpromos.0.get().then(|| vec.push(Category::SelfPromotion));
+		ctx.skip_intros.0.get().then(|| vec.push(Category::Intro));
+		ctx.skip_outros.0.get().then(|| vec.push(Category::Outro));
+		ctx.skip_interactions.0.get().then(|| vec.push(Category::Interaction));
+		ctx.skip_previews.0.get().then(|| vec.push(Category::Preview));
+		ctx.skip_irrelevant_music.0.get().then(|| vec.push(Category::OffTopicMusic));
+		ctx.skip_filler.0.get().then(|| vec.push(Category::Filler));
+		Some(vec)
+	};
+
+	Ok(Query::create(id, None, categories(), None, None).send_query().await.unwrap())
 }

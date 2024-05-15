@@ -9,7 +9,7 @@ Categories=AudioVideo; Player; Networking;
 Keywords=youtube; yt; video;
 Actions=new-window;
 
-X-Desktop-File-Install-Version=0.1.0
+X-Desktop-File-Install-Version=0.2.0
 
 [Desktop Action new-window]
 Name=Open another RustyTube window
