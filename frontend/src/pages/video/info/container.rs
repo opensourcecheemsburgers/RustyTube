@@ -54,7 +54,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 		false => "h-16 w-16 animate-pulse rounded-full bg-neutral".to_string(),
 	};
 
-	let dislikes = create_resource(
+	let dislikes = Resource::local(
 		move || video.id.clone(),
 		|id| async move { Dislikes::fetch_dislikes(&id).await },
 	);

@@ -38,10 +38,3 @@ where
 	}
 	Ok(())
 }
-
-pub fn initial_value<T>(key: impl AsRef<str>) -> Option<T>
-where
-	T: for<'de> Deserialize<'de>,
-{
-	LocalStorage::get::<T>(key.as_ref()).ok()
-}

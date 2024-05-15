@@ -31,7 +31,7 @@ pub struct PopularResource {
 
 impl PopularResource {
 	pub fn initialise() -> Self {
-		let resource = create_resource_with_initial_value(
+		let resource = create_local_resource_with_initial_value(
 			move || PopularResourceArgs::new(),
 			move |args| fetch_popular(args),
 			initial_value(POPULAR_KEY),

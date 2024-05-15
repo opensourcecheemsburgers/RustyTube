@@ -16,7 +16,7 @@ pub struct InstancesResource {
 
 impl InstancesResource {
 	pub fn initialise() -> Self {
-		let resource = create_resource_with_initial_value(
+		let resource = create_local_resource_with_initial_value(
 			move || (),
 			move |()| fetch_instances(),
 			initial_value(INSTANCES_KEY),

@@ -39,7 +39,7 @@ pub struct CommentsResource {
 impl CommentsResource {
 	pub fn initialise(args: CommentsResourceArgs) -> Self {
 		CommentsResource {
-			resource: Resource::new(move || args, move |args| fetch_comments(args)),
+			resource: Resource::local(move || args, move |args| fetch_comments(args)),
 			fetch_more: Action::new(|args: &CommentsResourceArgs| fetch_comments(args.clone())),
 		}
 	}

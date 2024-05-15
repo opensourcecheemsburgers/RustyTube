@@ -26,7 +26,7 @@ pub fn ChannelPage() -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
-	let channel = create_resource(
+	let channel = Resource::local(
 		move || {
 			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
 		},
@@ -237,7 +237,7 @@ fn Videos() -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
-	let videos = create_resource(
+	let videos = Resource::local(
 		move || {
 			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
 		},
@@ -319,7 +319,7 @@ fn Shorts() -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
-	let shorts = create_resource(
+	let shorts = Resource::local(
 		move || {
 			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
 		},
@@ -405,7 +405,7 @@ fn Livestreams() -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
-	let livestreams = create_resource(
+	let livestreams = Resource::local(
 		move || {
 			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
 		},
@@ -500,7 +500,7 @@ fn Playlists() -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 	let id_query: Memo<Option<String>> = create_query_signal("id").0;
 
-	let playlists = create_resource(
+	let playlists = Resource::local(
 		move || {
 			(server.get(), id_query.get().unwrap_or_default(), locale.get().to_invidious_lang())
 		},

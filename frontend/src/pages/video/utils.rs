@@ -29,11 +29,11 @@ pub fn find_video_format(formats: &Formats) -> Result<VideoFormat, RustyTubeErro
 		Some(_) => preferred_format,
 		None => formats.video_formats.first().cloned(),
 	}
-	.ok_or(RustyTubeError::no_dash_video_format_available())
+	.ok_or(RustyTubeError::NoAdaptiveFormat)
 }
 
 pub fn find_legacy_format(formats: &Formats) -> Result<LegacyFormat, RustyTubeError> {
-	formats.legacy_formats.last().cloned().ok_or(RustyTubeError::no_legacy_format_available())
+	formats.legacy_formats.last().cloned().ok_or(RustyTubeError::NoLegacyFormat)
 }
 
 pub fn find_audio_format(formats: &Formats) -> Result<AudioFormat, RustyTubeError> {
@@ -54,7 +54,7 @@ pub fn find_audio_format(formats: &Formats) -> Result<AudioFormat, RustyTubeErro
 		Some(_) => preferred_format,
 		None => audio_formats.first().cloned(),
 	}
-	.ok_or(RustyTubeError::no_audio_format_available())
+	.ok_or(RustyTubeError::NoAudioFormat)
 }
 
 pub fn filter_mp4_audio_formats(formats: &Vec<AudioFormat>) -> Vec<AudioFormat> {

@@ -35,7 +35,7 @@ pub struct TrendingResource {
 
 impl TrendingResource {
 	pub fn initialise(category: RwSignal<TrendingCategory>) -> Self {
-		let resource = create_resource_with_initial_value(
+		let resource = create_local_resource_with_initial_value(
 			move || TrendingResourceArgs::new(category),
 			move |args| fetch_trending(args),
 			initial_value(TRENDING_KEY),

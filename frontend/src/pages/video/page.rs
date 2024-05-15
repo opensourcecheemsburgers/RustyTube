@@ -20,7 +20,7 @@ pub fn VideoPage() -> impl IntoView {
 
 	expect_context::<SponsorBlockResource>().set_video(id);
 
-	let video_resource: VideoResource = create_resource(
+	let video_resource: VideoResource = Resource::local(
 		move || (server.get(), id.get().unwrap_or_default(), locale.get().to_invidious_lang()),
 		|(server, id, lang)| async move {
 			let video = Video::fetch_video(&server, &id, &lang).await;

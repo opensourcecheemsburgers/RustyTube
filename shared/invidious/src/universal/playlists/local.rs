@@ -97,7 +97,7 @@ impl LocalPlaylist {
 							LocalPlaylist::save_playlists(&local_playlists).await?;
 							Ok(local_playlists)
 						}
-						Err(_) => Err(RustyTubeError::parse_playlist_fail()),
+						Err(_) => Err(RustyTubeError::PlaylistParse),
 					},
 				},
 			},
@@ -119,7 +119,7 @@ impl LocalPlaylist {
 							LocalPlaylist::save_playlists(&local_playlists).await?;
 							Ok(local_playlists)
 						}
-						Err(_) => Err(RustyTubeError::parse_playlist_fail()),
+						Err(_) => Err(RustyTubeError::PlaylistParse),
 					},
 				},
 			},

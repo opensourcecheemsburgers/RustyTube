@@ -87,7 +87,7 @@ impl FromStr for VideoQuality {
 			"2160p60" => Ok(VideoQuality::_2160p60),
 			"4320p" => Ok(VideoQuality::_4320p),
 			"4320p60" => Ok(VideoQuality::_4320p60),
-			_ => Err(RustyTubeError::format_parse()),
+			_ => Err(RustyTubeError::NoVideoQuality),
 		}
 	}
 }

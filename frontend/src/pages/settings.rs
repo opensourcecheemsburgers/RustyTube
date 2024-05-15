@@ -234,8 +234,8 @@ async fn get_subs_from_file(
 	event: Event,
 ) -> Result<(), RustyTubeError> {
 	let input = event.target().unwrap().dyn_into::<HtmlInputElement>().unwrap();
-	let filelist = input.files().ok_or(RustyTubeError::no_file_selected())?;
-	let file = filelist.get(0).ok_or(RustyTubeError::no_file_selected())?;
+	let filelist = input.files().ok_or(RustyTubeError::NoFileSelected)?;
+	let file = filelist.get(0).ok_or(RustyTubeError::NoFileSelected)?;
 	let blob: Blob = file.into();
 	let mut subscriptions = Subscriptions::read_subs(blob).await?;
 	subs_resource.0.update(|subs| {

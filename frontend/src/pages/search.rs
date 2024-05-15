@@ -23,7 +23,7 @@ pub fn SearchSection() -> impl IntoView {
 
 	let query_map = use_query_map();
 	let search_args = move || get_search_args_from_query_map(query_map.get());
-	let search_results_resource = create_resource(
+	let search_results_resource = Resource::local(
 		move || (server.get(), search_args(), locale.get().to_invidious_lang()),
 		|(server, search_args, lang)| async move {
 			SearchResults::fetch_search_results(&server, search_args, 1, &lang).await

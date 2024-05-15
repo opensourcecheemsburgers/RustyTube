@@ -17,10 +17,10 @@ mod utils {
 	{
 		let element = document()
 			.get_element_by_id(id)
-			.ok_or(RustyTubeError::element_not_found(id))?
+			.ok_or(RustyTubeError::ElementNotFound(id.to_string()))?
 			.dyn_into::<T>()
 			.ok()
-			.ok_or(RustyTubeError::dyn_into_fail(id))?;
+			.ok_or(RustyTubeError::DynInto(id.to_string()))?;
 		Ok(element)
 	}
 

@@ -51,6 +51,7 @@ sponsorblock-rs = { path = "shared/sponsorblock" }
 tauri = { version = "1.4.1", default-features = false }
 tauri-sys = { git = "https://github.com/opensourcecheemsburgers/tauri-sys", features = ["all"] }
 tauri_utils = { path = "shared/tauri" }
+thiserror = "1.0.60"
 utils = { path = "shared/utils" }
 toml = "0.8.8"
 urlencoding = "2.1.3"

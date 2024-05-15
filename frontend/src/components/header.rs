@@ -104,7 +104,7 @@ pub fn Search() -> impl IntoView {
 	let query = RwSignal::new(String::default());
 	let set_query = move |_| query.set(search_bar.get().unwrap().value());
 
-	let suggestions = create_resource(
+	let suggestions = Resource::local(
 		move || (query.get(), server.get(), locale.get().to_invidious_lang()),
 		|(query, server, lang)| async move {
 			Suggestions::fetch_suggestions(&query, &server, &lang).await

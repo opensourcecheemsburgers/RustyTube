@@ -103,7 +103,7 @@ impl FromStr for Sort {
 			"rating" => Ok(Sort::Rating),
 			"date" => Ok(Sort::Date),
 			"views" => Ok(Sort::Views),
-			_ => Err(RustyTubeError::search_url_parse()),
+			_ => Err(RustyTubeError::SearchArgs),
 		}
 	}
 }
@@ -139,7 +139,7 @@ impl FromStr for TimeSpan {
 			"week" => Ok(TimeSpan::Week),
 			"month" => Ok(TimeSpan::Month),
 			"year" => Ok(TimeSpan::Year),
-			_ => Err(RustyTubeError::search_url_parse()),
+			_ => Err(RustyTubeError::SearchArgs),
 		}
 	}
 }
@@ -169,7 +169,7 @@ impl FromStr for Duration {
 			"short" => Ok(Duration::Short),
 			"long" => Ok(Duration::Long),
 			"medium" => Ok(Duration::Medium),
-			_ => Err(RustyTubeError::search_url_parse()),
+			_ => Err(RustyTubeError::SearchArgs),
 		}
 	}
 }
@@ -209,7 +209,7 @@ impl FromStr for ResponseType {
 			"movie" => Ok(ResponseType::Movie),
 			"show" => Ok(ResponseType::Show),
 			"all" => Ok(ResponseType::All),
-			_ => Err(RustyTubeError::search_url_parse()),
+			_ => Err(RustyTubeError::SearchArgs),
 		}
 	}
 }
@@ -263,7 +263,7 @@ impl FromStr for Feature {
 			"location" => Ok(Feature::Location),
 			"hdr" => Ok(Feature::HighDynamicRange),
 			"vr180" => Ok(Feature::VirtualReality180),
-			_ => Err(RustyTubeError::search_url_parse()),
+			_ => Err(RustyTubeError::SearchArgs),
 		}
 	}
 }

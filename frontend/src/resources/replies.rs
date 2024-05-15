@@ -39,7 +39,7 @@ pub struct RepliesResource {
 impl RepliesResource {
 	pub fn initialise(args: RepliesResourceArgs) -> Self {
 		RepliesResource {
-			resource: Resource::new(move || args, move |args| fetch_replies(args)),
+			resource: Resource::local(move || args, move |args| fetch_replies(args)),
 			fetch_more: Action::new(|args: &RepliesResourceArgs| fetch_replies(args.clone())),
 		}
 	}

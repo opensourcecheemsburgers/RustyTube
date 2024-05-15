@@ -68,7 +68,7 @@ pub struct SubscriptionsVideosResource {
 impl SubscriptionsVideosResource {
 	pub fn initialise(subscriptions: SubscriptionsCtx) -> Self {
 		SubscriptionsVideosResource {
-			resource: create_resource_with_initial_value(
+			resource: create_local_resource_with_initial_value(
 				move || SubscriptionsVideosResourceArgs::new(subscriptions),
 				move |args| fetch_subs_videos(args),
 				initial_value(SUBSCRIPTIONS_KEY),
@@ -111,7 +111,7 @@ pub struct SubscriptionsThumbnailsResource {
 impl SubscriptionsThumbnailsResource {
 	pub fn initialise(args: SubscriptionsCtx) -> Self {
 		SubscriptionsThumbnailsResource {
-			resource: create_resource_with_initial_value(
+			resource: create_local_resource_with_initial_value(
 				move || SubscriptionsThumbnailsResourceArgs::new(args),
 				move |args| fetch_subs_thumbnails(args),
 				initial_value(SUBSCRIPTIONS_THUMBNAILS_KEY),

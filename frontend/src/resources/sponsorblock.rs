@@ -9,7 +9,7 @@ pub struct SponsorBlockResource {
 
 impl SponsorBlockResource {
 	pub fn set_video(&self, video_id: Memo<Option<String>>) {
-		self.resource.set(Some(Resource::new(
+		self.resource.set(Some(Resource::local(
 			move || video_id.get().unwrap_or_default(),
 			move |id: String| fetch_sponsorblock_segments(id),
 		)));
