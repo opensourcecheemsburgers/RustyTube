@@ -1,0 +1,94 @@
+[general]
+load_more = "حمل زيادة"
+
+[header]
+back = "ارجع"
+forward = "تقدم"
+force_reload = "تحديث إجباري"
+search_placeholder = "أكتب عبارة البحث هنا..."
+search = "البحث"
+instances = "الخوادم"
+themes = "المظاهر"
+dark_themes = "المظاهر الداكنة"
+light_themes = "المظاهر الفاتحة"
+
+[sidebar]
+subscriptions = "الإشتراكات"
+trending = "الشائع"
+popular = "أشهر الفيديوهات"
+playlist = "قوائم التشغيل"
+settings = "الإعدادات"
+donate = "تبرع"
+
+[subscriptions]
+import_subscriptions = "إستورد الإشتراكات"
+tutorial = "شرح"
+
+[trending]
+trending = "الشائع"
+all = "الكل"
+music = "الموسيقى"
+gaming = "الألعاب"
+movies = "الأفلام"
+
+[settings]
+data = "البيانات"
+subscriptions = "الإشتراكات"
+playlists = "قوائم التشغيل"
+manage = "الإدارة"
+import = "الإستيراد"
+delete_all = "احذف الكل"
+export = "التصدير"
+config = "ملف الإعداد"
+locale = "المنطقة"
+language = "اللغة"
+trending_region = "منطقة الترند"
+themes = "المظاهر"
+autoplay = "التشغيل التلقائي"
+
+[settings.sponsorblock]
+title = "حظر الدعايات"
+enabled = "مفعل"
+sponsor = "دعاية"
+selfpromo = "دعاية ذاتية (سيلف برومو)"
+intro = "المقدمة"
+outro = "المؤخرة"
+interaction = "التفاعلات"
+filler = "الفلاتر"
+preview = "تشغيل"
+offtopic_music = "موسيقى خارج الموضوع"
+
+[playlist]
+shuffle = "تشغيل عشوائي"
+loop = "تكرار قائمة التشغيل"
+videos = "%{video_count} فيديوهات"
+
+[video]
+loading = "جاري التحميل..."
+
+[video.controls]
+play = "شغل"
+pause = "وقف"
+volume = "الصوت"
+formats = "الدقة"
+full_window = "تكبير النافذة"
+fullscreen = "تكبير الشاشة"
+playback_speed = "سرعة التشغيل"
+captions = "ترجمة العناوين"
+
+[video.info]
+share = "المشاركة"
+download = "التنزيل"
+recommended = "الموصى بها"
+views = "%{view_count} مشاهدة"
+
+[channel]
+subscribe = "إشتراك"
+subscribed = "مشترك"
+videos = "الفيديوهات"
+playlists = "قوائم التشغيل"
+shorts = "شورتس"
+livestreams = "البثوث المباشرة"
+
+[sponsorblock]
+skipped = "تم تخطي الدعايات"
