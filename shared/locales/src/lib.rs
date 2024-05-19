@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 pub enum RustyTubeLocale {
 	EN_US,
 	FR_FR,
+	AR_SY,
 }
 
 impl RustyTubeLocale {
@@ -12,6 +13,7 @@ impl RustyTubeLocale {
 		match &self {
 			RustyTubeLocale::EN_US => "en-US".to_string(),
 			RustyTubeLocale::FR_FR => "fr-FR".to_string(),
+			RustyTubeLocale::AR_SY => "ar-SY".to_string(),
 		}
 	}
 
@@ -19,6 +21,7 @@ impl RustyTubeLocale {
 		match &self {
 			RustyTubeLocale::EN_US => "English (US)".to_string(),
 			RustyTubeLocale::FR_FR => "Français (France)".to_string(),
+			RustyTubeLocale::AR_SY => "العربية (سوريا)".to_string(),
 		}
 	}
 
@@ -26,6 +29,7 @@ impl RustyTubeLocale {
 		match lang {
 			"en-US" => Self::EN_US,
 			"fr-FR" => Self::FR_FR,
+			"ar-SY" => Self::AR_SY,
 			_ => Self::EN_US,
 		}
 	}
@@ -34,12 +38,14 @@ impl RustyTubeLocale {
 		match self {
 			RustyTubeLocale::EN_US => "en".to_string(),
 			RustyTubeLocale::FR_FR => "fr".to_string(),
+			RustyTubeLocale::AR_SY => "ar".to_string(),
 		}
 	}
 	pub fn to_num_fmt(&self) -> num_format::Locale {
 		match self {
 			RustyTubeLocale::EN_US => num_format::Locale::en,
 			RustyTubeLocale::FR_FR => num_format::Locale::fr,
+			RustyTubeLocale::AR_SY => num_format::Locale::ar_SY,
 		}
 	}
 }
