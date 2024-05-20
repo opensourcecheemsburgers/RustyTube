@@ -450,7 +450,7 @@ fn ChannelSectionPlaceholder() -> impl IntoView {
 			<div class="h-36 w-full rounded-xl bg-neutral"></div>
 
 			<div class="flex flex-row justify-between">
-				<div class="flex flex-row items-center space-x-2">
+				<div class="flex flex-row items-center gap-x-2">
 					<div class="h-16 w-16 rounded-full bg-neutral"></div>
 					<div class="flex h-16 flex-col justify-around">
 						<div class="h-4 w-32 rounded bg-neutral"></div>
@@ -458,7 +458,7 @@ fn ChannelSectionPlaceholder() -> impl IntoView {
 					</div>
 				</div>
 
-				<div class="flex flex-row space-x-3">
+				<div class="flex flex-row gap-x-3">
 					<div class="h-16 w-16 rounded-full border-2 border-neutral"></div>
 				</div>
 			</div>

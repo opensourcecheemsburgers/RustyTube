@@ -37,8 +37,8 @@ pub fn ChannelRoll(
 		.is_some()
 	{
 		true => view! {
-			<div class="mt-2 flex w-full flex-row items-center justify-between space-x-4">
-				<div class="flex flex-row items-center space-x-4">
+			<div class="mt-2 flex w-full flex-row items-center justify-between gap-x-4">
+				<div class="flex flex-row items-center gap-x-4">
 					<img
 						on:click=move |_| go_to(format!("/channel?id={}", channel_id.get_value()))
 						on:load=move |_| img_loaded.set(true)
@@ -64,7 +64,7 @@ pub fn ChannelRoll(
 			</div>
 		},
 		false => view! {
-			<div class="flex flex-row space-x-4">
+			<div class="flex flex-row gap-x-4">
 				<img
 					on:click=move |_| go_to(format!("/channel?id={}", channel_id.get_value()))
 					on:load=move |_| img_loaded.set(true)

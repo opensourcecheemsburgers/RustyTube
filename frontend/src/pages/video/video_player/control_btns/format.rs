@@ -123,7 +123,7 @@ pub fn FormatList() -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex h-max w-max flex-row space-x-4 rounded-lg bg-base-200 p-2">
+		<div class="flex h-max w-max flex-row gap-x-4 rounded-lg bg-base-200 p-2">
 			<div class="flex flex-col items-center">
 				<h1>Audio</h1>
 				<div class="my-4 flex flex-col h-48 lg:h-64 overflow-y-scroll">

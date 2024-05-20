@@ -117,7 +117,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 						sub_count=sub_count_text
 						image_url=author_thumb_url.unwrap_or_default()
 					/>
-					<div class="flex flex-row items-end justify-center space-x-2">
+					<div class="flex flex-row items-end justify-center gap-x-2">
 						<DownloadsDropdown formats=formats title=title.clone()/>
 						<ShareDropdown/>
 					</div>
@@ -222,7 +222,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex h-max w-max flex-row space-x-4 rounded-lg bg-base-200 p-2">
+		<div class="flex h-max w-max flex-row gap-x-4 rounded-lg bg-base-200 p-2">
 			<div class="flex flex-col items-center">
 				<h1>Audio</h1>
 				<div class="my-4 flex flex-col h-64 overflow-y-scroll">{audio_formats_view}</div>
@@ -311,7 +311,7 @@ pub fn ShareDropdown() -> impl IntoView {
 
 				<div
 					tabindex="0"
-					class="flex h-max w-full flex-row items-center space-x-1 rounded-lg btn-accent px-3 py-1 bg-accent"
+					class="flex h-max w-full flex-row items-center gap-x-1 rounded-lg btn-accent px-3 py-1 bg-accent"
 				>
 					<p class="font-mono text-[8px] md:text-xs text-accent-content">{link_text}</p>
 				</div>

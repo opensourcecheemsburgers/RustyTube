@@ -99,7 +99,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col space-y-4 h-max">
-			<div class="flex flex-row w-full items-start space-x-4">
+			<div class="flex flex-row w-full items-start gap-x-4">
 				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
 
 				<div class="flex flex-col text-sm">
@@ -128,7 +128,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 				</div>
 			</div>
 			<Show when=move || { reply_count != 0 && replies_visible.get() }>
-				<div class="pl-2 flex flex-row h-max space-x-3">
+				<div class="pl-2 flex flex-row h-max gap-x-3">
 					<div class="w-0.5 h-full bg-primary rounded-xl"></div>
 					<div class="flex flex-col w-full h-max space-y-4">
 						{move || {
@@ -195,7 +195,7 @@ pub fn Reply(reply: Comment) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col space-y-4 h-max">
-			<div class="flex flex-row w-full items-start space-x-4">
+			<div class="flex flex-row w-full items-start gap-x-4">
 				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
 				<div class="flex flex-col text-sm">
 					<div class="flex flex-row gap-1">
@@ -229,10 +229,10 @@ pub fn CommentsSectionPlaceholder() -> impl IntoView {
 #[component]
 pub fn CommentPlaceholder() -> impl IntoView {
 	view! {
-		<div class="flex flex-row w-full space-x-4">
+		<div class="flex flex-row w-full gap-x-4">
 			<div class="bg-neutral animate-pulse h-12 w-12 rounded-full"></div>
 			<div class="flex flex-col w-full space-y-4">
-				<div class="flex flex-row space-x-2 items-center">
+				<div class="flex flex-row gap-x-2 items-center">
 					<p class="bg-neutral w-32 h-3 animate-pulse rounded-xl"></p>
 					<p class="bg-neutral h-1 w-1 animate-pulse rounded-full"></p>
 					<p class="bg-neutral w-20 h-3 animate-pulse rounded-xl"></p>
@@ -241,7 +241,7 @@ pub fn CommentPlaceholder() -> impl IntoView {
 					<p class="bg-neutral w-full h-2 animate-pulse rounded-xl"></p>
 					<p class="bg-neutral w-full h-2 animate-pulse rounded-xl"></p>
 				</div>
-				<div class="flex flex-row space-x-2 items-center">
+				<div class="flex flex-row gap-x-2 items-center">
 					<p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"></p>
 					<p class="bg-neutral h-1 w-1 animate-pulse rounded-full"></p>
 					<p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"></p>

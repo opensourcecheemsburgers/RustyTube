@@ -13,7 +13,7 @@ pub fn RecommendedPreviewCard(video: VideoShort) -> impl IntoView {
 	};
 
 	view! {
-		<div on:click=open_video class="flex flex-row space-x-4">
+		<div on:click=open_video class="flex flex-row gap-x-4">
 			<Thumbnail url=thumbnail_url/>
 		</div>
 	}
@@ -35,7 +35,7 @@ pub fn Info(video: VideoShort) -> impl IntoView {
 	view! {
 		<div class="flex flex-col w-[70%] overflow-hidden">
 			<p class="text-sm">{video.title}</p>
-			<div class="flex flex-row flex-wrap items-center mt-2 space-x-1 text-sm">
+			<div class="flex flex-row flex-wrap items-center mt-2 gap-x-1 text-sm">
 				<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
 				<p>{video.views_text}</p>
 			</div>

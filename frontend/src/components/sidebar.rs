@@ -289,7 +289,7 @@ data-[expanded=true]:w-64
 ";
 
 pub const SIDEBAR_HEADER_CLASSES: &'static str = "
-btn btn-ghost h-16 transition-all duration-300 flex flex-row flex-nowrap space-x-0 overflow-hidden
+btn btn-ghost h-16 transition-all duration-300 flex flex-row flex-nowrap gap-x-0 overflow-hidden
 
 data-[expanded=false]:w-16
 data-[expanded=true]:w-64
@@ -320,7 +320,7 @@ data-[expanded=false]:tooltip-right
 ";
 
 pub const SIDEBAR_ITEM_CLASSES: &'static str = "
-btn btn-ghost transition-all duration-300 flex flex-row flex-nowrap space-x-2
+btn btn-ghost transition-all duration-300 flex flex-row flex-nowrap gap-x-2
 
 data-[expanded=false]:w-16
 data-[expanded=true]:w-64

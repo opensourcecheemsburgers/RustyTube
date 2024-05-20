@@ -120,7 +120,7 @@ pub fn ImportSubscriptions() -> impl IntoView {
 		<div class="min-h-full hero">
 			<div class="flex flex-col space-y-8">
 				<FerrisWaveIcon width=96/>
-				<div class="flex flex-row justify-center space-x-4">
+				<div class="flex flex-row justify-center gap-x-4">
 					<ImportSubscriptionsTutorial/>
 					<ImportSubsButton/>
 				</div>

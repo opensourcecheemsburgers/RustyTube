@@ -82,6 +82,7 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 
 	view! {
 		<div
+			dir="ltr"
 			data-controls=move || style.controls_visible.get().to_string()
 			data-fullwindow=move || style.full_window.get().to_string()
 

@@ -42,7 +42,7 @@ pub fn Drawer(children: Children) -> impl IntoView {
 #[component]
 pub fn DrawerHeader() -> impl IntoView {
 	view! {
-		<label for=DRAWER_ID class="btn btn-ghost flex flex-row flex-nowrap">
+		<label for=DRAWER_ID class="btn btn-ghost flex flex-row flex-nowrap rtl:gap-x-2">
 			<FerrisIcon/>
 			<p class="normal-case font-display font-medium text-xl">{"RustyTube"}</p>
 		</label>

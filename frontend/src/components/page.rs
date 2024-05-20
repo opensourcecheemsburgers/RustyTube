@@ -4,7 +4,7 @@ use phosphor_leptos::{Chat, IconWeight};
 
 use crate::{
 	components::{Drawer, ExpandedCtx, Header, Sidebar, Toaster},
-	contexts::{Toast, UiConfigCtx},
+	contexts::{RegionConfigCtx, Toast, UiConfigCtx},
 };
 
 #[component]
@@ -14,10 +14,18 @@ pub fn Page() -> impl IntoView {
 	let expanded = RwSignal::new(false.to_string());
 	provide_context(ExpandedCtx(expanded));
 
+	let dir_signal = Signal::derive(move || {
+		match expect_context::<RegionConfigCtx>().locale_slice.0.get().is_rtl_lang() {
+			true => "rtl",
+			false => "ltr",
+		}
+	});
+
 	view! {
 		<div
+			dir=dir_signal
 			data-theme=theme
-			class="flex flex-row h-svh min-h-svh w-svw lg:h-screen lg:min-h-screen lg:w-screen"
+			class="flex h-svh min-h-svh w-svw lg:h-screen lg:min-h-screen lg:w-screen"
 		>
 			<Drawer>
 				<Sidebar/>
@@ -77,7 +85,7 @@ fn RustyTubeToaster() -> impl IntoView {
 }
 
 pub const PAGE_CLASSES: &'static str = "
-flex flex-col w-svw h-svw
+flex flex-col w-dvw h-dvh
 
 lg:data-[expanded=false]:w-[calc(100vw-16px)]
 lg:data-[expanded=true]:w-[calc(100vw-64px)]

@@ -48,4 +48,12 @@ impl RustyTubeLocale {
 			RustyTubeLocale::AR_SY => num_format::Locale::ar_SY,
 		}
 	}
+
+	pub fn is_rtl_lang(&self) -> bool {
+		match self {
+			RustyTubeLocale::EN_US => false,
+			RustyTubeLocale::FR_FR => false,
+			RustyTubeLocale::AR_SY => true,
+		}
+	}
 }

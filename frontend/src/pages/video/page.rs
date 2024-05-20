@@ -24,7 +24,7 @@ pub fn VideoPage() -> impl IntoView {
 	});
 
 	view! {
-		<div class="flex flex-row space-x-4 mb-48 md:px-4">
+		<div class="flex flex-row gap-x-4 mb-48 md:px-4">
 			<div class="flex flex-col basis-full lg:basis-4/6 item-start">
 				<VideoContainer/>
 				<div class="mt-5">
