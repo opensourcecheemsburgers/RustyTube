@@ -1,14 +1,16 @@
-use leptos::*;
+use leptos::{
+	component, provide_context, view, Children, IntoView, Props, RwSignal,
+};
 
 use crate::{
 	components::{
-		donate_modal::DonateModal, DonateButton, ExpandedCtx, PopularButton, SettingsButton, Subs,
-		SubscriptionsButton, TrendingButton,
+		donate_modal::DonateModal, DonateButton, ExpandedCtx, PopularButton,
+		SettingsButton, Subs, SubscriptionsButton, TrendingButton,
 	},
 	icons::FerrisIcon,
 };
 
-pub static DRAWER_ID: &'static str = "sidebar";
+pub static DRAWER_ID: &str = "sidebar";
 
 #[component]
 pub fn Drawer(children: Children) -> impl IntoView {
@@ -17,9 +19,15 @@ pub fn Drawer(children: Children) -> impl IntoView {
 	view! {
 		<div class="drawer">
 			<input id=DRAWER_ID type="checkbox" class="drawer-toggle"/>
-			<div class="drawer-content flex flex-row items-center justify-center">{children()}</div>
+			<div class="drawer-content flex flex-row items-center justify-center">
+				{children()}
+			</div>
 			<div class="drawer-side z-50">
-				<label for=DRAWER_ID aria-label="close sidebar" class="drawer-overlay"></label>
+				<label
+					for=DRAWER_ID
+					aria-label="close sidebar"
+					class="drawer-overlay"
+				></label>
 				<div class="flex flex-col h-full bg-base-200">
 					<DrawerHeader/>
 					<div class="flex flex-col border-b-[1px] border-b-primary">
@@ -42,9 +50,14 @@ pub fn Drawer(children: Children) -> impl IntoView {
 #[component]
 pub fn DrawerHeader() -> impl IntoView {
 	view! {
-		<label for=DRAWER_ID class="btn btn-ghost flex flex-row flex-nowrap rtl:gap-x-2">
+		<label
+			for=DRAWER_ID
+			class="btn btn-ghost flex flex-row flex-nowrap rtl:gap-x-2"
+		>
 			<FerrisIcon/>
-			<p class="normal-case font-display font-medium text-xl">{"RustyTube"}</p>
+			<p class="normal-case font-display font-medium text-xl">
+				{"RustyTube"}
+			</p>
 		</label>
 	}
 }

@@ -1,20 +1,25 @@
-use invidious::{CommonPlaylist, LocalPlaylist, LocalPlaylistItem, Video};
+use invidious::{LocalPlaylist, Video};
 use leptos::*;
-use leptos_router::NavigateOptions;
 use num_format::ToFormattedString;
-use phosphor_leptos::{CheckCircle, IconWeight};
-use wasm_bindgen::UnwrapThrowExt;
 
-use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
+use crate::{
+	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	utils::go_to,
+};
 
 #[component]
 pub fn LocalPlaylistPreviewCard(playlist: LocalPlaylist) -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 
-	let playlist = StoredValue::new(playlist.clone());
+	let playlist = StoredValue::new(playlist);
 	let video = Resource::local(
 		move || (server.get(), playlist.get_value()),
-		|(server, playlist)| async move { playlist.fetch_first_playlist_video(&server).await.unwrap() },
+		|(server, playlist)| async move {
+			playlist
+				.fetch_first_playlist_video(&server)
+				.await
+				.expect("First playlist video should load.")
+		},
 	);
 
 	view! {
@@ -49,34 +54,34 @@ pub fn LocalPlaylistPreviewCard(playlist: LocalPlaylist) -> impl IntoView {
 }
 
 #[component]
-pub fn Info(video: Video, playlist: StoredValue<LocalPlaylist>) -> impl IntoView {
+pub fn Info(
+	video: Video,
+	playlist: StoredValue<LocalPlaylist>,
+) -> impl IntoView {
 	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 
 	let name = video.title;
 	let author = video.author;
 	let author_id = video.author_id;
-	let video_count =
-		move || playlist.get_value().video_count.to_formatted_string(&locale.get().to_num_fmt());
+	let video_count = move || {
+		playlist
+			.get_value()
+			.video_count
+			.to_formatted_string(&locale.get().to_num_fmt())
+	};
 
-	let go_to_channel_page = move |_| {
-		let navigate = leptos_router::use_navigate();
-
-		request_animation_frame(move || {
-			_ = navigate(
-				&format!(
-					"/playlist?title={}&videos=[{{{}}}]",
-					playlist.get_value().title,
-					playlist
-						.get_value()
-						.videos
-						.into_iter()
-						.map(|video| video.id)
-						.collect::<Vec<String>>()
-						.join(",")
-				),
-				Default::default(),
-			);
-		})
+	let go_to_local_playlist_page = move |_| {
+		go_to(format!(
+			"/playlist?title={}&videos=[{{{}}}]",
+			playlist.get_value().title,
+			playlist
+				.get_value()
+				.videos
+				.into_iter()
+				.map(|video| video.id)
+				.collect::<Vec<String>>()
+				.join(",")
+		));
 	};
 
 	view! {
@@ -85,15 +90,18 @@ pub fn Info(video: Video, playlist: StoredValue<LocalPlaylist>) -> impl IntoView
 				{playlist.get_value().title}
 			</h1>
 			<div class="flex flex-row flex-wrap items-center font-normal text-sm gap-1">
-				<h2 on:click=go_to_channel_page class="cursor-pointer text-primary">
+				<h2
+					on:click=go_to_local_playlist_page
+					class="cursor-pointer text-primary"
+				>
 					{author}
 				</h2>
 				<p>{"•"}</p>
 				<p>
 					{move || {
 						t!(
-							"playlist.videos", video_count = video_count(), locale = & locale.get()
-							.id()
+							"playlist.videos", video_count = video_count(), locale = &
+							locale.get().id()
 						)
 					}}
 
@@ -104,42 +112,40 @@ pub fn Info(video: Video, playlist: StoredValue<LocalPlaylist>) -> impl IntoView
 }
 
 #[component]
-pub fn Thumbnail(id: String, url: String, playlist: StoredValue<LocalPlaylist>) -> impl IntoView {
+pub fn Thumbnail(
+	id: String,
+	url: String,
+	playlist: StoredValue<LocalPlaylist>,
+) -> impl IntoView {
 	let img_loaded = create_rw_signal(false);
-	let image_classes = move || match img_loaded.get() {
-		true => "w-full aspect-video object-center object-cover bg-neutral rounded-xl".to_string(),
-		false => "animate-pulse w-full aspect-video bg-neutral rounded-xl".to_string(),
+	let image_classes = move || {
+		if img_loaded.get() {
+			"w-full aspect-video object-center object-cover bg-neutral rounded-xl".to_string()
+		} else {
+			"animate-pulse w-full aspect-video bg-neutral rounded-xl"
+				.to_string()
+		}
 	};
 
-	let open_playlist = move |_| {
-		let navigate = leptos_router::use_navigate();
-		let id = id.clone();
-		request_animation_frame(move || {
-			_ = navigate(
-				&format!(
-					"/player?id={}&local_playlist_title={}&local_playlist_videos=[{{{}}}]",
-					playlist
-						.get_value()
-						.videos
-						.first()
-						.map(|video| video.id.clone())
-						.unwrap_or_default(),
-					playlist.get_value().title,
-					playlist
-						.get_value()
-						.videos
-						.into_iter()
-						.map(|video| video.id)
-						.collect::<Vec<String>>()
-						.join(",")
-				),
-				Default::default(),
-			);
-		})
+	let go_to_local_playlist_page = move |_| {
+		go_to(format!(
+			"/playlist?title={}&videos=[{{{}}}]",
+			playlist.get_value().title,
+			playlist
+				.get_value()
+				.videos
+				.into_iter()
+				.map(|video| video.id)
+				.collect::<Vec<String>>()
+				.join(",")
+		));
 	};
 
 	view! {
-		<div on:click=open_playlist class="w-full max-w-full overflow-hidden rounded-xl">
+		<div
+			on:click=go_to_local_playlist_page
+			class="w-full max-w-full overflow-hidden rounded-xl"
+		>
 			<img
 				decoding="async"
 				on:load=move |_| img_loaded.set(true)

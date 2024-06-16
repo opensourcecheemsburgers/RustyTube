@@ -1,9 +1,15 @@
+use std::str::FromStr;
+
 use gloo::{
 	file::Blob,
 	storage::{LocalStorage, Storage},
 };
 use invidious::{LocalPlaylist, NewpipeSubscriptions, Subscriptions, SUBS_KEY};
-use leptos::*;
+use leptos::{
+	component, create_action, expect_context, view, wasm_bindgen, web_sys,
+	Children, CollectView, For, IntoView, Props, SignalGet, SignalSet,
+	SignalUpdate, StoredValue,
+};
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
 use urlencoding::encode;
@@ -14,10 +20,10 @@ use web_sys::{Event, HtmlDialogElement, HtmlInputElement, MouseEvent};
 use crate::{
 	contexts::{RegionConfigCtx, SponsorBlockConfigCtx, UiConfigCtx},
 	resources::{
-		save_playlists, save_subs, PlaylistsCtx, SubscriptionsCtx, SubscriptionsThumbnailsResource,
-		SubscriptionsVideosResource,
+		save_playlists, save_subs, PlaylistsCtx, SubscriptionsCtx,
+		SubscriptionsThumbnailsResource, SubscriptionsVideosResource,
 	},
-	themes::*,
+	themes::{DARK_THEMES, LIGHT_THEMES},
 	utils::i18n,
 };
 
@@ -25,7 +31,7 @@ use crate::{
 pub fn SettingsPage() -> impl IntoView {
 	view! {
 		<div class="flex flex-col w-full h-full items-center">
-			<div class="flex flex-col w-[95vw] 2xl:w-[50vw] xl:w-[50vw] lg:w-[85vw] md:w-[90vw] sm:w-[95vw] my-[3vh] px-6 overscroll-contain overflow-visible overflow-y-auto gap-16">
+			<div class="flex flex-col w-[95vw] md:w-[90vw] sm:w-[95vw] xl:w-[50vw] lg:w-[85vw] my-[3vh] px-6 overscroll-contain overflow-visible overflow-y-auto gap-16">
 				<SubscriptionsSettings/>
 				// <PlaylistsSettings/>
 				<SponsorBlockSettings/>
@@ -103,115 +109,112 @@ pub fn PlaylistsSettings() -> impl IntoView {
 
 #[component]
 pub fn SponsorBlockSettings() -> impl IntoView {
-	let sponsorblock_ctx = expect_context::<SponsorBlockConfigCtx>();
+	let ctx = expect_context::<SponsorBlockConfigCtx>();
 
 	view! {
 		<SettingsSection title=i18n("settings.sponsorblock.title")()>
 			<Setting title=i18n("settings.sponsorblock.sponsor")()>
 				<input
-					on:input=move |_| {
-						sponsorblock_ctx
-							.skip_sponsors
-							.1
-							.set(!sponsorblock_ctx.skip_sponsors.0.get())
-					}
-
+					on:click=move |_| toggle_skip_sponsors(&ctx)
 					type="checkbox"
 					class="toggle lg:toggle-lg toggle-primary"
-					checked=sponsorblock_ctx.skip_sponsors.0
+					checked=ctx.skip_sponsors.0
 				/>
 			</Setting>
 			<Setting title=i18n("settings.sponsorblock.selfpromo")()>
 				<input
-					on:click=move |_| {
-						sponsorblock_ctx
-							.skip_selfpromos
-							.1
-							.set(!sponsorblock_ctx.skip_selfpromos.0.get())
-					}
-
+					on:input=move |_| toggle_skip_selfpromos(&ctx)
 					type="checkbox"
 					class="toggle lg:toggle-lg toggle-primary"
-					checked=sponsorblock_ctx.skip_selfpromos.0
+					checked=ctx.skip_selfpromos.0
 				/>
 			</Setting>
 			<Setting title=i18n("settings.sponsorblock.intro")()>
 				<input
-					on:click=move |_| {
-						sponsorblock_ctx.skip_intros.1.set(!sponsorblock_ctx.skip_intros.0.get())
-					}
-
+					on:input=move |_| toggle_skip_intros(&ctx)
 					type="checkbox"
 					class="toggle lg:toggle-lg toggle-primary"
-					checked=sponsorblock_ctx.skip_intros.0
+					checked=ctx.skip_intros.0
 				/>
 			</Setting>
 			<Setting title=i18n("settings.sponsorblock.outro")()>
 				<input
-					on:click=move |_| {
-						sponsorblock_ctx.skip_outros.1.set(!sponsorblock_ctx.skip_outros.0.get())
-					}
-
+					on:input=move |_| toggle_skip_outros(&ctx)
 					type="checkbox"
 					class="toggle lg:toggle-lg toggle-primary"
-					checked=move || sponsorblock_ctx.skip_outros.0.get()
+					checked=move || ctx.skip_outros.0.get()
 				/>
 			</Setting>
 			<Setting title=i18n("settings.sponsorblock.interaction")()>
 				<input
-					on:click=move |_| {
-						sponsorblock_ctx
-							.skip_interactions
-							.1
-							.set(!sponsorblock_ctx.skip_interactions.0.get())
-					}
-
+					on:input=move |_| toggle_skip_interactions(&ctx)
 					type="checkbox"
 					class="toggle lg:toggle-lg toggle-primary"
-					checked=sponsorblock_ctx.skip_interactions.0
+					checked=ctx.skip_interactions.0
 				/>
 			</Setting>
-			<Setting title=i18n("settings.sponsorblock.preview")()>
-				<input
-					on:click=move |_| {
-						sponsorblock_ctx
-							.skip_previews
-							.1
-							.set(!sponsorblock_ctx.skip_previews.0.get())
-					}
-
-					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
-					checked=sponsorblock_ctx.skip_previews.0
+			<Setting title=i18n(
+				"settings.sponsorblock.preview",
+			)()>
+				on:input=move |_| toggle_skip_previews(&ctx)
+				type= "checkbox" class= "toggle lg:toggle-lg toggle-primary"
+				checked=sponsorblock_ctx.skip_previews.0
 				/>
 			</Setting>
 			<Setting title=i18n("settings.sponsorblock.offtopic_music")()>
 				<input
-					on:click=move |_| {
-						sponsorblock_ctx
-							.skip_irrelevant_music
-							.1
-							.set(!sponsorblock_ctx.skip_irrelevant_music.0.get())
-					}
-
+					on:input=move |_| toggle_skip_irrelevant_music(&ctx)
 					type="checkbox"
 					class="toggle lg:toggle-lg toggle-primary"
-					checked=sponsorblock_ctx.skip_irrelevant_music.0
+					checked=ctx.skip_irrelevant_music.0
 				/>
 			</Setting>
 			<Setting title=i18n("settings.sponsorblock.filler")()>
 				<input
-					on:click=move |_| {
-						sponsorblock_ctx.skip_filler.1.set(!sponsorblock_ctx.skip_filler.0.get());
-					}
-
+					on:input=move |_| toggle_skip_filler(&ctx)
 					type="checkbox"
 					class="toggle lg:toggle-lg toggle-primary"
-					checked=sponsorblock_ctx.skip_filler.0
+					checked=ctx.skip_filler.0
 				/>
 			</Setting>
 		</SettingsSection>
 	}
+}
+
+fn toggle_enabled(ctx: &SponsorBlockConfigCtx) {
+	ctx.enabled.1.set(!ctx.enabled.0.get());
+}
+
+fn toggle_skip_sponsors(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_sponsors.1.set(!ctx.skip_sponsors.0.get());
+}
+
+fn toggle_skip_selfpromos(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_selfpromos.1.set(!ctx.skip_selfpromos.0.get());
+}
+
+fn toggle_skip_interactions(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_interactions.1.set(!ctx.skip_interactions.0.get());
+}
+
+fn toggle_skip_intros(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_intros.1.set(!ctx.skip_intros.0.get());
+}
+
+fn toggle_skip_outros(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_outros.1.set(!ctx.skip_outros.0.get());
+}
+
+fn toggle_skip_previews(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_previews.1.set(!ctx.skip_previews.0.get());
+}
+
+fn toggle_skip_irrelevant_music(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_irrelevant_music.1.set(!ctx.skip_irrelevant_music.0.get());
+}
+
+fn toggle_skip_filler(ctx: &SponsorBlockConfigCtx) {
+	ctx.skip_filler.1.set(!ctx.skip_filler.0.get());
 }
 
 #[component]
@@ -245,11 +248,11 @@ pub fn LocaleDropdown() -> impl IntoView {
 					each=move || {
 						rust_i18n::available_locales!()
 							.into_iter()
-							.map(|locale| RustyTubeLocale::from_str(&locale))
+							.map(RustyTubeLocale::from_lang_code_str)
 							.collect::<Vec<RustyTubeLocale>>()
 					}
 
-					key=|locale| locale.id().clone()
+					key=locales::RustyTubeLocale::id
 					let:locale
 				>
 					<li>
@@ -269,11 +272,12 @@ pub fn LocaleDropdown() -> impl IntoView {
 
 #[component]
 pub fn TrendingRegionDropdown() -> impl IntoView {
-	let trending_region_slice = expect_context::<RegionConfigCtx>().trending_region_slice;
+	let trending_region_slice =
+		expect_context::<RegionConfigCtx>().trending_region_slice;
 
 	let regions_view = isocountry::CountryCode::iter()
 		.map(|region| {
-			let set_region = move |_| trending_region_slice.1.set(region.clone());
+			let set_region = move |_| trending_region_slice.1.set(*region);
 
 			view! {
 				<li>
@@ -309,7 +313,7 @@ pub fn ImportSubsButton() -> impl IntoView {
 	let subs = expect_context::<SubscriptionsCtx>();
 
 	let parse_subs_file = create_action(|input: &(SubscriptionsCtx, Event)| {
-		let subs = input.0.clone();
+		let subs = input.0;
 		let event = input.1.clone();
 
 		get_subs_from_file(subs, event)
@@ -321,7 +325,10 @@ pub fn ImportSubsButton() -> impl IntoView {
 
 	view! {
 		<div>
-			<label class="btn btn-sm md:btn-md lg:btn-lg btn-primary" for="subs_upload">
+			<label
+				class="btn btn-sm md:btn-md lg:btn-lg btn-primary"
+				for="subs_upload"
+			>
 				{i18n("settings.import")}
 			</label>
 			<input
@@ -340,14 +347,20 @@ async fn get_subs_from_file(
 	subs_resource: SubscriptionsCtx,
 	event: Event,
 ) -> Result<(), RustyTubeError> {
-	let input = event.target().unwrap().dyn_into::<HtmlInputElement>().unwrap();
+	let input = event
+		.target()
+		.ok_or(RustyTubeError::TargetNotFound)?
+		.dyn_into::<HtmlInputElement>()
+		.ok()
+		.ok_or(RustyTubeError::ElementNotFound)?;
 	let filelist = input.files().ok_or(RustyTubeError::NoFileSelected)?;
 	let file = filelist.get(0).ok_or(RustyTubeError::NoFileSelected)?;
 	let blob: Blob = file.into();
 	let mut subscriptions = Subscriptions::read_subs(blob).await?;
 	subs_resource.0.update(|subs| {
 		subs.channels.append(&mut subscriptions.channels);
-		subs.channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+		subs.channels
+			.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
 		subs.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
 		save_subs(subs);
 	});
@@ -362,26 +375,35 @@ pub fn DeleteAllSubsButton() -> impl IntoView {
 
 	let modal_id = StoredValue::new("delete_subs_modal");
 	let open_modal = move |_| {
-		get_element_by_id::<HtmlDialogElement>(modal_id.get_value()).unwrap().set_open(true);
+		get_element_by_id::<HtmlDialogElement>(modal_id.get_value())
+			.expect("donate modal should exist")
+			.set_open(true);
 	};
 
 	let close_modal = move |_| {
-		get_element_by_id::<HtmlDialogElement>(modal_id.get_value()).unwrap().set_open(false);
+		get_element_by_id::<HtmlDialogElement>(modal_id.get_value())
+			.expect("donate modal should exist")
+			.set_open(false);
 	};
 
 	let delete_all_subs = move |ev: MouseEvent| {
-		LocalStorage::set(SUBS_KEY, "").unwrap();
+		LocalStorage::set(SUBS_KEY, "");
 		subs_ctx.0.set(Subscriptions::default());
 		close_modal(ev);
 	};
 
 	view! {
-		<button on:click=open_modal class="btn btn-sm md:btn-md lg:btn-lg btn-error">
+		<button
+			on:click=open_modal
+			class="btn btn-sm md:btn-md lg:btn-lg btn-error"
+		>
 			{i18n("settings.delete_all")}
 		</button>
 		<dialog id=modal_id.get_value() class="modal">
 			<div class="modal-box">
-				<h3 class="font-bold text-lg">{i18n("settings.delete_subscriptions")}</h3>
+				<h3 class="font-bold text-lg">
+					{i18n("settings.delete_subscriptions")}
+				</h3>
 				<p class="py-4">
 					This action will delete all subscriptions from the RustyTube database.
 				</p>
@@ -406,7 +428,7 @@ pub fn ExportSubsLibreTubeButton() -> impl IntoView {
 		let subs: NewpipeSubscriptions = current_subs.get().into();
 		let subs_json = subs.to_json_string().unwrap_or_default();
 		let encoded_subs = encode(&subs_json);
-		format!("data:attachment/text,{}", encoded_subs)
+		format!("data:attachment/text,{encoded_subs}")
 	};
 
 	view! {
@@ -431,7 +453,7 @@ pub fn ExportSubsFreeTubeButton() -> impl IntoView {
 		let subs: NewpipeSubscriptions = current_subs.get().into();
 		let subs_json = subs.to_json_string().unwrap_or_default();
 		let encoded_subs = encode(&subs_json);
-		format!("data:attachment/text,{}", encoded_subs)
+		format!("data:attachment/text,{encoded_subs}")
 	};
 
 	view! {
@@ -456,7 +478,7 @@ pub fn ExportSubsNewPipeButton() -> impl IntoView {
 		let subs: NewpipeSubscriptions = current_subs.get().into();
 		let subs_json = subs.to_json_string().unwrap_or_default();
 		let encoded_subs = encode(&subs_json);
-		format!("data:attachment/text,{}", encoded_subs)
+		format!("data:attachment/text,{encoded_subs}")
 	};
 
 	view! {
@@ -474,12 +496,13 @@ pub fn ExportSubsNewPipeButton() -> impl IntoView {
 pub fn ImportPlaylistsButton() -> impl IntoView {
 	let playlists = expect_context::<PlaylistsCtx>();
 
-	let parse_playlists_file = create_action(|input: &(PlaylistsCtx, Event)| {
-		let playlists = input.0.clone();
-		let event = input.1.clone();
+	let parse_playlists_file =
+		create_action(|input: &(PlaylistsCtx, Event)| {
+			let playlists = input.0;
+			let event = input.1.clone();
 
-		get_playlists_from_file(playlists, event)
-	});
+			get_playlists_from_file(playlists, event)
+		});
 
 	let on_file_upload = move |event: Event| {
 		parse_playlists_file.dispatch((playlists, event));
@@ -487,7 +510,10 @@ pub fn ImportPlaylistsButton() -> impl IntoView {
 
 	view! {
 		<div>
-			<label class="btn btn-sm md:btn-md lg:btn-lg btn-primary" for="playlists_upload">
+			<label
+				class="btn btn-sm md:btn-md lg:btn-lg btn-primary"
+				for="playlists_upload"
+			>
 				{i18n("settings.import")}
 			</label>
 			<input
@@ -506,14 +532,20 @@ async fn get_playlists_from_file(
 	playlists_resource: PlaylistsCtx,
 	event: Event,
 ) -> Result<(), RustyTubeError> {
-	let input = event.target().unwrap().dyn_into::<HtmlInputElement>().unwrap();
+	let input = event
+		.target()
+		.expect("playlist button should exist")
+		.dyn_into::<HtmlInputElement>()
+		.expect("playlist button should be an input element");
 	let filelist = input.files().ok_or(RustyTubeError::NoFileSelected)?;
 	let file = filelist.get(0).ok_or(RustyTubeError::NoFileSelected)?;
 	let blob: Blob = file.into();
 	let mut new_playlists = LocalPlaylist::read_playlists(blob).await?;
 	playlists_resource.playlists.update(|playlists| {
 		playlists.append(&mut new_playlists);
-		playlists.sort_by(|a, b| a.title.to_lowercase().cmp(&b.title.to_lowercase()));
+		playlists.sort_by(|a, b| {
+			a.title.to_lowercase().cmp(&b.title.to_lowercase())
+		});
 		playlists.dedup_by(|a, b| a.title.eq_ignore_ascii_case(&b.title));
 		save_playlists(playlists);
 	});
@@ -523,20 +555,22 @@ async fn get_playlists_from_file(
 #[component]
 fn ThemeSettings() -> impl IntoView {
 	let dark_themes_view = DARK_THEMES
-		.into_iter()
-		.map(|theme| view! { <ThemeCard name=theme.to_string()/> })
+		.iter()
+		.map(|theme| view! { <ThemeCard name=(*theme).to_string()/> })
 		.collect_view();
 
 	let light_themes_view = LIGHT_THEMES
-		.into_iter()
-		.map(|theme| view! { <ThemeCard name=theme.to_string()/> })
+		.iter()
+		.map(|theme| view! { <ThemeCard name=(*theme).to_string()/> })
 		.collect_view();
 
 	view! {
 		<div class="flex flex-col gap-3 w-full">
 			<h1 class="font-sans text-3xl">{i18n("settings.themes")}</h1>
 			<div class="divider"></div>
-			<div class="flex flex-wrap flex-row gap-4">{dark_themes_view} {light_themes_view}</div>
+			<div class="flex flex-wrap flex-row gap-4">
+				{dark_themes_view} {light_themes_view}
+			</div>
 		</div>
 	}
 }
@@ -549,15 +583,12 @@ pub fn ThemeCard(name: String) -> impl IntoView {
 
 	let card_classes = move || {
 		let current_theme = current_theme_slice.0.get();
-		match theme_name.get_value().eq_ignore_ascii_case(&current_theme) {
-			false => {
-				"lg:w-96 w-64 overflow-hidden rounded-lg border-2 border-base-content/20 \
-				 hover:border-base-content/40 outline-base-content outline-2 outline-offset-2"
-			}
-			true => {
-				"lg:w-96 w-64 overflow-hidden rounded-lg border-2 border-primary \
+		if theme_name.get_value().eq_ignore_ascii_case(&current_theme) {
+			"lg:w-96 w-64 overflow-hidden rounded-lg border-2 border-primary \
 				 hover:border-primary outline-primary outline-8 outline-offset-8"
-			}
+		} else {
+			"lg:w-96 w-64 overflow-hidden rounded-lg border-2 border-base-content/20 \
+				 hover:border-base-content/40 outline-base-content outline-2 outline-offset-2"
 		}
 	};
 
@@ -576,16 +607,24 @@ pub fn ThemeCard(name: String) -> impl IntoView {
 						<div class="font-bold">{theme_name.get_value()}</div>
 						<div class="flex flex-wrap gap-1">
 							<div class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-primary-content text-sm font-bold">{"A"}</div>
+								<div class="text-primary-content text-sm font-bold">
+									{"A"}
+								</div>
 							</div>
 							<div class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-secondary-content text-sm font-bold">{"A"}</div>
+								<div class="text-secondary-content text-sm font-bold">
+									{"A"}
+								</div>
 							</div>
 							<div class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-accent-content text-sm font-bold">{"A"}</div>
+								<div class="text-accent-content text-sm font-bold">
+									{"A"}
+								</div>
 							</div>
 							<div class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-neutral-content text-sm font-bold">{"A"}</div>
+								<div class="text-neutral-content text-sm font-bold">
+									{"A"}
+								</div>
 							</div>
 						</div>
 					</div>

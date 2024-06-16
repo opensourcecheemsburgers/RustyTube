@@ -1,6 +1,6 @@
-use leptos::*;
+use leptos::{component, view, IntoView, Props};
 
-pub const DONATE_MODAL_ID: &'static str = "contribution_modal";
+pub const DONATE_MODAL_ID: &str = "contribution_modal";
 
 #[component]
 pub fn DonateModal() -> impl IntoView {
@@ -40,7 +40,9 @@ pub fn DonateModal() -> impl IntoView {
 						</div>
 					</div>
 					<form method="dialog">
-						<button class="btn btn-md btn-primary btn-block">Got it.</button>
+						<button class="btn btn-md btn-primary btn-block">
+							Got it.
+						</button>
 					</form>
 				</div>
 			</div>
@@ -52,7 +54,15 @@ pub fn DonateModal() -> impl IntoView {
 fn LiberapaySvg() -> impl IntoView {
 	view! {
 		<svg xmlns="http://www.w3.org/2000/svg" width="83" height="30">
-			<rect id="back" fill="#f6c915" x="1" y=".5" width="82" height="29" rx="4"></rect>
+			<rect
+				id="back"
+				fill="#f6c915"
+				x="1"
+				y=".5"
+				width="82"
+				height="29"
+				rx="4"
+			></rect>
 			<svg viewBox="0 0 80 80" height="16" width="16" x="7" y="7">
 				<g transform="translate(-78.37-208.06)" fill="#1a171b">
 					<path d="m104.28 271.1c-3.571 0-6.373-.466-8.41-1.396-2.037-.93-3.495-2.199-4.375-3.809-.88-1.609-1.308-3.457-1.282-5.544.025-2.086.313-4.311.868-6.675l9.579-40.05 11.69-1.81-10.484 43.44c-.202.905-.314 1.735-.339 2.489-.026.754.113 1.421.415 1.999.302.579.817 1.044 1.546 1.395.729.353 1.747.579 3.055.679l-2.263 9.278"></path>

@@ -4,12 +4,15 @@ use invidious::{Format, Formats, Video, VideoFormat};
 use leptos::{leptos_dom::helpers::TimeoutHandle, *};
 use phosphor_leptos::{IconWeight, SpinnerGap};
 use utils::get_element_by_id;
-use wasm_bindgen::{JsCast, JsValue};
-use web_sys::{Element, HtmlDivElement, PointerEvent};
+use wasm_bindgen::JsCast;
+use web_sys::{Element, HtmlDivElement};
 
 use crate::{
 	components::FerrisError,
-	contexts::{PlaybackState, PlayerState, PlayerStyle, VIDEO_CONTAINER_ID, VIDEO_CONTROLS_ID},
+	contexts::{
+		PlaybackState, PlayerState, PlayerStyle, VIDEO_CONTAINER_ID,
+		VIDEO_CONTROLS_ID,
+	},
 	pages::video::{
 		utils::get_format,
 		video_player::{
@@ -48,7 +51,10 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 	let state = expect_context::<PlayerState>();
 	let style = expect_context::<PlayerStyle>();
 
-	let formats = Formats::from((video.adaptive_formats.clone(), video.format_streams.clone()));
+	let formats = Formats::from((
+		video.adaptive_formats.clone(),
+		video.format_streams.clone(),
+	));
 	let format = get_format(&formats).ok();
 	provide_context(create_rw_signal(formats));
 	provide_context::<RwSignal<Option<Format>>>(create_rw_signal(format));
@@ -68,9 +74,10 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 				style.controls_visible.set(cursor_visible());
 			},
 			Duration::from_secs(3),
-		)
-		.unwrap();
-		handle_store.set(Some(handle));
+		);
+		if let Ok(handle) = handle {
+			handle_store.set(Some(handle));
+		}
 	};
 
 	set_interval(
@@ -94,7 +101,7 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 
 			on:dblclick=move |_| {
 				if !controls_hovered() {
-					toggle_fullscreen()
+					toggle_fullscreen();
 				}
 			}
 
@@ -103,7 +110,7 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 			class=VIDEO_CLASSES
 			id=VIDEO_CONTAINER_ID
 		>
-			<VideoStream video=video.clone()/>
+			<VideoStream video=video/>
 			<AudioStream/>
 			<VideoPlayerControls/>
 			<LoadingCircle/>
@@ -122,7 +129,9 @@ pub fn VideoPlaceholder() -> impl IntoView {
 
 #[component]
 pub fn VideoFormat() -> impl IntoView {
-	let url = expect_context::<RwSignal<Option<VideoFormat>>>().get().map(|format| format.url);
+	let url = expect_context::<RwSignal<Option<VideoFormat>>>()
+		.get()
+		.map(|format| format.url);
 
 	move || view! { <source src=url.clone()/> }
 }
@@ -130,11 +139,12 @@ pub fn VideoFormat() -> impl IntoView {
 #[component]
 pub fn LoadingCircle() -> impl IntoView {
 	let state = expect_context::<PlayerState>();
-	let classes = move || match state.playback_state.get() == PlaybackState::Loading {
-		true => {
+	let classes = move || {
+		if state.playback_state.get() == PlaybackState::Loading {
 			"flex flex-col items-center absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2"
+		} else {
+			"hidden"
 		}
-		false => "hidden",
 	};
 
 	view! {
@@ -151,33 +161,30 @@ fn cursor_visible() -> bool {
 fn controls_hovered() -> bool {
 	let hovered_elements = document().query_selector_all(":hover").ok();
 
-	match hovered_elements {
-		Some(hovered_elements) => {
-			let mut elements_vec: Vec<Element> = Vec::new();
-			let mut index = 0;
-			while let Some(node) = hovered_elements.item(index) {
-				let element: Element = node.dyn_into().unwrap();
+	hovered_elements.map_or(false, |hovered_elements| {
+		let mut elements_vec = vec![];
+		let mut index = 0;
+		while let Some(node) = hovered_elements.item(index) {
+			if let Ok(element) = node.dyn_into::<Element>() {
 				elements_vec.push(element);
-				index = index + 1;
+				index += 1;
 			}
-			elements_vec.iter().find(|element| element.id().eq(VIDEO_CONTROLS_ID)).is_some()
 		}
-		None => false,
-	}
+		elements_vec.iter().any(|element| element.id().eq(VIDEO_CONTROLS_ID))
+	})
 }
 
 fn toggle_fullscreen() {
-	match document().fullscreen() {
-		true => document().exit_fullscreen(),
-		false => {
-			let _ = get_element_by_id::<HtmlDivElement>(VIDEO_CONTAINER_ID)
-				.unwrap()
-				.request_fullscreen();
-		}
+	if document().fullscreen() {
+		document().exit_fullscreen();
+	} else if let Ok(element) =
+		get_element_by_id::<HtmlDivElement>(VIDEO_CONTAINER_ID)
+	{
+		element.request_fullscreen();
 	}
 }
 
-pub const VIDEO_CLASSES: &'static str = "\
+pub const VIDEO_CLASSES: &str = "\
 relative flex flex-col transition-all \
 object-contain items-center justify-center \
 \

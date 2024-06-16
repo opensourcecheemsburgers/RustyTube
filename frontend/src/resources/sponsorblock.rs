@@ -1,12 +1,15 @@
-use leptos::*;
+use leptos::{expect_context, Memo, Resource, RwSignal, SignalGet, SignalSet};
 use rustytube_error::RustyTubeError;
 use sponsorblock_rs::{Category, Query, Response, Segment};
 
 use crate::contexts::SponsorBlockConfigCtx;
 
+#[allow(clippy::type_complexity)]
 #[derive(Clone, Copy)]
 pub struct SponsorBlockResource {
-	pub resource: RwSignal<Option<Resource<String, Result<Option<Response>, RustyTubeError>>>>,
+	pub resource: RwSignal<
+		Option<Resource<String, Result<Option<Response>, RustyTubeError>>>,
+	>,
 }
 
 impl SponsorBlockResource {
@@ -18,7 +21,7 @@ impl SponsorBlockResource {
 	}
 
 	pub fn empty() -> Self {
-		SponsorBlockResource { resource: RwSignal::new(None) }
+		Self { resource: RwSignal::new(None) }
 	}
 
 	pub fn get_segments(&self) -> Option<Vec<Segment>> {
@@ -26,7 +29,9 @@ impl SponsorBlockResource {
 	}
 }
 
-async fn fetch_sponsorblock_segments(id: String) -> Result<Option<Response>, RustyTubeError> {
+async fn fetch_sponsorblock_segments(
+	id: String,
+) -> Result<Option<Response>, RustyTubeError> {
 	let categories = move || {
 		let ctx = expect_context::<SponsorBlockConfigCtx>();
 
@@ -37,10 +42,16 @@ async fn fetch_sponsorblock_segments(id: String) -> Result<Option<Response>, Rus
 		ctx.skip_outros.0.get().then(|| vec.push(Category::Outro));
 		ctx.skip_interactions.0.get().then(|| vec.push(Category::Interaction));
 		ctx.skip_previews.0.get().then(|| vec.push(Category::Preview));
-		ctx.skip_irrelevant_music.0.get().then(|| vec.push(Category::OffTopicMusic));
+		ctx.skip_irrelevant_music
+			.0
+			.get()
+			.then(|| vec.push(Category::OffTopicMusic));
 		ctx.skip_filler.0.get().then(|| vec.push(Category::Filler));
 		Some(vec)
 	};
 
-	Ok(Query::create(id, None, categories(), None, None).send_query().await.unwrap())
+	Ok(Query::create(id, None, categories(), None, None)
+		.send_query()
+		.await
+		.expect("Error fetching sponsorblock data."))
 }

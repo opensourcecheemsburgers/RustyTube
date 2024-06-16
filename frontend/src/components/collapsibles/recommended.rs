@@ -21,7 +21,9 @@ pub fn RecommendedSection() -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col h-auto rounded-lg bg-base-200 p-4 space-y-4">
-			<h1 class="font-semibold text-xl">{i18n("video.info.recommended")}</h1>
+			<h1 class="font-semibold text-xl">
+				{i18n("video.info.recommended")}
+			</h1>
 			<div class="flex flex-col space-y-4 ltr:pr-4 rtl:pl-4 rounded-lg bg-base-200">
 				<Suspense fallback=move || {
 					view! { <RecommendedSectionPlaceholder/> }
@@ -49,7 +51,9 @@ pub fn RecommendedSectionCollapsible() -> impl IntoView {
 	view! {
 		<div>
 			<div class="hidden lg:!flex flex-col h-auto rounded-lg bg-base-200 p-4 space-y-4">
-				<h1 class="font-semibold text-xl">{i18n("video.info.recommended")}</h1>
+				<h1 class="font-semibold text-xl">
+					{i18n("video.info.recommended")}
+				</h1>
 				<div class="flex flex-col space-y-4 ltr:pr-4 rtl:pl-4 rounded-lg bg-base-200">
 					<Suspense fallback=move || {
 						view! { <RecommendedSectionPlaceholder/> }
@@ -77,7 +81,10 @@ pub fn RecommendedSectionCollapsible() -> impl IntoView {
 
 #[component]
 pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
-	let src = video.thumbnails.get(4).cloned().unwrap().url;
+	let src = video
+		.thumbnails
+		.get(4)
+		.map_or(String::new(), |thumb| thumb.url.clone());
 
 	let video_id = video.id;
 	let open_video = move |_| {
@@ -85,9 +92,13 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 	};
 
 	let img_loaded = create_rw_signal(false);
-	let image_classes = move || match img_loaded.get() {
-		true => "w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string(),
-		false => "animate-pulse w-[30%] aspect-video bg-neutral rounded-lg".to_string(),
+	let image_classes = move || {
+		if img_loaded.get() {
+			"w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string()
+		} else {
+			"animate-pulse w-[30%] aspect-video bg-neutral rounded-lg"
+				.to_string()
+		}
 	};
 
 	view! {

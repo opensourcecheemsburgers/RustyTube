@@ -1,10 +1,14 @@
-use leptos::*;
+use leptos::{component, view, CollectView, IntoView, Props};
 
-use crate::components::{CardGrid, GridContainer};
+use crate::components::CardGrid;
 
 #[component]
 pub fn PlaceholderCardArray() -> impl IntoView {
-	view! { <CardGrid>{(0..50).map(|_| view! { <PlaceholderCard/> }).collect_view()}</CardGrid> }
+	view! {
+		<CardGrid>
+			{(0..50).map(|_| view! { <PlaceholderCard/> }).collect_view()}
+		</CardGrid>
+	}
 }
 
 #[component]

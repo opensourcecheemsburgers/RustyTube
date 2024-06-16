@@ -1,7 +1,11 @@
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
-use crate::{common::*, fetch::fetch, hidden::*};
+use crate::{
+	common::{CommonImage, CommonPlaylist, CommonVideo},
+	fetch::fetch,
+	hidden::{CountryCode, RelatedChannel},
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -42,101 +46,133 @@ pub struct ChannelThumb {
 }
 
 impl Channel {
+	/// # Errors
+	///
+	/// - Network errors.
+	/// - Serde errors.
 	pub async fn fetch_channel(server: &str, id: &str, lang: &str) -> Result<Self, RustyTubeError> {
-		let channel_url = format!("{}/api/v1/channels/{}/", server, id);
+		let channel_url = format!("{server}/api/v1/channels/{id}?hl={lang}");
 		let channel_json: String = fetch(&channel_url).await?;
 		let channel: Self = serde_json::from_str(&channel_json)?;
 		Ok(channel)
 	}
 
+	/// # Errors
+	///
+	/// - Network errors.
+	/// - Serde errors.
 	pub async fn fetch_channel_thumbnails(
 		server: &str,
 		id: &str,
 	) -> Result<Vec<CommonImage>, RustyTubeError> {
-		let thumbnails_url = format!("{}/api/v1/channels/{}?fields=authorThumbnails", server, id);
+		let thumbnails_url = format!("{server}/api/v1/channels/{id}?fields=authorThumbnails");
 		let thumbnails_json = fetch(&thumbnails_url).await?;
 		let thumbnails = serde_json::from_str(&thumbnails_json)?;
 		Ok(thumbnails)
 	}
 
+	/// # Errors
+	///
+	/// - Network errors.
+	/// - Serde errors.
 	pub async fn fetch_channel_thumb(
 		server: &str,
 		id: &str,
 	) -> Result<ChannelThumb, RustyTubeError> {
 		let thumbnails_url =
-			format!("{}/api/v1/channels/{}?fields=author,authorId,authorThumbnails", server, id);
+			format!("{server}/api/v1/channels/{id}?fields=author,authorId,authorThumbnails");
 		let thumbnails_json = fetch(&thumbnails_url).await?;
 		let thumbnails = serde_json::from_str(&thumbnails_json)?;
 		Ok(thumbnails)
 	}
 
+	/// # Errors
+	///
+	/// - Network errors.
+	/// - Serde errors.
 	pub async fn fetch_channel_videos(
 		server: &str,
 		id: &str,
 		continuation: Option<&str>,
 		lang: &str,
 	) -> Result<ChannelVideos, RustyTubeError> {
-		let videos_url = match continuation {
-			Some(continuation) => format!(
-				"{}/api/v1/channels/{}/videos?continuation={}&hl={}",
-				server, id, continuation, lang
-			),
-			None => format!("{}/api/v1/channels/{}/videos?hl={}", server, id, lang),
-		};
+		let videos_url = continuation.map_or_else(
+			|| format!("{server}/api/v1/channels/{id}/videos?hl={lang}"),
+			|continuation| {
+				format!(
+					"{server}/api/v1/channels/{id}/videos?continuation={continuation}&hl={lang}"
+				)
+			},
+		);
 		let videos_json = fetch(&videos_url).await?;
 		let videos = serde_json::from_str(&videos_json)?;
 		Ok(videos)
 	}
 
+	/// # Errors
+	///
+	/// - Network errors.
+	/// - Serde errors.
 	pub async fn fetch_channel_shorts(
 		server: &str,
 		id: &str,
 		continuation: Option<&str>,
 		lang: &str,
 	) -> Result<ChannelShorts, RustyTubeError> {
-		let shorts_url = match continuation {
-			Some(continuation) => format!(
-				"{}/api/v1/channels/{}/shorts?continuation={}&hl={}",
-				server, id, continuation, lang
-			),
-			None => format!("{}/api/v1/channels/{}/shorts?hl={}", server, id, lang),
-		};
+		let shorts_url = continuation.map_or(
+			format!("{server}/api/v1/channels/{id}/shorts?hl={lang}"),
+			|continuation| {
+				format!(
+					"{server}/api/v1/channels/{id}/shorts?continuation={continuation}&hl={lang}"
+				)
+			},
+		);
 		let shorts_json = fetch(&shorts_url).await?;
 		let shorts = serde_json::from_str(&shorts_json)?;
 		Ok(shorts)
 	}
 
+	/// # Errors
+	///
+	/// - Network errors.
+	/// - Serde errors.
 	pub async fn fetch_channel_livestreams(
 		server: &str,
 		id: &str,
 		continuation: Option<&str>,
 		lang: &str,
 	) -> Result<ChannelLivestreams, RustyTubeError> {
-		let livestreams_url = match continuation {
-			Some(continuation) => format!(
-				"{}/api/v1/channels/{}/streams?continuation={}&hl={}",
-				server, id, continuation, lang
-			),
-			None => format!("{}/api/v1/channels/{}/streams?hl={}", server, id, lang),
-		};
+		let livestreams_url = continuation.map_or_else(
+			|| format!("{server}/api/v1/channels/{id}/streams?hl={lang}"),
+			|continuation| {
+				format!(
+					"{server}/api/v1/channels/{id}/streams?continuation={continuation}&hl={lang}"
+				)
+			},
+		);
 		let livestreams_json = fetch(&livestreams_url).await?;
 		let livestreams = serde_json::from_str(&livestreams_json)?;
 		Ok(livestreams)
 	}
 
+	/// # Errors
+	///
+	/// - Network errors.
+	/// - Serde errors.
 	pub async fn fetch_channel_playlists(
 		server: &str,
 		id: &str,
 		continuation: Option<&str>,
 		lang: &str,
 	) -> Result<ChannelPlaylists, RustyTubeError> {
-		let playlists_url = match continuation {
-			Some(continuation) => format!(
-				"{}/api/v1/channels/{}/playlists?continuation={}&hl={}",
-				server, id, continuation, lang
-			),
-			None => format!("{}/api/v1/channels/{}/playlists?hl={}", server, id, lang),
-		};
+		let playlists_url = continuation.map_or_else(
+			|| format!("{server}/api/v1/channels/{id}/playlists?hl={lang}"),
+			|continuation| {
+				format!(
+					"{server}/api/v1/channels/{id}/playlists?continuation={continuation}&hl={lang}"
+				)
+			},
+		);
 		let channel_videos_json = fetch(&playlists_url).await?;
 		let channel_videos = serde_json::from_str(&channel_videos_json)?;
 		Ok(channel_videos)
@@ -145,7 +181,7 @@ impl Channel {
 
 impl PartialEq for Channel {
 	fn eq(&self, other: &Self) -> bool {
-		*&self.id.eq(&other.id)
+		self.id.eq(&other.id)
 	}
 }
 

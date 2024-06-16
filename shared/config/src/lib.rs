@@ -49,6 +49,7 @@ pub struct RegionConfig {
 	pub trending_region: isocountry::CountryCode,
 }
 
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Clone, Deserialize, Serialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub struct SponsorBlockConfig {
@@ -63,7 +64,7 @@ pub struct SponsorBlockConfig {
 	pub skip_filler: bool,
 }
 
-#[derive(Clone, Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Clone, Default, Deserialize, Serialize, Debug, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub struct Config {
 	pub network: NetworkConfig,
@@ -121,11 +122,11 @@ impl Default for PlayerConfig {
 
 		Self {
 			auto_play,
-			volume,
 			fast_forward_interval,
 			default_video_quality,
 			default_audio_quality,
 			remember_position,
+			volume,
 		}
 	}
 }
@@ -163,37 +164,25 @@ impl Default for SponsorBlockConfig {
 	}
 }
 
-impl Default for Config {
-	fn default() -> Self {
-		Self {
-			network: NetworkConfig::default(),
-			ui: UiConfig::default(),
-			player: PlayerConfig::default(),
-			privacy: PrivacyConfig::default(),
-			region: RegionConfig::default(),
-			sponsorblock: SponsorBlockConfig::default(),
-		}
-	}
-}
-
-pub const CONFIG_KEY: &'static str = "RUSTYTUBE_CONFIG";
+pub const CONFIG_KEY: &str = "RUSTYTUBE_CONFIG";
 
 impl Config {
+	/// # Errors
+	///
+	/// - `LocalStorage` errors.
+	/// - Toml serialisation error.
 	pub fn save(&self) -> Result<(), RustyTubeError> {
-		save_to_browser_storage(CONFIG_KEY, &self.to_toml_string()?)?;
+		save_to_browser_storage(CONFIG_KEY, &toml::to_string(&self)?)?;
 		Ok(())
 	}
 
+	/// # Errors
+	///
+	/// - `LocalStorage` errors.
+	/// - Toml deserialisation error.
 	pub fn load() -> Result<Self, RustyTubeError> {
-		let config_str = LocalStorage::get::<String>(CONFIG_KEY)?;
-		Self::from_toml_string(&config_str)
-	}
-
-	pub fn to_toml_string(&self) -> Result<String, RustyTubeError> {
-		Ok(toml::to_string(&self)?)
-	}
-
-	pub fn from_toml_string(toml_str: &str) -> Result<Self, RustyTubeError> {
-		Ok(toml::from_str(toml_str)?)
+		let toml_str = LocalStorage::get::<String>(CONFIG_KEY)?;
+		let config = toml::from_str::<Self>(&toml_str)?;
+		Ok(config)
 	}
 }

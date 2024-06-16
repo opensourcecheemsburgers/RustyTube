@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{common::CommonVideo, fetch::fetch};
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Eq, Clone)]
 pub enum TrendingCategory {
 	Default,
 	Music,
@@ -41,6 +41,6 @@ impl Trending {
 		let url = Self::url(server, category, region, lang);
 		let trending_json = fetch(&url).await?;
 		let videos: Vec<CommonVideo> = serde_json::from_str(&trending_json)?;
-		Ok(Trending { videos })
+		Ok(Self { videos })
 	}
 }

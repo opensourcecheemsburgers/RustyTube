@@ -1,4 +1,4 @@
-pub const DARK_THEMES: &'static [&'static str] = &[
+pub const DARK_THEMES: &[&str] = &[
 	"rustytube",
 	"dracula",
 	"sunset",
@@ -14,7 +14,7 @@ pub const DARK_THEMES: &'static [&'static str] = &[
 	"business",
 ];
 
-pub const LIGHT_THEMES: &'static [&'static str] = &[
+pub const LIGHT_THEMES: &[&str] = &[
 	"garden",
 	"autumn",
 	"light",

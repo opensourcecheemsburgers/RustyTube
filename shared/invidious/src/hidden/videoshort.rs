@@ -18,6 +18,6 @@ pub struct VideoShort {
 
 impl PartialEq for VideoShort {
 	fn eq(&self, other: &Self) -> bool {
-		*&self.id.eq_ignore_ascii_case(&other.id)
+		self.id.eq_ignore_ascii_case(&other.id)
 	}
 }

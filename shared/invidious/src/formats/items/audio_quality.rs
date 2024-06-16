@@ -17,10 +17,10 @@ pub enum AudioQuality {
 impl fmt::Display for AudioQuality {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
-			AudioQuality::UltraLow => write!(f, "Ultra Low"),
-			AudioQuality::Low => write!(f, "Low"),
-			AudioQuality::Medium => write!(f, "Medium"),
-			AudioQuality::High => write!(f, "High"),
+			Self::UltraLow => write!(f, "Ultra Low"),
+			Self::Low => write!(f, "Low"),
+			Self::Medium => write!(f, "Medium"),
+			Self::High => write!(f, "High"),
 		}
 	}
 }

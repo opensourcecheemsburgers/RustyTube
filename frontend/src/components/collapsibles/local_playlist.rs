@@ -1,4 +1,4 @@
-use invidious::{LocalPlaylist, Video, VideoShort};
+use invidious::{LocalPlaylist, Video};
 use leptos::*;
 use leptos_router::create_query_signal;
 use num_format::ToFormattedString;
@@ -6,17 +6,20 @@ use num_format::ToFormattedString;
 use crate::{
 	components::FerrisError,
 	contexts::{NetworkConfigCtx, RegionConfigCtx},
-	resources::VideoResource,
 	utils::i18n,
 };
 
 #[component]
-pub fn LocalPlaylistSectionCollapsible(playlist: LocalPlaylist) -> impl IntoView {
+pub fn LocalPlaylistSectionCollapsible(
+	playlist: LocalPlaylist,
+) -> impl IntoView {
 	let server = expect_context::<NetworkConfigCtx>().server_slice.0;
 
 	let playlist_videos = Resource::local(
 		move || (playlist.clone(), server.get()),
-		|(playlist, server)| async move { playlist.fetch_playlist_videos(&server).await },
+		|(playlist, server)| async move {
+			playlist.fetch_playlist_videos(&server).await
+		},
 	);
 
 	let recommended_view = move || {
@@ -34,7 +37,9 @@ pub fn LocalPlaylistSectionCollapsible(playlist: LocalPlaylist) -> impl IntoView
 	view! {
 		<div>
 			<div class="hidden lg:!flex flex-col h-auto rounded-lg bg-base-200 p-4 space-y-4">
-				<h1 class="font-semibold text-xl">{i18n("video.info.recommended")}</h1>
+				<h1 class="font-semibold text-xl">
+					{i18n("video.info.recommended")}
+				</h1>
 				<div class="flex flex-col space-y-4 pr-4 rounded-lg bg-base-200">
 					<Suspense fallback=move || {
 						view! { <PlaylistSectionPlaceholder/> }
@@ -62,7 +67,10 @@ pub fn LocalPlaylistSectionCollapsible(playlist: LocalPlaylist) -> impl IntoView
 
 #[component]
 pub fn PlaylistVideo(video: Video) -> impl IntoView {
-	let src = video.thumbnails.get(4).cloned().unwrap().url;
+	let src = video
+		.thumbnails
+		.get(4)
+		.map_or(String::new(), |thumbnail| thumbnail.url.clone());
 
 	let video_id = video.id;
 	let open_video = move |_| {
@@ -70,13 +78,18 @@ pub fn PlaylistVideo(video: Video) -> impl IntoView {
 	};
 
 	let img_loaded = create_rw_signal(false);
-	let image_classes = move || match img_loaded.get() {
-		true => "w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string(),
-		false => "animate-pulse w-[30%] aspect-video bg-neutral rounded-lg".to_string(),
+	let image_classes = move || {
+		if img_loaded.get() {
+			"w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string()
+		} else {
+			"animate-pulse w-[30%] aspect-video bg-neutral rounded-lg"
+				.to_string()
+		}
 	};
 
 	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
-	let views = move || video.views.to_formatted_string(&locale.get().to_num_fmt());
+	let views =
+		move || video.views.to_formatted_string(&locale.get().to_num_fmt());
 
 	view! {
 		<div class="flex flex-row gap-x-4">

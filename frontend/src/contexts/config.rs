@@ -1,6 +1,9 @@
 use config::{Config, HomepageCategory, RememberPosition};
 use invidious::{AudioQuality, VideoQuality};
-use leptos::*;
+use leptos::{
+	create_effect, provide_context, slice, RwSignal, Signal, SignalGet,
+	SignalSetter,
+};
 use locales::RustyTubeLocale;
 
 pub fn provide_config_context_slices(config: Config) {
@@ -21,9 +24,15 @@ pub fn provide_config_context_slices(config: Config) {
 
 	let player_ctx = PlayerConfigCtx {
 		auto_play_slice: slice!(config.player.auto_play),
-		fast_forward_interval_slice: slice!(config.player.fast_forward_interval),
-		default_video_quality_slice: slice!(config.player.default_video_quality),
-		default_audio_quality_slice: slice!(config.player.default_audio_quality),
+		fast_forward_interval_slice: slice!(
+			config.player.fast_forward_interval
+		),
+		default_video_quality_slice: slice!(
+			config.player.default_video_quality
+		),
+		default_audio_quality_slice: slice!(
+			config.player.default_audio_quality
+		),
 		remember_position_slice: slice!(config.player.remember_position),
 		volume_slice: slice!(config.player.volume),
 	};
@@ -33,7 +42,9 @@ pub fn provide_config_context_slices(config: Config) {
 		trending_region_slice: slice!(config.region.trending_region),
 	};
 
-	let privacy_ctx = PrivacyConfigCtx { keep_history_slice: slice!(config.privacy.keep_history) };
+	let privacy_ctx = PrivacyConfigCtx {
+		keep_history_slice: slice!(config.privacy.keep_history),
+	};
 
 	let sponsorblock_ctx = SponsorBlockConfigCtx {
 		enabled: slice!(config.sponsorblock.enabled),
@@ -43,7 +54,9 @@ pub fn provide_config_context_slices(config: Config) {
 		skip_intros: slice!(config.sponsorblock.skip_intros),
 		skip_outros: slice!(config.sponsorblock.skip_outros),
 		skip_previews: slice!(config.sponsorblock.skip_previews),
-		skip_irrelevant_music: slice!(config.sponsorblock.skip_irrelevant_music),
+		skip_irrelevant_music: slice!(
+			config.sponsorblock.skip_irrelevant_music
+		),
 		skip_filler: slice!(config.sponsorblock.skip_filler),
 	};
 
@@ -55,10 +68,13 @@ pub fn provide_config_context_slices(config: Config) {
 	provide_context(sponsorblock_ctx);
 }
 
+#[allow(clippy::struct_field_names)]
+#[allow(clippy::type_complexity)]
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct NetworkConfigCtx {
 	pub server_slice: (Signal<String>, SignalSetter<String>),
-	pub custom_servers_slice: (Signal<Option<Vec<String>>>, SignalSetter<Option<Vec<String>>>),
+	pub custom_servers_slice:
+		(Signal<Option<Vec<String>>>, SignalSetter<Option<Vec<String>>>),
 	pub auto_fetch_subs_slice: (Signal<bool>, SignalSetter<bool>),
 	pub fetch_rss_slice: (Signal<bool>, SignalSetter<bool>),
 }
@@ -66,24 +82,31 @@ pub struct NetworkConfigCtx {
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct UiConfigCtx {
 	pub theme_slice: (Signal<String>, SignalSetter<String>),
-	pub homepage_slice: (Signal<HomepageCategory>, SignalSetter<HomepageCategory>),
+	pub homepage_slice:
+		(Signal<HomepageCategory>, SignalSetter<HomepageCategory>),
 }
 
+#[allow(clippy::struct_field_names)]
 #[derive(Clone, Copy, PartialEq)]
 pub struct PlayerConfigCtx {
 	pub auto_play_slice: (Signal<bool>, SignalSetter<bool>),
 	pub fast_forward_interval_slice: (Signal<u8>, SignalSetter<u8>),
-	pub default_video_quality_slice: (Signal<VideoQuality>, SignalSetter<VideoQuality>),
-	pub default_audio_quality_slice: (Signal<AudioQuality>, SignalSetter<AudioQuality>),
-	pub remember_position_slice: (Signal<RememberPosition>, SignalSetter<RememberPosition>),
+	pub default_video_quality_slice:
+		(Signal<VideoQuality>, SignalSetter<VideoQuality>),
+	pub default_audio_quality_slice:
+		(Signal<AudioQuality>, SignalSetter<AudioQuality>),
+	pub remember_position_slice:
+		(Signal<RememberPosition>, SignalSetter<RememberPosition>),
 	pub volume_slice: (Signal<f64>, SignalSetter<f64>),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct RegionConfigCtx {
 	pub locale_slice: (Signal<RustyTubeLocale>, SignalSetter<RustyTubeLocale>),
-	pub trending_region_slice:
-		(Signal<isocountry::CountryCode>, SignalSetter<isocountry::CountryCode>),
+	pub trending_region_slice: (
+		Signal<isocountry::CountryCode>,
+		SignalSetter<isocountry::CountryCode>,
+	),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]

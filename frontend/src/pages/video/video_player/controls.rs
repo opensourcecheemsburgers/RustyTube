@@ -1,8 +1,13 @@
 use std::time::Duration;
 
-use leptos::*;
+use leptos::{
+	component, expect_context, view, AnimatedShow, IntoView, Props, SignalSet,
+};
 
-use super::control_btns::*;
+use super::control_btns::{
+	FormatDropdown, FullScreenBtn, FullWindowBtn, PauseBtn, ProgressBar,
+	TimeInfo, VolumeKnob,
+};
 use crate::contexts::{PlayerStyle, VIDEO_CONTROLS_ID};
 
 #[component]

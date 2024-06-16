@@ -1,4 +1,3 @@
-use chrono::ParseError;
 use gloo::utils::format::JsValueSerdeExt;
 use wasm_bindgen::JsValue;
 
@@ -7,9 +6,11 @@ pub enum RustyTubeError {
 	BrowserStorage(String),
 	ChronoParse(#[from] chrono::ParseError),
 	Csv(String),
-	DynInto(String),
-	ElementNotFound(String),
+	DateTime,
+	DynInto,
+	ElementNotFound,
 	GlooFileRead(String),
+	LangCode,
 	Network(String),
 	NoAdaptiveFormat,
 	NoAudioFormat,
@@ -19,11 +20,14 @@ pub enum RustyTubeError {
 	NoVideoFormat,
 	NoVideoQuality,
 	NoVideoUrl,
+	NoPerformance,
+	NoWindow,
 	PlaylistParse,
 	Ron(#[from] ron::error::Error),
 	RonSpanned(#[from] ron::error::SpannedError),
 	SearchArgs,
 	SerdeJson(String),
+	TargetNotFound,
 	Tauri(#[from] tauri_sys::error::Error),
 	TomlSerialisation(#[from] toml::ser::Error),
 	TomlDeserialisation(#[from] toml::de::Error),
@@ -33,50 +37,55 @@ pub enum RustyTubeError {
 
 impl From<JsValue> for RustyTubeError {
 	fn from(value: JsValue) -> Self {
-		RustyTubeError::Websys(value.into_serde().unwrap_or_default())
+		Self::Websys(JsValueSerdeExt::into_serde(&value).unwrap_or_default())
 	}
 }
 
 impl std::fmt::Display for RustyTubeError {
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
 		match self {
-			RustyTubeError::BrowserStorage(error) => {
-				write!(f, "Browser Storage Error: {}", error.to_string())
+			Self::BrowserStorage(error) => {
+				write!(f, "Browser Storage Error: {error}")
 			}
-			RustyTubeError::ChronoParse(error) => {
-				write!(f, "Time Parse Error: {}", error.to_string())
+			Self::ChronoParse(error) => {
+				write!(f, "Time Parse Error: {error}")
 			}
-			RustyTubeError::Csv(error) => write!(f, "Csv Parse Error: {}", error.to_string()),
-			RustyTubeError::DynInto(_) => todo!(),
-			RustyTubeError::ElementNotFound(_) => todo!(),
-			RustyTubeError::GlooFileRead(error) => {
-				write!(f, "File Read Error: {}", error.to_string())
+			Self::Csv(error) => write!(f, "Csv Parse Error: {error}"),
+			Self::DateTime => write!(f, "Date time error."),
+			Self::DynInto => write!(f, "Dynamic conversion error."),
+			Self::ElementNotFound => write!(f, "Element not found error."),
+			Self::GlooFileRead(error) => {
+				write!(f, "File Read Error: {error}")
 			}
-			RustyTubeError::Network(error) => write!(f, "Network Error: {}", error.to_string()),
-			RustyTubeError::NoAdaptiveFormat => write!(f, "Error: No adaptive formats available."),
-			RustyTubeError::NoAudioFormat => write!(f, "Error: No audio formats available."),
-			RustyTubeError::NoFileSelected => write!(f, "No file selected."),
-			RustyTubeError::NoLegacyFormat => write!(f, "No legacy format available."),
-			RustyTubeError::NoThumbnails => write!(f, "Error: No thumbnails available."),
-			RustyTubeError::NoVideoFormat => write!(f, "Error: No video formats available."),
-			RustyTubeError::NoVideoQuality => write!(f, "Error: No video qualities available."),
-			RustyTubeError::NoVideoUrl => write!(f, "Error: No video urls available."),
-			RustyTubeError::PlaylistParse => write!(f, "Error: Playlist parse failed."),
-			RustyTubeError::Ron(error) => write!(f, "Ron Error: {}", error.to_string()),
-			RustyTubeError::RonSpanned(error) => write!(f, "Ron Error: {}", error.to_string()),
-			RustyTubeError::SearchArgs => write!(f, "Error: Search args invalid."),
-			RustyTubeError::SerdeJson(error) => {
-				write!(f, "Serde Json Error: {}", error.to_string())
+			Self::LangCode => write!(f, "Unknown lang code."),
+			Self::Network(error) => write!(f, "Network Error: {error}"),
+			Self::NoAdaptiveFormat => write!(f, "Error: No adaptive formats available."),
+			Self::NoAudioFormat => write!(f, "Error: No audio formats available."),
+			Self::NoFileSelected => write!(f, "No file selected."),
+			Self::NoLegacyFormat => write!(f, "No legacy format available."),
+			Self::NoThumbnails => write!(f, "Error: No thumbnails available."),
+			Self::NoVideoFormat => write!(f, "Error: No video formats available."),
+			Self::NoVideoQuality => write!(f, "Error: No video qualities available."),
+			Self::NoVideoUrl => write!(f, "Error: No video urls available."),
+			Self::NoPerformance => write!(f, "Error: Perfomance not available."),
+			Self::NoWindow => write!(f, "Error: Window not available."),
+			Self::PlaylistParse => write!(f, "Error: Playlist parse failed."),
+			Self::Ron(error) => write!(f, "Ron Error: {error}"),
+			Self::RonSpanned(error) => write!(f, "Ron Error: {error}"),
+			Self::SearchArgs => write!(f, "Error: Search args invalid."),
+			Self::SerdeJson(error) => {
+				write!(f, "Serde Json Error: {error}")
 			}
-			RustyTubeError::Tauri(error) => write!(f, "Tauri Error: {}", error.to_string()),
-			RustyTubeError::TomlSerialisation(error) => {
-				write!(f, "Toml Serialisation Error: {}", error.to_string())
+			Self::TargetNotFound => write!(f, "Error: target not found."),
+			Self::Tauri(error) => write!(f, "Tauri Error: {error}"),
+			Self::TomlSerialisation(error) => {
+				write!(f, "Toml Serialisation Error: {error}")
 			}
-			RustyTubeError::TomlDeserialisation(error) => {
-				write!(f, "Toml Deserialisation Error: {}", error.to_string())
+			Self::TomlDeserialisation(error) => {
+				write!(f, "Toml Deserialisation Error: {error}")
 			}
-			RustyTubeError::Websys(error) => write!(f, "Websys Error: {}", error.to_string()),
-			RustyTubeError::Xml(error) => write!(f, "Xml Error: {}", error.to_string()),
+			Self::Websys(error) => write!(f, "Websys Error: {error}"),
+			Self::Xml(error) => write!(f, "Xml Error: {error}"),
 		}
 	}
 }

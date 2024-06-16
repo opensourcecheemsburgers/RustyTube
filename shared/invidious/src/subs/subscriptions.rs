@@ -1,26 +1,22 @@
 use futures::future::join_all;
-use gloo::{
-	file::{
-		futures::{read_as_bytes, read_as_text},
-		Blob,
-	},
-	storage::{LocalStorage, Storage},
+use gloo::file::{
+	futures::{read_as_bytes, read_as_text},
+	Blob,
 };
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use utils::save_to_browser_storage;
 
 use crate::{
 	Channel, ChannelThumb, ChannelVideos, Feed, NewpipeSubscription, NewpipeSubscriptions,
 	YoutubeSubscription, YoutubeSubscriptions,
 };
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Default)]
 pub struct Subscriptions {
 	pub channels: Vec<Subscription>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Default)]
 pub struct Subscription {
 	pub id: String,
 	pub name: String,
@@ -32,7 +28,7 @@ impl Subscription {
 	}
 }
 
-pub const SUBS_KEY: &'static str = "subscriptions";
+pub const SUBS_KEY: &str = "subscriptions";
 
 pub type SubsVideosResult = Result<Vec<Result<ChannelVideos, RustyTubeError>>, RustyTubeError>;
 pub type SubsThumbsResult = Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError>;
@@ -40,21 +36,22 @@ pub type SubsChannelsResult = Result<Vec<Result<Channel, RustyTubeError>>, Rusty
 
 impl Subscriptions {
 	pub async fn read_subs(blob: Blob) -> Result<Self, RustyTubeError> {
-		match blob.raw_mime_type().eq("text/csv") {
-			true => match read_youtube(&blob).await {
+		if blob.raw_mime_type().eq("text/csv") {
+			match read_youtube(&blob).await {
 				Ok(subs) => Ok(subs),
 				Err(_) => match read_newpipe(&blob).await {
 					Ok(subs) => Ok(subs),
 					Err(err) => Err(err),
 				},
-			},
-			false => match read_newpipe(&blob).await {
+			}
+		} else {
+			match read_newpipe(&blob).await {
 				Ok(subs) => Ok(subs),
 				Err(_) => match read_youtube(&blob).await {
 					Ok(subs) => Ok(subs),
 					Err(err) => Err(err),
 				},
-			},
+			}
 		}
 	}
 
@@ -64,12 +61,13 @@ impl Subscriptions {
 		for channel in self.channels.clone() {
 			let id = channel.id.clone();
 			let future = async move {
-				match rss {
-					true => Feed::fetch_videos_from_feed(server, &id).await,
-					false => Channel::fetch_channel_videos(server, &id, None, lang).await,
+				if rss {
+					Feed::fetch_videos_from_feed(server, &id).await
+				} else {
+					Channel::fetch_channel_videos(server, &id, None, lang).await
 				}
 			};
-			futures.push(future)
+			futures.push(future);
 		}
 		let subs_videos = join_all(futures).await;
 
@@ -82,7 +80,7 @@ impl Subscriptions {
 		for channel in self.channels.clone() {
 			let id = channel.id.clone();
 			let future = async move { Channel::fetch_channel(server, &id, lang).await };
-			futures.push(future)
+			futures.push(future);
 		}
 		let channels = join_all(futures).await;
 		Ok(channels)
@@ -94,7 +92,7 @@ impl Subscriptions {
 		for channel in self.channels.clone() {
 			let id = channel.id.clone();
 			let future = async move { Channel::fetch_channel_thumb(server, &id).await };
-			futures.push(future)
+			futures.push(future);
 		}
 		let thumbs = join_all(futures).await;
 		Ok(thumbs)
@@ -102,58 +100,58 @@ impl Subscriptions {
 }
 
 async fn read_youtube(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
-	let bytes = read_as_bytes(&file).await?;
+	let bytes = read_as_bytes(file).await?;
 	let slice = bytes.as_slice();
-	let yt_subs = YoutubeSubscriptions::read_subs_from_csv(&slice)?;
+	let yt_subs = YoutubeSubscriptions::read_subs_from_csv(slice)?;
 	Ok(yt_subs.into())
 }
 
 async fn read_newpipe(file: &Blob) -> Result<Subscriptions, RustyTubeError> {
-	let json_str = read_as_text(&file).await?;
+	let json_str = read_as_text(file).await?;
 	let newpipe_subs = NewpipeSubscriptions::read_subs_from_file(&json_str)?;
 	Ok(newpipe_subs.into())
 }
 
-impl Into<NewpipeSubscriptions> for Subscriptions {
-	fn into(self) -> NewpipeSubscriptions {
-		let subscriptions = self
+impl From<Subscriptions> for NewpipeSubscriptions {
+	fn from(val: Subscriptions) -> Self {
+		let subscriptions = val
 			.channels
 			.into_iter()
-			.map(|yt_sub| yt_sub.into())
+			.map(std::convert::Into::into)
 			.collect::<Vec<NewpipeSubscription>>();
 
-		NewpipeSubscriptions { app_version: "0.0.0".to_string(), app_version_int: 0, subscriptions }
+		Self { app_version: "0.0.0".to_string(), app_version_int: 0, subscriptions }
 	}
 }
 
-impl Into<NewpipeSubscription> for Subscription {
-	fn into(self) -> NewpipeSubscription {
+impl From<Subscription> for NewpipeSubscription {
+	fn from(val: Subscription) -> Self {
 		let service_id = 0;
-		let name = self.name;
-		let url = format!("https:://youtube.com/channel/{}", self.id);
+		let name = val.name;
+		let url = format!("https:://youtube.com/channel/{}", val.id);
 
-		NewpipeSubscription { service_id, name, url }
+		Self { name, service_id, url }
 	}
 }
 
-impl Into<YoutubeSubscriptions> for Subscriptions {
-	fn into(self) -> YoutubeSubscriptions {
-		let subscriptions = self
+impl From<Subscriptions> for YoutubeSubscriptions {
+	fn from(val: Subscriptions) -> Self {
+		let subscriptions = val
 			.channels
 			.into_iter()
-			.map(|yt_sub| yt_sub.into())
+			.map(std::convert::Into::into)
 			.collect::<Vec<YoutubeSubscription>>();
 
-		YoutubeSubscriptions { subscriptions }
+		Self { subscriptions }
 	}
 }
 
-impl Into<YoutubeSubscription> for Subscription {
-	fn into(self) -> YoutubeSubscription {
-		let channel_id = self.id.clone();
-		let channel_url = format!("https:://youtube.com/channel/{}", self.id);
-		let channel_title = self.name;
+impl From<Subscription> for YoutubeSubscription {
+	fn from(val: Subscription) -> Self {
+		let channel_id = val.id.clone();
+		let channel_url = format!("https:://youtube.com/channel/{}", val.id);
+		let channel_title = val.name;
 
-		YoutubeSubscription { channel_id, channel_url, channel_title }
+		Self { channel_id, channel_url, channel_title }
 	}
 }

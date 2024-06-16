@@ -1,7 +1,8 @@
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
-use crate::{fetch::fetch, Comment};
+use crate::fetch::fetch;
+use crate::hidden::Comment;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ChannelComments {
@@ -14,18 +15,10 @@ pub struct ChannelComments {
 }
 
 impl ChannelComments {
-	fn url(server: &str, args: &str) -> String {
-		format!("{server}/api/v1/channels/{args}/community?",)
-	}
-
-	async fn fetch_comments(
-		server: &str,
-		id: &str,
-		args: Option<&str>,
-	) -> Result<Self, RustyTubeError> {
-		let comments_url: String = Self::url(server, id);
-		let comments_json: String = fetch(&comments_url).await?;
-		let comments: Self = serde_json::from_str(&comments_json)?;
+	async fn fetch_comments(server: &str, id: &str) -> Result<Self, RustyTubeError> {
+		let comments_url = format!("{server}/api/v1/channels/{id}/community?");
+		let comments_json = fetch(&comments_url).await?;
+		let comments = serde_json::from_str::<Self>(&comments_json)?;
 		Ok(comments)
 	}
 }

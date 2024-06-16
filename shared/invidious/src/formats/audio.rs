@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::formats::items::{AudioQuality, Container};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AudioFormat {
 	pub init: String,

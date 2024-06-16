@@ -22,12 +22,23 @@ pub fn RecommendedPreviewCard(video: VideoShort) -> impl IntoView {
 #[component]
 pub fn Thumbnail(url: Option<String>) -> impl IntoView {
 	let img_loaded = create_rw_signal(false);
-	let image_classes = move || match img_loaded.get() {
-		true => "w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string(),
-		false => "animate-pulse w-[30%] aspect-video bg-neutral rounded-lg".to_string(),
+	let image_classes = move || {
+		if img_loaded.get() {
+			"w-[30%] aspect-video object-center object-cover bg-neutral rounded-lg".to_string()
+		} else {
+			"animate-pulse w-[30%] aspect-video bg-neutral rounded-lg"
+				.to_string()
+		}
 	};
 
-	view! { <img decoding="async" on:load=move |_| img_loaded.set(true) src=url class=image_classes/> }
+	view! {
+		<img
+			decoding="async"
+			on:load=move |_| img_loaded.set(true)
+			src=url
+			class=image_classes
+		/>
+	}
 }
 
 #[component]

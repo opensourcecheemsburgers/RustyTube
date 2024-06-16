@@ -12,22 +12,22 @@ mod themes;
 mod utils;
 
 use config::Config;
-use console_error_panic_hook;
-use leptos::*;
-use leptos_router::*;
+
+use leptos::{component, mount_to_body, provide_context, view, IntoView};
+use leptos_router::{Route, Router, Routes};
 pub use themes::*;
 
 use crate::{
 	components::Page,
 	contexts::{provide_config_context_slices, provide_toaster_ctx},
 	pages::{
-		ChannelPage, PlaylistsSection, PopularSection, SearchSection, SettingsPage,
-		SubscriptionsSection, TrendingSection, VideoPage,
+		ChannelPage, PlaylistsSection, PopularSection, SearchSection,
+		SettingsPage, SubscriptionsSection, TrendingSection, VideoPage,
 	},
 	resources::{
-		InstancesResource, PlaylistsCtx, SponsorBlockResource, SubscriptionsCtx,
-		SubscriptionsThumbnailsResource, SubscriptionsThumbnailsResourceArgs,
-		SubscriptionsVideosResource, SubscriptionsVideosResourceArgs,
+		InstancesResource, PlaylistsCtx, SponsorBlockResource,
+		SubscriptionsCtx, SubscriptionsThumbnailsResource,
+		SubscriptionsVideosResource,
 	},
 };
 
@@ -52,14 +52,38 @@ fn App() -> impl IntoView {
 				<Route path="" view=move || view! { <Page/> }>
 					<Route path="/" view=move || view! { <TrendingSection/> }/>
 					<Route path="/player" view=move || view! { <VideoPage/> }/>
-					<Route path="/channel" view=move || view! { <ChannelPage/> }/>
-					<Route path="/subscriptions" view=move || view! { <SubscriptionsSection/> }/>
-					<Route path="/trending" view=move || view! { <TrendingSection/> }/>
-					<Route path="/popular" view=move || view! { <PopularSection/> }/>
-					<Route path="/search" view=move || view! { <SearchSection/> }/>
-					<Route path="/playlist" view=move || view! { <VideoPage/> }/>
-					<Route path="/playlists" view=move || view! { <PlaylistsSection/> }/>
-					<Route path="/settings" view=move || view! { <SettingsPage/> }/>
+					<Route
+						path="/channel"
+						view=move || view! { <ChannelPage/> }
+					/>
+					<Route
+						path="/subscriptions"
+						view=move || view! { <SubscriptionsSection/> }
+					/>
+					<Route
+						path="/trending"
+						view=move || view! { <TrendingSection/> }
+					/>
+					<Route
+						path="/popular"
+						view=move || view! { <PopularSection/> }
+					/>
+					<Route
+						path="/search"
+						view=move || view! { <SearchSection/> }
+					/>
+					<Route
+						path="/playlist"
+						view=move || view! { <VideoPage/> }
+					/>
+					<Route
+						path="/playlists"
+						view=move || view! { <PlaylistsSection/> }
+					/>
+					<Route
+						path="/settings"
+						view=move || view! { <SettingsPage/> }
+					/>
 					<Route path="/about" view=move || ().into_view()/>
 				</Route>
 			</Routes>
@@ -68,5 +92,5 @@ fn App() -> impl IntoView {
 }
 
 fn main() {
-	mount_to_body(|| view! { <App/> })
+	mount_to_body(|| view! { <App/> });
 }

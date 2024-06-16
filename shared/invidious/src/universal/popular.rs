@@ -13,6 +13,6 @@ impl Popular {
 		let url = format!("{server}/api/v1/popular?hl={lang}");
 		let popular_json = fetch(&url).await?;
 		let items: Vec<PopularItem> = serde_json::from_str(&popular_json)?;
-		Ok(Popular { items })
+		Ok(Self { items })
 	}
 }

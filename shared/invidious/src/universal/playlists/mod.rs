@@ -7,6 +7,7 @@ pub use csv_playlist::*;
 pub use freetube::*;
 pub use libretube::*;
 pub use local::*;
+
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
@@ -41,16 +42,8 @@ pub struct Playlist {
 }
 
 impl Playlist {
-	fn url(server: &str, args: &str) -> String {
-		format!("{}/api/v1/playlists/{}", server, args)
-	}
-
-	pub async fn fetch_playlist(
-		server: &str,
-		id: &str,
-		args: Option<&str>,
-	) -> Result<Self, RustyTubeError> {
-		let url = Self::url(server, id);
+	pub async fn fetch_playlist(server: &str, id: &str) -> Result<Self, RustyTubeError> {
+		let url = format!("{server}/api/v1/playlists/{id}");
 		let playlist_json = fetch(&url).await?;
 		let playlist: Self = serde_json::from_str(&playlist_json)?;
 		Ok(playlist)

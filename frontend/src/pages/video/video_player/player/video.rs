@@ -35,7 +35,7 @@ pub fn VideoStream(video: Video) -> impl IntoView {
 				let _ = state.update_time();
 			}
 
-			poster=&video.thumbnails.first().unwrap().url
+			poster=video.thumbnails.first().map(|thumb| thumb.url.clone())
 			preload="auto"
 			controls=false
 			autoplay=false
@@ -49,7 +49,7 @@ pub fn VideoStream(video: Video) -> impl IntoView {
 #[component]
 pub fn VideoSource() -> impl IntoView {
 	let format = expect_context::<RwSignal<Option<Format>>>();
-	let source = move || format.get().map(|format| format.video_url()).flatten();
+	let source = move || format.get().and_then(|format| format.video_url());
 
 	move || view! { <source src=source/> }
 }

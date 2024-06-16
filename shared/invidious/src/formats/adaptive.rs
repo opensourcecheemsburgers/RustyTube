@@ -6,7 +6,7 @@ use crate::formats::{
 	AudioFormat, AudioQuality, VideoFormat,
 };
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AdaptiveFormat {
 	pub init: String,
@@ -38,7 +38,7 @@ impl TryFrom<AdaptiveFormat> for AudioFormat {
 			adaptive_format.audio_sample_rate.ok_or(RustyTubeError::NoAudioFormat)?;
 		let audio_channels = adaptive_format.audio_channels.ok_or(RustyTubeError::NoAudioFormat)?;
 
-		Ok(AudioFormat {
+		Ok(Self {
 			init: adaptive_format.init,
 			index: adaptive_format.index,
 			bitrate: adaptive_format.bitrate,
@@ -66,7 +66,7 @@ impl TryFrom<AdaptiveFormat> for VideoFormat {
 			adaptive_format.quality_label.ok_or(RustyTubeError::NoAdaptiveFormat)?;
 		let fps = adaptive_format.fps.ok_or(RustyTubeError::NoAdaptiveFormat)?;
 
-		Ok(VideoFormat {
+		Ok(Self {
 			init: adaptive_format.init,
 			index: adaptive_format.index,
 			bitrate: adaptive_format.bitrate,

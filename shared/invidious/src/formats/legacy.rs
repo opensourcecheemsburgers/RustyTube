@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::formats::items::{Container, Resolution, VideoQuality};
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct LegacyFormat {
 	pub url: String,

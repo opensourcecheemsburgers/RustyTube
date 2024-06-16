@@ -1,6 +1,8 @@
 use std::time::Duration;
 
-use leptos::{expect_context, provide_context, RwSignal, SignalUpdate, StoredValue};
+use leptos::{
+	expect_context, provide_context, RwSignal, SignalUpdate, StoredValue,
+};
 
 #[derive(Clone, Copy)]
 pub struct Toaster {
@@ -9,20 +11,21 @@ pub struct Toaster {
 
 impl Toaster {
 	fn new() -> Self {
-		Toaster { toasts: RwSignal::new(vec![]) }
+		Self { toasts: RwSignal::new(vec![]) }
 	}
 
 	pub fn add_toast(&self, toast: Toast) {
-		self.toasts.update(|toasts| toasts.push(toast))
+		self.toasts.update(|toasts| toasts.push(toast));
 	}
 
 	pub fn remove_toast(&self, burnt_toast: &Toast) {
-		self.toasts.update(|toasts| toasts.retain(|toast| toast != burnt_toast))
+		self.toasts
+			.update(|toasts| toasts.retain(|toast| toast != burnt_toast));
 	}
 }
 
 pub fn toast(toast: Toast) {
-	expect_context::<Toaster>().add_toast(toast)
+	expect_context::<Toaster>().add_toast(toast);
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -59,14 +62,14 @@ pub enum ToastDuration {
 }
 
 impl From<ToastDuration> for Duration {
-	fn from(value: ToastDuration) -> Duration {
+	fn from(value: ToastDuration) -> Self {
 		match value {
-			ToastDuration::Normal => Duration::from_millis(1250),
-			ToastDuration::Long => Duration::from_millis(2500),
+			ToastDuration::Normal => Self::from_millis(1250),
+			ToastDuration::Long => Self::from_millis(2500),
 		}
 	}
 }
 
 pub fn provide_toaster_ctx() {
-	provide_context(Toaster::new())
+	provide_context(Toaster::new());
 }

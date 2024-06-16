@@ -17,6 +17,6 @@ impl Caption {
 
 impl PartialEq for Caption {
 	fn eq(&self, other: &Self) -> bool {
-		*&self.url.eq_ignore_ascii_case(&other.url)
+		self.url.eq_ignore_ascii_case(&other.url)
 	}
 }

@@ -1,10 +1,12 @@
-use std::str::FromStr;
+use leptos::{
+	component, expect_context, provide_context, view, IntoView, Props, Signal,
+	SignalGet,
+};
+use leptos_router::create_query_signal;
 
-use invidious::{LocalPlaylist, LocalPlaylistItem};
-use leptos::*;
-use leptos_router::*;
-
-use super::{comments::CommentsSection, info::VideoInfo, video_player::VideoContainer};
+use super::{
+	comments::CommentsSection, info::VideoInfo, video_player::VideoContainer,
+};
 use crate::{
 	components::RecommendedSectionCollapsible,
 	resources::{SponsorBlockResource, VideoResource},
@@ -14,13 +16,17 @@ use crate::{
 pub fn VideoPage() -> impl IntoView {
 	provide_context(VideoResource::initialise());
 
-	expect_context::<SponsorBlockResource>().set_video(create_query_signal::<String>("id").0);
+	expect_context::<SponsorBlockResource>()
+		.set_video(create_query_signal::<String>("id").0);
 
 	let playlist_query_signal = create_query_signal::<String>("videos").0;
 	let playlist_videos = Signal::derive(move || {
-		playlist_query_signal
-			.get()
-			.map(|videos| videos.split(",").map(|video| video.to_string()).collect::<Vec<String>>())
+		playlist_query_signal.get().map(|videos| {
+			videos
+				.split(',')
+				.map(std::string::ToString::to_string)
+				.collect::<Vec<String>>()
+		})
 	});
 
 	view! {

@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{channel::Channel, hidden::PlaylistItem, universal::Playlist, video::Video};
+use crate::{Channel, Playlist, PlaylistItem, Video};
 
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct CommonImage {
 	pub url: String,
 	pub width: u32,
@@ -15,8 +15,8 @@ impl PartialEq for CommonImage {
 	}
 }
 
-/// Shared thumbnail object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+/// Shared thumbnail object as specified [here](https://docs.invidious.io/api/common_types/)
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct CommonThumbnail {
 	#[serde(default)]
 	pub quality: String,
@@ -31,11 +31,8 @@ impl PartialEq for CommonThumbnail {
 	}
 }
 
-// https://docs.invidious.io/api/common_types/#videoobject
-
-/// Shared image object as specified in https://docs.invidious.io/api/common_types/
-/// Shared video object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+#[allow(clippy::struct_excessive_bools)]
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct CommonVideo {
 	pub title: String,
 	#[serde(rename = "videoId")]
@@ -84,8 +81,8 @@ impl PartialEq for CommonVideo {
 	}
 }
 
-/// Shared channel object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+/// Shared channel object as specified [here](https://docs.invidious.io/api/common_types/)
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct CommonChannel {
 	#[serde(rename = "author")]
 	pub name: String,
@@ -116,8 +113,8 @@ impl PartialEq for CommonChannel {
 	}
 }
 
-/// Shared playlist object as specified in https://docs.invidious.io/api/common_types/
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+/// Shared playlist object as specified [here](https://docs.invidious.io/api/common_types/)
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct CommonPlaylist {
 	pub title: String,
 	#[serde(rename = "playlistId")]
@@ -146,8 +143,8 @@ impl PartialEq for CommonPlaylist {
 	}
 }
 
-/// Playlist video struct used in CommonPlaylist
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+/// Playlist video struct used in `CommonPlaylist`
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct CommonPlaylistVideo {
 	pub title: String,
 	#[serde(rename = "videoId")]
@@ -184,7 +181,7 @@ impl From<Video> for CommonVideo {
 			premium: value.premium,
 			upcoming: value.upcoming,
 			author_verified: false,
-			views_text: "".to_string(),
+			views_text: String::new(),
 		}
 	}
 }

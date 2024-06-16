@@ -1,6 +1,8 @@
-use leptos::*;
+use leptos::{
+	component, expect_context, provide_context, view, IntoView, Props,
+	RwSignal, Signal, SignalGet,
+};
 use leptos_router::Outlet;
-use phosphor_leptos::{Chat, IconWeight};
 
 use crate::{
 	components::{Drawer, ExpandedCtx, Header, Sidebar, Toaster},
@@ -15,9 +17,15 @@ pub fn Page() -> impl IntoView {
 	provide_context(ExpandedCtx(expanded));
 
 	let dir_signal = Signal::derive(move || {
-		match expect_context::<RegionConfigCtx>().locale_slice.0.get().is_rtl_lang() {
-			true => "rtl",
-			false => "ltr",
+		if expect_context::<RegionConfigCtx>()
+			.locale_slice
+			.0
+			.get()
+			.is_rtl_lang()
+		{
+			"rtl"
+		} else {
+			"ltr"
 		}
 	});
 
@@ -84,9 +92,9 @@ fn RustyTubeToaster() -> impl IntoView {
 	}
 }
 
-pub const PAGE_CLASSES: &'static str = "
-flex flex-col w-dvw h-dvh
-
+pub const PAGE_CLASSES: &str = "
+flex flex-col w-dvw h-dvh \
+\
 lg:data-[expanded=false]:w-[calc(100vw-16px)]
 lg:data-[expanded=true]:w-[calc(100vw-64px)]
 ";

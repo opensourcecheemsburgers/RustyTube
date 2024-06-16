@@ -1,29 +1,29 @@
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
-use super::subscriptions::*;
+use super::subscriptions::{Subscription, Subscriptions};
 
-impl Into<Subscription> for NewpipeSubscription {
-	fn into(self) -> Subscription {
-		let index = self.url.rfind("UC").expect("Channel id should have UC at start");
-		let mut id = self.url.clone();
+impl From<NewpipeSubscription> for Subscription {
+	fn from(val: NewpipeSubscription) -> Self {
+		let index = val.url.rfind("UC").expect("Channel id should have UC at start");
+		let mut id = val.url.clone();
 		id.replace_range(0..index, "");
-		let name = self.name.to_string();
+		let name = val.name;
 
-		Subscription { id, name }
+		Self { id, name }
 	}
 }
 
-impl Into<Subscriptions> for NewpipeSubscriptions {
-	fn into(self) -> Subscriptions {
+impl From<NewpipeSubscriptions> for Subscriptions {
+	fn from(val: NewpipeSubscriptions) -> Self {
 		let mut channels: Vec<Subscription> = Vec::new();
 
-		self.subscriptions.iter().for_each(|newpipe_sub| {
+		val.subscriptions.iter().for_each(|newpipe_sub| {
 			let sub: Subscription = newpipe_sub.clone().into();
-			channels.push(sub)
+			channels.push(sub);
 		});
 
-		Subscriptions { channels }
+		Self { channels }
 	}
 }
 

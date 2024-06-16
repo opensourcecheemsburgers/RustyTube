@@ -12,10 +12,10 @@ pub struct Mix {
 }
 
 impl Mix {
-	async fn fetch_mix(server: &str, args: &str, lang: &str) -> Result<Self, RustyTubeError> {
-		let mix_url: String = format!("{}/api/v1/mixes/{}", server, args);
-		let mix_json: String = fetch(&mix_url).await?;
-		let mix: Self = serde_json::from_str(&mix_json)?;
+	async fn fetch_mix(server: &str, lang: &str) -> Result<Self, RustyTubeError> {
+		let mix_url = format!("{server}/api/v1/mixes?hl={lang}");
+		let mix_json = fetch(&mix_url).await?;
+		let mix = serde_json::from_str::<Self>(&mix_json)?;
 		Ok(mix)
 	}
 }

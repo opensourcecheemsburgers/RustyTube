@@ -16,10 +16,10 @@ impl Suggestions {
 		query: &str,
 		server: &str,
 		lang: &str,
-	) -> Result<Suggestions, RustyTubeError> {
-		let url = format!("{}/api/v1/search/suggestions?q={}&hl={}", server, query, lang);
+	) -> Result<Self, RustyTubeError> {
+		let url = format!("{server}/api/v1/search/suggestions?q={query}&hl={lang}");
 		let suggestions_json = fetch(&url).await?;
-		let mut suggestions = serde_json::from_str::<Suggestions>(&suggestions_json)?;
+		let mut suggestions = serde_json::from_str::<Self>(&suggestions_json)?;
 		let decoded_suggestions = suggestions
 			.suggestions
 			.into_iter()

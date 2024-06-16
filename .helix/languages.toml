@@ -1,0 +1,79 @@
+[[language]]
+name = "rust"
+scope = "source.rust"
+injection-regex = "rust"
+file-types = ["rs"]
+roots = ["Cargo.toml", "Cargo.lock", "tailwind.config.js"]
+formatter = { command = "leptosfmt", args = ["--stdin", "--rustfmt"] }
+language-servers = ["rust-analyzer", "tailwindcss-language-server"]
+auto-format = true
+
+[language-server.rust-analyzer.config]
+cargo = { features = "all" }
+check.command = "clippy"
+
+[language-server.tailwindcss-language-server]
+command = "tailwindcss-language-server"
+config = { userLanguages = { rust = "html", "*.rs" = "html", "*.html" = "html" } }
+args = ["--stdio"]
+
+[language-server.vscode-html-language-server]
+command = "vscode-html-language-server"
+args = ["--stdio"]
+
+[language-server.vscode-css-language-server]
+command = "vscode-css-language-server"
+args = ["--stdio"]
+
+[language-server.vscode-json-language-server]
+command = "vscode-json-language-server"
+args = ["--stdio"]
+
+[[language]]
+name = "html"
+file-types = ["html"]
+language-servers = ["vscode-html-language-server", "tailwindcss-language-server"]
+formatter = { command = "dprint", args = ["fmt", "--stdin", "prettier"] }
+auto-format = true
+
+[[language]]
+name = "css"
+file-types = ["css"]
+language-servers = ["vscode-css-language-server"]
+formatter = { command = "dprint", args = ["fmt", "--stdin", "prettier"] }
+auto-format = true
+
+[[language]]
+name = "toml"
+file-types = ["toml"]
+language-servers = ["taplo"]
+formatter = { command = "dprint", args = ["fmt", "--stdin", "toml"] }
+auto-format = true
+
+[[language]]
+name = "javascript"
+file-types = ["js", "jsx"]
+language-servers = ["typescript-language-server"]
+formatter = { command = "dprint", args = ["fmt", "--stdin", "javascript"] }
+auto-format = true
+
+[[language]]
+name = "typescript"
+file-types = ["js", "jsx"]
+language-servers = ["typescript-language-server"]
+formatter = { command = "dprint", args = ["fmt", "--stdin", "typescript"] }
+auto-format = true
+
+[[language]]
+name = "markdown"
+file-types = ["md"]
+language-servers = ["marksman"]
+formatter = { command = "dprint", args = ["fmt", "--stdin", "md"] }
+auto-format = true
+
+[[language]]
+name = "json"
+file-types = ["json"]
+language-servers = ["vscode-json-language-server"]
+formatter = { command = "dprint", args = ["fmt", "--stdin", "json"] }
+auto-format = true

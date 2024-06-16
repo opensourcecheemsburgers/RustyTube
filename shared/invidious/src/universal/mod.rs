@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod mixes;
 mod playlists;
 mod popular;
@@ -12,4 +14,4 @@ pub use popular::*;
 pub use search::*;
 pub use stats::*;
 pub use suggestions::*;
-pub use trending::{Trending, TrendingCategory};
+pub use trending::*;

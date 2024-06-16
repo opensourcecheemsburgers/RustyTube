@@ -1,19 +1,18 @@
-use std::{borrow::BorrowMut, str::FromStr};
-
-use invidious::{
-	Duration, Feature, ResponseType, SearchArgs, SearchResult, SearchResults, Sort, TimeSpan,
+use invidious::{SearchArgs, SearchResult};
+use leptos::{
+	component, view, CollectView, IntoView, RwSignal, Signal, SignalGet,
+	Suspense,
 };
-use leptos::*;
-use leptos_router::{use_query_map, ParamsMap};
-use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{
-		CardGrid, ChannelPreviewCard, FerrisError, GridContainer, PlaceholderCardArray,
-		PlaylistPreviewCard, VideoPreviewCard,
+		CardGrid, ChannelPreviewCard, FerrisError, GridContainer,
+		PlaceholderCardArray, PlaylistPreviewCard, VideoPreviewCard,
 	},
-	contexts::{NetworkConfigCtx, RegionConfigCtx},
-	resources::{get_search_args_from_query_map, SearchAction, SearchActionArgs, SearchResource},
+	resources::{
+		get_search_args_from_query_map, SearchAction, SearchActionArgs,
+		SearchResource,
+	},
 	utils::i18n,
 };
 
@@ -24,7 +23,9 @@ pub fn SearchSection() -> impl IntoView {
 
 	view! {
 		<GridContainer>
-			<h1 class="pl-4 font-semibold text-2xl">{move || search_args.get().query}</h1>
+			<h1 class="pl-4 font-semibold text-2xl">
+				{move || search_args.get().query}
+			</h1>
 			<Suspense fallback=move || {
 				view! { <PlaceholderCardArray/> }
 			}>
@@ -91,7 +92,9 @@ pub fn SearchResults(
 		<button
 			class="btn btn-primary btn-outline btn-sm"
 			on:click=move |_| {
-				search_action.action.dispatch(SearchActionArgs::new(search_args, pages))
+				search_action
+					.action
+					.dispatch(SearchActionArgs::new(search_args, pages));
 			}
 		>
 

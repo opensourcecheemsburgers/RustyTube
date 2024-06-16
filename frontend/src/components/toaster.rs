@@ -1,4 +1,7 @@
-use leptos::*;
+use leptos::{
+	component, expect_context, set_timeout, view, For, IntoView, Props,
+	SignalGet,
+};
 
 use crate::contexts::{Toast, ToastType, Toaster};
 
@@ -20,7 +23,7 @@ where
 
 	view! {
 		<div class="toast toast-center z-[100]">
-			<For each=move || toaster.toasts.get() key=|toast| toast.clone() let:toast>
+			<For each=move || toaster.toasts.get() key=|toast| *toast let:toast>
 
 				{
 					set_timeout(

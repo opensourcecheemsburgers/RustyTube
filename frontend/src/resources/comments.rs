@@ -1,5 +1,7 @@
 use invidious::{Comment, Comments};
-use leptos::*;
+use leptos::{
+	expect_context, Action, Resource, RwSignal, SignalGet, SignalSet,
+};
 use leptos_router::create_query_signal;
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
@@ -25,15 +27,16 @@ impl CommentsResourceArgs {
 
 #[derive(Clone, Copy)]
 pub struct CommentsResource {
-	pub resource: Resource<CommentsResourceArgs, Result<Comments, RustyTubeError>>,
+	pub resource:
+		Resource<CommentsResourceArgs, Result<Comments, RustyTubeError>>,
 }
 
 impl CommentsResource {
 	pub fn initialise() -> Self {
-		CommentsResource {
+		Self {
 			resource: Resource::local(
-				move || CommentsResourceArgs::new(),
-				move |args| fetch_comments(args),
+				CommentsResourceArgs::new,
+				fetch_comments,
 			),
 		}
 	}
@@ -70,33 +73,40 @@ pub struct CommentsAction {
 
 impl CommentsAction {
 	pub fn new() -> Self {
-		Self { action: Action::new(|args: &CommentsActionArgs| fetch_more_comments(args.clone())) }
+		Self {
+			action: Action::new(|args: &CommentsActionArgs| {
+				fetch_more_comments(args.clone())
+			}),
+		}
 	}
 }
 
-async fn fetch_comments(args: CommentsResourceArgs) -> Result<Comments, RustyTubeError> {
+async fn fetch_comments(
+	args: CommentsResourceArgs,
+) -> Result<Comments, RustyTubeError> {
 	Comments::fetch_comments(
 		args.server.as_str(),
 		args.video_id.as_str(),
 		None,
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await
 }
 
-async fn fetch_more_comments(args: CommentsActionArgs) -> Result<(), RustyTubeError> {
-	if args.continuation.get().is_some() || args.comments_vec.get().len() == 0 {
-		let comments = Comments::fetch_comments(
+async fn fetch_more_comments(
+	args: CommentsActionArgs,
+) -> Result<(), RustyTubeError> {
+	if args.continuation.get().is_some() || args.comments_vec.get().is_empty() {
+		let mut comments = Comments::fetch_comments(
 			args.server.as_str(),
 			args.video_id.as_str(),
 			args.continuation.get().as_deref(),
-			&args.locale.to_invidious_lang(),
+			args.locale.to_invidious_lang(),
 		)
-		.await
-		.unwrap();
+		.await?;
 		args.continuation.set(comments.continuation);
 		let mut temp = args.comments_vec.get();
-		temp.append(comments.comments.clone().as_mut());
+		temp.append(comments.comments.as_mut());
 		args.comments_vec.set(temp);
 	}
 	Ok(())

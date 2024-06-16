@@ -1,3 +1,6 @@
+use std::str::FromStr;
+
+use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
 #[allow(non_camel_case_types)]
@@ -8,52 +11,63 @@ pub enum RustyTubeLocale {
 	AR_SY,
 }
 
+pub const ENGLISH_US_LANG_CODE: &str = "en-US";
+pub const FRENCH_LANG_CODE: &str = "fr-FR";
+pub const ARABIC_LANG_CODE: &str = "ar-SY";
+
+pub const ENGLISH_US_HUMAN_NAME: &str = "English (US)";
+pub const FRENCH_HUMAN_NAME: &str = "Français (France)";
+pub const ARABIC_HUMAN_NAME: &str = "العربية (سوريا)";
+
+pub const ENGLISH_US_INVIDIOUS_CODE: &str = "en";
+pub const FRENCH_INVIDIOUS_CODE: &str = "fr";
+pub const ARABIC_INVIDIOUS_CODE: &str = "ar";
+
 impl RustyTubeLocale {
-	pub fn id(&self) -> String {
+	#[allow(clippy::missing_const_for_fn)]
+	#[allow(clippy::wildcard_in_or_patterns)]
+	pub fn from_lang_code_str(lang_code_str: &str) -> Self {
+		match lang_code_str {
+			_ | ENGLISH_US_LANG_CODE => Self::EN_US,
+			FRENCH_LANG_CODE => Self::FR_FR,
+			ARABIC_LANG_CODE => Self::AR_SY,
+		}
+	}
+	pub const fn id(&self) -> &'static str {
 		match &self {
-			RustyTubeLocale::EN_US => "en-US".to_string(),
-			RustyTubeLocale::FR_FR => "fr-FR".to_string(),
-			RustyTubeLocale::AR_SY => "ar-SY".to_string(),
+			Self::EN_US => ENGLISH_US_LANG_CODE,
+			Self::FR_FR => FRENCH_LANG_CODE,
+			Self::AR_SY => ARABIC_LANG_CODE,
 		}
 	}
 
-	pub fn human_name(&self) -> String {
+	pub const fn human_name(&self) -> &'static str {
 		match &self {
-			RustyTubeLocale::EN_US => "English (US)".to_string(),
-			RustyTubeLocale::FR_FR => "Français (France)".to_string(),
-			RustyTubeLocale::AR_SY => "العربية (سوريا)".to_string(),
+			Self::EN_US => ENGLISH_US_HUMAN_NAME,
+			Self::FR_FR => FRENCH_HUMAN_NAME,
+			Self::AR_SY => ARABIC_HUMAN_NAME,
 		}
 	}
 
-	pub fn from_str(lang: &str) -> Self {
-		match lang {
-			"en-US" => Self::EN_US,
-			"fr-FR" => Self::FR_FR,
-			"ar-SY" => Self::AR_SY,
-			_ => Self::EN_US,
+	pub const fn to_invidious_lang(&self) -> &'static str {
+		match self {
+			Self::EN_US => ENGLISH_US_INVIDIOUS_CODE,
+			Self::FR_FR => FRENCH_INVIDIOUS_CODE,
+			Self::AR_SY => ARABIC_INVIDIOUS_CODE,
+		}
+	}
+	pub const fn to_num_fmt(&self) -> num_format::Locale {
+		match self {
+			Self::EN_US => num_format::Locale::en,
+			Self::FR_FR => num_format::Locale::fr,
+			Self::AR_SY => num_format::Locale::ar_SY,
 		}
 	}
 
-	pub fn to_invidious_lang(&self) -> String {
+	pub const fn is_rtl_lang(&self) -> bool {
 		match self {
-			RustyTubeLocale::EN_US => "en".to_string(),
-			RustyTubeLocale::FR_FR => "fr".to_string(),
-			RustyTubeLocale::AR_SY => "ar".to_string(),
-		}
-	}
-	pub fn to_num_fmt(&self) -> num_format::Locale {
-		match self {
-			RustyTubeLocale::EN_US => num_format::Locale::en,
-			RustyTubeLocale::FR_FR => num_format::Locale::fr,
-			RustyTubeLocale::AR_SY => num_format::Locale::ar_SY,
-		}
-	}
-
-	pub fn is_rtl_lang(&self) -> bool {
-		match self {
-			RustyTubeLocale::EN_US => false,
-			RustyTubeLocale::FR_FR => false,
-			RustyTubeLocale::AR_SY => true,
+			Self::EN_US | Self::FR_FR => false,
+			Self::AR_SY => true,
 		}
 	}
 }

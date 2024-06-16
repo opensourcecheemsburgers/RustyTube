@@ -1,16 +1,18 @@
 use gloo::storage::{LocalStorage, Storage};
-use invidious::{SubsThumbsResult, SubsVideosResult, Subscription, Subscriptions};
-use leptos::*;
+use invidious::{
+	SubsThumbsResult, SubsVideosResult, Subscription, Subscriptions,
+};
+use leptos::{
+	expect_context, Resource, RwSignal, SignalGet, SignalSet, SignalUpdate,
+};
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
 
 use crate::contexts::{NetworkConfigCtx, RegionConfigCtx};
 
-use super::save_resource;
+static SUBSCRIPTIONS_KEY: &str = "subscriptions";
 
-static SUBSCRIPTIONS_KEY: &'static str = "subscriptions";
-
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub struct SubscriptionsCtx(pub RwSignal<Subscriptions>);
 
 impl SubscriptionsCtx {
@@ -18,23 +20,37 @@ impl SubscriptionsCtx {
 		Self(RwSignal::new(get_subs(SUBSCRIPTIONS_KEY).unwrap_or_default()))
 	}
 
-	pub async fn add_subscription(&self, id: &str, name: &str) -> Result<(), RustyTubeError> {
+	pub async fn add_subscription(
+		&self,
+		id: &str,
+		name: &str,
+	) -> Result<(), RustyTubeError> {
 		self.0.update(|subs| {
 			let sub = Subscription::new(id, name);
-			if subs.channels.iter().find(|sub| sub.id.eq_ignore_ascii_case(id)).is_none() {
+			if !subs.channels.iter().any(|sub| sub.id.eq_ignore_ascii_case(id))
+			{
 				subs.channels.push(sub);
-				subs.channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
-				subs.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
+				subs.channels.sort_by(|a, b| {
+					a.name.to_lowercase().cmp(&b.name.to_lowercase())
+				});
+				subs.channels
+					.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
 				save_subs(subs);
 			}
 		});
 		Ok(())
 	}
 
-	pub async fn remove_subscription(&self, id: &str) -> Result<(), RustyTubeError> {
+	pub async fn remove_subscription(
+		&self,
+		id: &str,
+	) -> Result<(), RustyTubeError> {
 		self.0.update(|subs| {
-			subs.channels.retain(|channel| !channel.id.eq_ignore_ascii_case(id));
-			subs.channels.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+			subs.channels
+				.retain(|channel| !channel.id.eq_ignore_ascii_case(id));
+			subs.channels.sort_by(|a, b| {
+				a.name.to_lowercase().cmp(&b.name.to_lowercase())
+			});
 			subs.channels.dedup_by(|a, b| a.name.eq_ignore_ascii_case(&b.name));
 			save_subs(subs);
 		});
@@ -47,11 +63,11 @@ pub fn get_subs(key: &'static str) -> Result<Subscriptions, RustyTubeError> {
 }
 
 pub fn save_subs(subs: &mut Subscriptions) -> Result<(), RustyTubeError> {
-	LocalStorage::set(SUBSCRIPTIONS_KEY, subs);
+	LocalStorage::set(SUBSCRIPTIONS_KEY, subs)?;
 	Ok(())
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct SubscriptionsVideosResourceArgs {
 	server: String,
 	locale: RustyTubeLocale,
@@ -75,27 +91,26 @@ pub struct SubscriptionsVideosResource {
 
 impl SubscriptionsVideosResource {
 	pub fn initialise(subscriptions: SubscriptionsCtx) -> Self {
-		SubscriptionsVideosResource {
+		Self {
 			resource: Resource::local(
 				move || SubscriptionsVideosResourceArgs::new(subscriptions),
-				move |args| fetch_subs_videos(args),
+				fetch_subs_videos,
 			),
 		}
 	}
 }
 
-async fn fetch_subs_videos(args: SubscriptionsVideosResourceArgs) -> SubsVideosResult {
-	let videos = args
-		.subscriptions
-		.fetch_videos(&args.server, false, &args.locale.to_invidious_lang())
-		.await;
-	// save_resource(SUBSCRIPTIONS_VIDEOS_KEY, &videos).await?;
-	videos
+async fn fetch_subs_videos(
+	args: SubscriptionsVideosResourceArgs,
+) -> SubsVideosResult {
+	args.subscriptions
+		.fetch_videos(&args.server, false, args.locale.to_invidious_lang())
+		.await
 }
 
-static SUBSCRIPTIONS_THUMBNAILS_KEY: &'static str = "subscriptions_thumbs";
+static SUBSCRIPTIONS_THUMBNAILS_KEY: &str = "subscriptions_thumbs";
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct SubscriptionsThumbnailsResourceArgs {
 	server: String,
 	subscriptions: Subscriptions,
@@ -112,21 +127,23 @@ impl SubscriptionsThumbnailsResourceArgs {
 
 #[derive(Copy, Clone)]
 pub struct SubscriptionsThumbnailsResource {
-	pub resource: Resource<SubscriptionsThumbnailsResourceArgs, SubsThumbsResult>,
+	pub resource:
+		Resource<SubscriptionsThumbnailsResourceArgs, SubsThumbsResult>,
 }
 
 impl SubscriptionsThumbnailsResource {
 	pub fn initialise(args: SubscriptionsCtx) -> Self {
-		SubscriptionsThumbnailsResource {
+		Self {
 			resource: Resource::local(
 				move || SubscriptionsThumbnailsResourceArgs::new(args),
-				move |args| fetch_subs_thumbnails(args),
+				fetch_subs_thumbnails,
 			),
 		}
 	}
 }
 
-async fn fetch_subs_thumbnails(args: SubscriptionsThumbnailsResourceArgs) -> SubsThumbsResult {
-	let thumbs = args.subscriptions.fetch_channel_thumbs(&args.server).await;
-	thumbs
+async fn fetch_subs_thumbnails(
+	args: SubscriptionsThumbnailsResourceArgs,
+) -> SubsThumbsResult {
+	args.subscriptions.fetch_channel_thumbs(&args.server).await
 }

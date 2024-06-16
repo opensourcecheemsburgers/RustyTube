@@ -1,18 +1,21 @@
-use invidious::{Instance, InstanceInfo, SearchArgs, Suggestions};
-use leptos::{html::Input, *};
+use invidious::{Instance, InstanceInfo, SearchArgs};
+use leptos::{
+	component, create_node_ref, expect_context, html, view, window,
+	CollectView, For, IntoView, RwSignal, SignalGet, SignalSet, SignalUpdate,
+};
 use phosphor_leptos::{
-	ArrowClockwise, ArrowLeft, ArrowRight, ArrowUUpLeft, HardDrives, IconWeight, List, Palette,
+	ArrowClockwise, ArrowLeft, ArrowRight, HardDrives, IconWeight, List,
+	Palette,
 };
 use rustytube_error::RustyTubeError;
-use wasm_bindgen::JsCast;
-use web_sys::{HtmlButtonElement, KeyboardEvent, MouseEvent};
+use web_sys::KeyboardEvent;
 
 use crate::{
 	components::{drawer::DRAWER_ID, FerrisError},
-	contexts::{NetworkConfigCtx, RegionConfigCtx, UiConfigCtx},
-	resources::{InstancesResource, SearchResource, SearchSuggestions},
-	themes::*,
-	utils::*,
+	contexts::{NetworkConfigCtx, UiConfigCtx},
+	resources::{InstancesResource, SearchSuggestions},
+	themes::{DARK_THEMES, LIGHT_THEMES},
+	utils::{go_to, i18n},
 };
 
 #[component]
@@ -24,7 +27,10 @@ pub fn Header() -> impl IntoView {
 					class="landscape:lg:hidden btn btn-xs sm:btn-sm md:btn-md btn-ghost"
 					for=DRAWER_ID
 				>
-					<List weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+					<List
+						weight=IconWeight::Regular
+						class="h-6 w-6 base-content"
+					/>
 				</label>
 				<div class="hidden lg:landscape:!flex flex-row items-center">
 					<BackBtn/>
@@ -50,15 +56,22 @@ pub fn BackBtn() -> impl IntoView {
 			class="lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
 			data-tip=i18n("header.back")
 		>
-			<button on:click=|_| back().unwrap() class="btn btn-ghost rounded-btn">
-				<ArrowLeft weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+			<button on:click=|_| back() class="btn btn-ghost rounded-btn">
+				<ArrowLeft
+					weight=IconWeight::Regular
+					class="h-6 w-6 base-content"
+				/>
 			</button>
 		</div>
 	}
 }
 
-fn back() -> Result<(), RustyTubeError> {
-	Ok(window().history()?.back()?)
+fn back() {
+	window()
+		.history()
+		.expect("Window should have history.")
+		.back()
+		.expect("Window should be able to go back");
 }
 
 #[component]
@@ -68,15 +81,22 @@ pub fn ForwardBtn() -> impl IntoView {
 			class="lg:landscape:lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
 			data-tip=i18n("header.forward")
 		>
-			<button on:click=|_| forward().unwrap() class="btn btn-ghost rounded-btn">
-				<ArrowRight weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+			<button on:click=|_| forward() class="btn btn-ghost rounded-btn">
+				<ArrowRight
+					weight=IconWeight::Regular
+					class="h-6 w-6 base-content"
+				/>
 			</button>
 		</div>
 	}
 }
 
-fn forward() -> Result<(), RustyTubeError> {
-	Ok(window().history()?.forward()?)
+fn forward() {
+	window()
+		.history()
+		.expect("Window should have history.")
+		.forward()
+		.expect("Window should be able to go forward");
 }
 
 #[component]
@@ -86,33 +106,37 @@ pub fn ReloadBtn() -> impl IntoView {
 			class="lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
 			data-tip=i18n("header.force_reload")
 		>
-			<button on:click=|_| reload().unwrap() class="btn btn-ghost rounded-btn">
-				<ArrowClockwise weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+			<button on:click=|_| reload() class="btn btn-ghost rounded-btn">
+				<ArrowClockwise
+					weight=IconWeight::Regular
+					class="h-6 w-6 base-content"
+				/>
 			</button>
 		</div>
 	}
 }
 
-fn reload() -> Result<(), RustyTubeError> {
-	Ok(window().location().reload_with_forceget(true)?)
+fn reload() {
+	window()
+		.location()
+		.reload_with_forceget(true)
+		.expect("Window should be able to go reload");
 }
 
 #[component]
 pub fn Search() -> impl IntoView {
-	let search_bar = create_node_ref::<Input>();
+	let search_bar = create_node_ref::<html::Input>();
 
 	let query = RwSignal::new(String::new());
-	let search_args = RwSignal::new(SearchArgs::from_str("".to_string()));
+	let search_args = RwSignal::new(SearchArgs::from_query_str(String::new()));
 
 	let search = move |_| {
 		go_to(format!("/search{}", search_args.get().to_url()));
 	};
 
 	let check_for_enter_key = move |keyboard_event: KeyboardEvent| {
-		if keyboard_event.key_code() == 13 {
-			if !query.get().trim().is_empty() {
-				go_to(format!("/search{}", search_args.get().to_url()));
-			}
+		if keyboard_event.key_code() == 13 && !query.get().trim().is_empty() {
+			go_to(format!("/search{}", search_args.get().to_url()));
 		}
 	};
 
@@ -158,7 +182,7 @@ pub fn Search() -> impl IntoView {
 									view! {
 										<For
 											each=move || suggestions.suggestions.clone()
-											key=|suggestion| suggestion.clone()
+											key=std::clone::Clone::clone
 											let:suggestion
 										>
 											<li>
@@ -204,7 +228,10 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 							tabindex="0"
 							class="btn btn-xs sm:btn-sm md:btn-md btn-ghost rounded-btn"
 						>
-							<HardDrives weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+							<HardDrives
+								weight=IconWeight::Regular
+								class="h-6 w-6 base-content"
+							/>
 
 						</label>
 					</div>
@@ -215,20 +242,21 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 						<div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
 
 							{instances
-								.unwrap()
-								.into_iter()
-								.map(|instance: (String, InstanceInfo)| {
-									let api = instance.1.api.unwrap_or_default();
-									let cors = instance.1.cors.unwrap_or_default();
-									let server_visible = api && cors;
-									match server_visible {
-										true => {
-											view! { <InstanceDropdownListItem instance=instance/> }
-										}
-										false => view! { <div class="hidden"></div> }.into_view(),
-									}
-								})
-								.collect_view()}
+								.map(|instances| {
+									instances
+										.into_iter()
+										.map(|instance: (String, InstanceInfo)| {
+											let api = instance.1.api.unwrap_or_default();
+											let cors = instance.1.cors.unwrap_or_default();
+											let server_visible = api && cors;
+											if server_visible {
+												view! { <InstanceDropdownListItem instance=instance/> }
+											} else {
+												view! { <div class="hidden"></div> }.into_view()
+											}
+										})
+										.collect_view()
+								})}
 
 						</div>
 					</ul>
@@ -246,95 +274,117 @@ pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
 	let flag = instance.1.flag;
 	let uri = instance.1.uri;
 
-	let instance_view = move || {
+	move || {
 		let instance_name = instance_name.clone();
 		let flag = flag.clone();
 		let uri = uri.clone();
 
-		match server.0.get().eq_ignore_ascii_case(&uri) {
-			false => {
-				let uri = uri.clone();
-
-				view! {
-					<div
-						class="p-3 rounded-lg bg-base-100"
-						on:click=move |_| server.1.set(uri.clone())
-					>
-						<a class="font-sans text-base-content">{flag} {" "} {instance_name}</a>
-					</div>
-				}
+		if server.0.get().eq_ignore_ascii_case(&uri) {
+			view! {
+				<div
+					class="p-3 border-2 rounded-lg bg-base-100 border-primary"
+					on:click=move |_| server.1.set(uri.clone())
+				>
+					<a class="font-sans text-base-content">
+						{flag} {" "} {instance_name}
+					</a>
+				</div>
 			}
-			true => {
-				let uri = uri.clone();
-				view! {
-					<div
-						class="p-3 border-2 rounded-lg bg-base-100 border-primary"
-						on:click=move |_| server.1.set(uri.clone())
-					>
-						<a class="font-sans text-base-content">{flag} {" "} {instance_name}</a>
-					</div>
-				}
+		} else {
+			view! {
+				<div
+					class="p-3 rounded-lg bg-base-100"
+					on:click=move |_| server.1.set(uri.clone())
+				>
+					<a class="font-sans text-base-content">
+						{flag} {" "} {instance_name}
+					</a>
+				</div>
 			}
 		}
-	};
-	instance_view
+	}
 }
 
 #[component]
 pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
 	let theme_ctx = expect_context::<UiConfigCtx>().theme_slice;
 
-	let theme_view = move || match theme_ctx.0.get().eq_ignore_ascii_case(name) {
-		true => view! {
-			<div
-				data-theme=name
-				class="p-3 border-2 rounded-lg bg-base-100 border-primary"
-				on:click=move |_| theme_ctx.1.set(name.to_string())
-			>
-				<a class="font-sans capitalize text-base-content">
-					<div class="flex flex-row items-center justify-between w-full rounded-lg">
-						{name} <div class="flex flex-row gap-1">
-							<div data-theme=name class="w-4 h-4 rounded-full bg-primary"></div>
-							<div data-theme=name class="w-4 h-4 rounded-full bg-secondary"></div>
-							<div data-theme=name class="w-4 h-4 rounded-full bg-accent"></div>
-							<div data-theme=name class="w-4 h-4 rounded-full bg-neutral"></div>
+	move || {
+		if theme_ctx.0.get().eq_ignore_ascii_case(name) {
+			view! {
+				<div
+					data-theme=name
+					class="p-3 border-2 rounded-lg bg-base-100 border-primary"
+					on:click=move |_| theme_ctx.1.set(name.to_string())
+				>
+					<a class="font-sans capitalize text-base-content">
+						<div class="flex flex-row items-center justify-between w-full rounded-lg">
+							{name} <div class="flex flex-row gap-1">
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-primary"
+								></div>
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-secondary"
+								></div>
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-accent"
+								></div>
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-neutral"
+								></div>
+							</div>
 						</div>
-					</div>
-				</a>
-			</div>
-		},
-		false => view! {
-			<div
-				data-theme=name
-				class="p-3 rounded-lg bg-base-100"
-				on:click=move |_| theme_ctx.1.set(name.to_string())
-			>
-				<a class="font-sans capitalize text-base-content">
-					<div class="flex flex-row items-center justify-between w-full rounded-lg">
-						{name} <div class="flex flex-row gap-1">
-							<div data-theme=name class="w-4 h-4 rounded-full bg-primary"></div>
-							<div data-theme=name class="w-4 h-4 rounded-full bg-secondary"></div>
-							<div data-theme=name class="w-4 h-4 rounded-full bg-accent"></div>
-							<div data-theme=name class="w-4 h-4 rounded-full bg-neutral"></div>
+					</a>
+				</div>
+			}
+		} else {
+			view! {
+				<div
+					data-theme=name
+					class="p-3 rounded-lg bg-base-100"
+					on:click=move |_| theme_ctx.1.set(name.to_string())
+				>
+					<a class="font-sans capitalize text-base-content">
+						<div class="flex flex-row items-center justify-between w-full rounded-lg">
+							{name} <div class="flex flex-row gap-1">
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-primary"
+								></div>
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-secondary"
+								></div>
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-accent"
+								></div>
+								<div
+									data-theme=name
+									class="w-4 h-4 rounded-full bg-neutral"
+								></div>
+							</div>
 						</div>
-					</div>
-				</a>
-			</div>
-		},
-	};
-
-	theme_view
+					</a>
+				</div>
+			}
+		}
+	}
 }
 
 #[component]
 pub fn ThemeSelectDropdown() -> impl IntoView {
 	let dark_themes_view = DARK_THEMES
-		.into_iter()
+		.iter()
 		.map(|theme| view! { <ThemeDropdownListItem name=theme/> })
 		.collect_view();
 
 	let light_themes_view = LIGHT_THEMES
-		.into_iter()
+		.iter()
 		.map(|theme| view! { <ThemeDropdownListItem name=theme/> })
 		.collect_view();
 
@@ -345,8 +395,14 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 				data-tip=i18n("header.themes")
 			>
 
-				<label tabindex="0" class="btn btn-xs sm:btn-sm md:btn-md btn-ghost rounded-btn">
-					<Palette weight=IconWeight::Regular class="h-6 w-6 base-content"/>
+				<label
+					tabindex="0"
+					class="btn btn-xs sm:btn-sm md:btn-md btn-ghost rounded-btn"
+				>
+					<Palette
+						weight=IconWeight::Regular
+						class="h-6 w-6 base-content"
+					/>
 				</label>
 			</div>
 			<ul

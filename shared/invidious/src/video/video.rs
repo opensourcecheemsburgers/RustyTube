@@ -2,12 +2,13 @@ use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-	common::*,
+	common::{CommonImage, CommonThumbnail},
 	fetch::fetch,
 	formats::{AdaptiveFormat, LegacyFormat},
-	hidden::*,
+	hidden::{Caption, CountryCode, Storyboard, VideoShort},
 };
 
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Video {
 	pub title: String,
@@ -90,6 +91,6 @@ impl Video {
 
 impl PartialEq for Video {
 	fn eq(&self, other: &Self) -> bool {
-		*&self.id.eq(&other.id)
+		self.id.eq(&other.id)
 	}
 }

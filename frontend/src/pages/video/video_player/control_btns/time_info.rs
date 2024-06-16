@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::{component, expect_context, view, IntoView, Props};
 
 use crate::contexts::PlayerState;
 

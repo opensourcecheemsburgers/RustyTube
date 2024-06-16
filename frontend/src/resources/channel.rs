@@ -1,8 +1,11 @@
 use invidious::{
-	Channel, ChannelLivestreams, ChannelPlaylists, ChannelShorts, ChannelVideos, Comment, Comments,
-	CommonPlaylist, CommonVideo,
+	Channel, ChannelLivestreams, ChannelPlaylists, ChannelShorts,
+	ChannelVideos, Comment, Comments, CommonPlaylist, CommonVideo,
 };
-use leptos::*;
+use leptos::{
+	expect_context, Action, Resource, RwSignal, SignalGet, SignalSet,
+	SignalUpdate,
+};
 use leptos_router::create_query_signal;
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
@@ -28,22 +31,29 @@ impl ChannelResourceArgs {
 
 #[derive(Clone, Copy)]
 pub struct ChannelResource {
-	pub resource: Resource<ChannelResourceArgs, Result<Channel, RustyTubeError>>,
+	pub resource:
+		Resource<ChannelResourceArgs, Result<Channel, RustyTubeError>>,
 }
 
 impl ChannelResource {
 	pub fn initialise() -> Self {
-		ChannelResource {
-			resource: Resource::local(
-				move || ChannelResourceArgs::new(),
-				move |args| fetch_channel(args),
-			),
+		Self {
+			resource: Resource::local(ChannelResourceArgs::new, move |args| {
+				fetch_channel(args)
+			}),
 		}
 	}
 }
 
-async fn fetch_channel(args: ChannelResourceArgs) -> Result<Channel, RustyTubeError> {
-	Channel::fetch_channel(&args.server, &args.channel_id, &args.locale.to_invidious_lang()).await
+async fn fetch_channel(
+	args: ChannelResourceArgs,
+) -> Result<Channel, RustyTubeError> {
+	Channel::fetch_channel(
+		&args.server,
+		&args.channel_id,
+		args.locale.to_invidious_lang(),
+	)
+	.await
 }
 
 #[derive(Clone, PartialEq, Eq)]
@@ -65,15 +75,18 @@ impl ChannelVideosResourceArgs {
 
 #[derive(Clone, Copy)]
 pub struct ChannelVideosResource {
-	pub resource: Resource<ChannelVideosResourceArgs, Result<ChannelVideos, RustyTubeError>>,
+	pub resource: Resource<
+		ChannelVideosResourceArgs,
+		Result<ChannelVideos, RustyTubeError>,
+	>,
 }
 
 impl ChannelVideosResource {
 	pub fn initialise() -> Self {
 		Self {
 			resource: Resource::local(
-				move || ChannelVideosResourceArgs::new(),
-				move |args| fetch_channel_videos(args),
+				ChannelVideosResourceArgs::new,
+				fetch_channel_videos,
 			),
 		}
 	}
@@ -86,7 +99,7 @@ async fn fetch_channel_videos(
 		&args.server,
 		&args.channel_id,
 		None,
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await
 }
@@ -130,15 +143,18 @@ impl ChannelVideosAction {
 	}
 }
 
-async fn fetch_more_channel_videos(args: ChannelVideosActionArgs) -> Result<(), RustyTubeError> {
+async fn fetch_more_channel_videos(
+	args: ChannelVideosActionArgs,
+) -> Result<(), RustyTubeError> {
 	let mut channel_videos = Channel::fetch_channel_videos(
 		&args.server,
 		&args.channel_id,
 		args.continuation.get().as_deref(),
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await?;
-	args.channel_videos_vec.update(|videos| videos.append(&mut channel_videos.videos));
+	args.channel_videos_vec
+		.update(|videos| videos.append(&mut channel_videos.videos));
 	args.continuation.set(channel_videos.continuation);
 	Ok(())
 }
@@ -162,15 +178,18 @@ impl ChannelShortsResourceArgs {
 
 #[derive(Clone, Copy)]
 pub struct ChannelShortsResource {
-	pub resource: Resource<ChannelShortsResourceArgs, Result<ChannelShorts, RustyTubeError>>,
+	pub resource: Resource<
+		ChannelShortsResourceArgs,
+		Result<ChannelShorts, RustyTubeError>,
+	>,
 }
 
 impl ChannelShortsResource {
 	pub fn initialise() -> Self {
 		Self {
 			resource: Resource::local(
-				move || ChannelShortsResourceArgs::new(),
-				move |args| fetch_channel_shorts(args),
+				ChannelShortsResourceArgs::new,
+				fetch_channel_shorts,
 			),
 		}
 	}
@@ -183,7 +202,7 @@ async fn fetch_channel_shorts(
 		&args.server,
 		&args.channel_id,
 		None,
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await
 }
@@ -227,15 +246,18 @@ impl ChannelShortsAction {
 	}
 }
 
-async fn fetch_more_channel_shorts(args: ChannelShortsActionArgs) -> Result<(), RustyTubeError> {
+async fn fetch_more_channel_shorts(
+	args: ChannelShortsActionArgs,
+) -> Result<(), RustyTubeError> {
 	let mut channel_shorts = Channel::fetch_channel_shorts(
 		&args.server,
 		&args.channel_id,
 		args.continuation.get().as_deref(),
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await?;
-	args.channel_shorts_vec.update(|shorts| shorts.append(&mut channel_shorts.shorts));
+	args.channel_shorts_vec
+		.update(|shorts| shorts.append(&mut channel_shorts.shorts));
 	args.continuation.set(channel_shorts.continuation);
 	Ok(())
 }
@@ -259,16 +281,18 @@ impl ChannelLivestreamsResourceArgs {
 
 #[derive(Clone, Copy)]
 pub struct ChannelLivestreamsResource {
-	pub resource:
-		Resource<ChannelLivestreamsResourceArgs, Result<ChannelLivestreams, RustyTubeError>>,
+	pub resource: Resource<
+		ChannelLivestreamsResourceArgs,
+		Result<ChannelLivestreams, RustyTubeError>,
+	>,
 }
 
 impl ChannelLivestreamsResource {
 	pub fn initialise() -> Self {
 		Self {
 			resource: Resource::local(
-				move || ChannelLivestreamsResourceArgs::new(),
-				move |args| fetch_channel_livestreams(args),
+				ChannelLivestreamsResourceArgs::new,
+				fetch_channel_livestreams,
 			),
 		}
 	}
@@ -281,7 +305,7 @@ async fn fetch_channel_livestreams(
 		&args.server,
 		&args.channel_id,
 		None,
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await
 }
@@ -312,7 +336,8 @@ impl ChannelLivestreamsActionArgs {
 
 #[derive(Clone, Copy)]
 pub struct ChannelLivestreamsAction {
-	pub action: Action<ChannelLivestreamsActionArgs, Result<(), RustyTubeError>>,
+	pub action:
+		Action<ChannelLivestreamsActionArgs, Result<(), RustyTubeError>>,
 }
 
 impl ChannelLivestreamsAction {
@@ -332,11 +357,12 @@ async fn fetch_more_channel_livestreams(
 		&args.server,
 		&args.channel_id,
 		args.continuation.get().as_deref(),
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await?;
-	args.channel_livestreams_vec
-		.update(|livestreams| livestreams.append(&mut channel_livestreams.livestreams));
+	args.channel_livestreams_vec.update(|livestreams| {
+		livestreams.append(&mut channel_livestreams.livestreams);
+	});
 	args.continuation.set(channel_livestreams.continuation);
 	Ok(())
 }
@@ -360,15 +386,18 @@ impl ChannelPlaylistsResourceArgs {
 
 #[derive(Clone, Copy)]
 pub struct ChannelPlaylistsResource {
-	pub resource: Resource<ChannelPlaylistsResourceArgs, Result<ChannelPlaylists, RustyTubeError>>,
+	pub resource: Resource<
+		ChannelPlaylistsResourceArgs,
+		Result<ChannelPlaylists, RustyTubeError>,
+	>,
 }
 
 impl ChannelPlaylistsResource {
 	pub fn initialise() -> Self {
 		Self {
 			resource: Resource::local(
-				move || ChannelPlaylistsResourceArgs::new(),
-				move |args| fetch_channel_playlists(args),
+				ChannelPlaylistsResourceArgs::new,
+				fetch_channel_playlists,
 			),
 		}
 	}
@@ -381,7 +410,7 @@ async fn fetch_channel_playlists(
 		&args.server,
 		&args.channel_id,
 		None,
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await
 }
@@ -432,7 +461,7 @@ async fn fetch_more_channel_playlists(
 		&args.server,
 		&args.channel_id,
 		args.continuation.get().as_deref(),
-		&args.locale.to_invidious_lang(),
+		args.locale.to_invidious_lang(),
 	)
 	.await?;
 	args.channel_playlists_vec

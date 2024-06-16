@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{common::CommonImage, fetch};
 
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct Comment {
 	#[serde(default)]
 	pub verified: bool,
@@ -52,7 +52,7 @@ pub struct CreatorHeart {
 	pub name: String,
 }
 
-#[derive(Clone, Eq, Hash, Deserialize, Serialize, Debug)]
+#[derive(Clone, Eq, Deserialize, Serialize, Debug)]
 pub struct RepliesInfo {
 	#[serde(rename = "replyCount")]
 	pub replies: u32,
@@ -65,7 +65,7 @@ impl PartialEq for RepliesInfo {
 	}
 }
 
-#[derive(Clone, PartialEq, Eq, Hash, Deserialize, Serialize, Debug)]
+#[derive(Clone, PartialEq, Eq, Deserialize, Serialize, Debug)]
 pub struct Replies {
 	#[serde(rename = "videoId")]
 	pub id: String,
@@ -79,11 +79,11 @@ impl Replies {
 		id: &str,
 		continuation: &str,
 		lang: &str,
-	) -> Result<Replies, RustyTubeError> {
+	) -> Result<Self, RustyTubeError> {
 		let comments_url =
-			format!("{}/api/v1/comments/{}?continuation={}&hl={}", server, id, continuation, lang);
+			format!("{server}/api/v1/comments/{id}?continuation={continuation}&hl={lang}");
 		let comments_json = fetch(&comments_url).await?;
-		let replies: Replies = serde_json::from_str(&comments_json)?;
+		let replies = serde_json::from_str::<Self>(&comments_json)?;
 		Ok(replies)
 	}
 }

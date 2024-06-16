@@ -1,5 +1,7 @@
 use invidious::{Comment, Replies};
-use leptos::*;
+use leptos::{
+	expect_context, Action, Resource, RwSignal, SignalGet, SignalSet,
+};
 use leptos_router::create_query_signal;
 use locales::RustyTubeLocale;
 use rustytube_error::RustyTubeError;
@@ -38,29 +40,30 @@ pub struct RepliesResource {
 
 impl RepliesResource {
 	pub fn initialise(args: RepliesResourceArgs) -> Self {
-		RepliesResource {
-			resource: Resource::local(
-				move || args.clone(),
-				move |args| fetch_replies(args.clone()),
-			),
-			fetch_more: Action::new(|args: &RepliesResourceArgs| fetch_replies(args.clone())),
+		Self {
+			resource: Resource::local(move || args.clone(), fetch_replies),
+			fetch_more: Action::new(|args: &RepliesResourceArgs| {
+				fetch_replies(args.clone())
+			}),
 		}
 	}
 }
 
-async fn fetch_replies(args: RepliesResourceArgs) -> Result<(), RustyTubeError> {
+async fn fetch_replies(
+	args: RepliesResourceArgs,
+) -> Result<(), RustyTubeError> {
 	if let Some(token) = args.continuation.get() {
-		if let Ok(replies) = Replies::fetch_replies(
+		if let Ok(mut replies) = Replies::fetch_replies(
 			args.server.as_str(),
 			args.video_id.as_str(),
 			token.as_str(),
-			&args.locale.to_invidious_lang(),
+			args.locale.to_invidious_lang(),
 		)
 		.await
 		{
 			args.continuation.set(replies.continuation);
 			let mut temp = args.replies_vec.get();
-			temp.append(replies.comments.clone().as_mut());
+			temp.append(replies.comments.as_mut());
 			args.replies_vec.set(temp);
 		}
 	}

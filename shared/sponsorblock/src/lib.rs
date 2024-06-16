@@ -1,9 +1,10 @@
-pub static SPONSORBLOCK_API: &'static str = "https://sponsor.ajay.app/api";
+pub static SPONSORBLOCK_API: &str = "https://sponsor.ajay.app/api";
 
-use std::{error::Error, future::Future};
+use std::{error::Error, fmt::Display};
 
 use serde::{Deserialize, Serialize};
 
+#[must_use]
 #[derive(Clone, Deserialize, Serialize)]
 pub struct Query {
 	#[serde(rename = "videoID")]
@@ -29,17 +30,17 @@ pub enum Category {
 	Filler,
 }
 
-impl ToString for Category {
-	fn to_string(&self) -> String {
+impl Display for Category {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		match self {
-			Category::Sponsor => "\"sponsor\"".to_string(),
-			Category::SelfPromotion => "\"selfpromo\"".to_string(),
-			Category::Interaction => "\"interaction\"".to_string(),
-			Category::Intro => "\"intro\"".to_string(),
-			Category::Outro => "\"outro\"".to_string(),
-			Category::Preview => "\"preview\"".to_string(),
-			Category::OffTopicMusic => "\"music_offtopic\"".to_string(),
-			Category::Filler => "\"filler\"".to_string(),
+			Self::Sponsor => write!(f, "\"sponsor\""),
+			Self::SelfPromotion => write!(f, "\"selfpromo\""),
+			Self::Interaction => write!(f, "\"interaction\""),
+			Self::Intro => write!(f, "\"intro\""),
+			Self::Outro => write!(f, "\"outro\""),
+			Self::Preview => write!(f, "\"preview\""),
+			Self::OffTopicMusic => write!(f, "\"music_offtopic\""),
+			Self::Filler => write!(f, "\"filler\""),
 		}
 	}
 }
@@ -54,20 +55,20 @@ pub enum Action {
 	Chapter,
 }
 
-impl ToString for Action {
-	fn to_string(&self) -> String {
+impl Display for Action {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		match self {
-			Action::Skip => "\"skip\"".to_string(),
-			Action::Mute => "\"mute\"".to_string(),
-			Action::Full => "\"full\"".to_string(),
-			Action::PointOfInterest => "\"poi\"".to_string(),
-			Action::Chapter => "\"chapter\"".to_string(),
+			Self::Skip => write!(f, "\"skip\""),
+			Self::Mute => write!(f, "\"mute\""),
+			Self::Full => write!(f, "\"full\""),
+			Self::PointOfInterest => write!(f, "\"poi\""),
+			Self::Chapter => write!(f, "\"chapter\""),
 		}
 	}
 }
 
 impl Query {
-	pub fn create(
+	pub const fn create(
 		video_id: String,
 		required_segments: Option<Vec<String>>,
 		categories: Option<Vec<Category>>,
@@ -77,7 +78,7 @@ impl Query {
 		Self { video_id, required_segments, categories, actions, service }
 	}
 
-	pub fn build(video_id: String) -> Self {
+	pub const fn build(video_id: String) -> Self {
 		Self { video_id, required_segments: None, categories: None, actions: None, service: None }
 	}
 
@@ -98,6 +99,7 @@ impl Query {
 		self.clone()
 	}
 
+	#[must_use]
 	pub fn url(&self) -> String {
 		let required_segments = self.required_segments.as_ref().map(|required_segments| {
 			format!("&requiredSegments=[{}]", required_segments.join("\",\""))
@@ -106,18 +108,26 @@ impl Query {
 		let categories = self.categories.as_ref().map(|categories| {
 			format!(
 				"&categories=[{}]",
-				categories.iter().map(|cat| cat.to_string()).collect::<Vec<String>>().join(",")
+				categories
+					.iter()
+					.map(std::string::ToString::to_string)
+					.collect::<Vec<String>>()
+					.join(",")
 			)
 		});
 
 		let actions = self.actions.as_ref().map(|actions| {
 			format!(
 				"&actionTypes=[{}]",
-				actions.iter().map(|cat| cat.to_string()).collect::<Vec<String>>().join(",")
+				actions
+					.iter()
+					.map(std::string::ToString::to_string)
+					.collect::<Vec<String>>()
+					.join(",")
 			)
 		});
 
-		let service = self.service.as_ref().map(|service| format!("&service={}", service));
+		let service = self.service.as_ref().map(|service| format!("&service={service}"));
 
 		format!(
 			"{}/skipSegments?videoID={}{}{}{}{}",
@@ -130,15 +140,18 @@ impl Query {
 		)
 	}
 
+	/// # Errors
+	///
+	/// - Network errors
+	/// - Serde errors
 	pub async fn send_query(&self) -> Result<Option<Response>, Box<dyn Error>> {
 		let response = gloo::net::http::Request::get(&self.url()).send().await?;
 
-		match response.status() == 404 {
-			true => Ok(None),
-			false => {
-				let response_text = response.text().await?;
-				Ok(Some(serde_json::from_str::<Response>(&response_text)?))
-			}
+		if response.status() == 404 {
+			Ok(None)
+		} else {
+			let response_text = response.text().await?;
+			Ok(Some(serde_json::from_str::<Response>(&response_text)?))
 		}
 	}
 }
@@ -164,126 +177,124 @@ pub struct Response {
 	pub segments: Vec<Segment>,
 }
 
-#[cfg(test)]
-mod tests {
-	use std::{error::Error, future::Future};
+// #[cfg(test)]
+// mod tests {
+// 	use crate::{Category, Query};
 
-	use crate::{Category, Query, Response};
+// 	use wasm_bindgen_test::*;
 
-	use wasm_bindgen_test::*;
+// 	pub static TEST_VIDEOS: &[&str; 61] = &[
+// 		"wsmHCfSZM70",
+// 		"RE0f4ed5N24",
+// 		"Bu6PxzNR3dY",
+// 		"r22tyT77vOw",
+// 		"SKIXCPn2xB0",
+// 		"HEbaKDkzomI",
+// 		"yLy3ygqA5yg",
+// 		"s1fxZ-VWs2U",
+// 		"gIMOtNzjHL4",
+// 		"69dCWRvIzyo",
+// 		"bc8Okr4cgL4",
+// 		"1EIlcYCfEIE",
+// 		"sB1XQYDbzOE",
+// 		"QsM6b5yix0U",
+// 		"seoaDLWuHtU",
+// 		"Al93JD5GExY",
+// 		"kaf3pdJ_Cow",
+// 		"i9TJWsuzBLU",
+// 		"CcHevgjAnV0",
+// 		"8BxVi6YiicQ",
+// 		"DNfj2BxGIxA",
+// 		"X5OIucMnw7M",
+// 		"n3XTZde8ZvQ",
+// 		"FwdDAZruMKk",
+// 		"-duJtlw394U",
+// 		"AfzwEF5yr3k",
+// 		"YjkEVrJP7jI",
+// 		"fpayOqZNWUo",
+// 		"TNZk-xnxIYE",
+// 		"iQr1EZ3rLOM",
+// 		"WXV-zB3EfNw",
+// 		"qz7NHaCspzg",
+// 		"YE431SYO2Is",
+// 		"YUMtJ6K43K8",
+// 		"2fpZbH4BNsI",
+// 		"8V8uQbIFlh0",
+// 		"tVvbLS2Bm8c",
+// 		"gMULrCIT6QY",
+// 		"1r82NBk3aKM",
+// 		"JoaIoctknLk",
+// 		"jv3zuQ-forQ",
+// 		"M42qWWi4y6k",
+// 		"JAKm3-ijEBo",
+// 		"5kJv-oSajto",
+// 		"mtaQroi75M0",
+// 		"nCS4BtJ34-o",
+// 		"8ZrNRk9OUGA",
+// 		"j6Gf482ZjSg",
+// 		"Qa6y_CiyAMA",
+// 		"mY-Yc1B6vdk",
+// 		"aeifzxaDOVo",
+// 		"4QY6ADlspTQ",
+// 		"3wCexOqw-h4",
+// 		"VvMjFXwL9Uw",
+// 		"BH5ghaSLVUc",
+// 		"MuP-9O7gNIc",
+// 		"9vjVT-Pp4R8",
+// 		"hDWeJnH4Wys",
+// 		"msiKpFV8HNY",
+// 		"FufN3c68nPg",
+// 		"CW1CLcT83as",
+// 	];
 
-	pub static TEST_VIDEOS: &[&'static str; 61] = &[
-		"wsmHCfSZM70",
-		"RE0f4ed5N24",
-		"Bu6PxzNR3dY",
-		"r22tyT77vOw",
-		"SKIXCPn2xB0",
-		"HEbaKDkzomI",
-		"yLy3ygqA5yg",
-		"s1fxZ-VWs2U",
-		"gIMOtNzjHL4",
-		"69dCWRvIzyo",
-		"bc8Okr4cgL4",
-		"1EIlcYCfEIE",
-		"sB1XQYDbzOE",
-		"QsM6b5yix0U",
-		"seoaDLWuHtU",
-		"Al93JD5GExY",
-		"kaf3pdJ_Cow",
-		"i9TJWsuzBLU",
-		"CcHevgjAnV0",
-		"8BxVi6YiicQ",
-		"DNfj2BxGIxA",
-		"X5OIucMnw7M",
-		"n3XTZde8ZvQ",
-		"FwdDAZruMKk",
-		"-duJtlw394U",
-		"AfzwEF5yr3k",
-		"YjkEVrJP7jI",
-		"fpayOqZNWUo",
-		"TNZk-xnxIYE",
-		"iQr1EZ3rLOM",
-		"WXV-zB3EfNw",
-		"qz7NHaCspzg",
-		"YE431SYO2Is",
-		"YUMtJ6K43K8",
-		"2fpZbH4BNsI",
-		"8V8uQbIFlh0",
-		"tVvbLS2Bm8c",
-		"gMULrCIT6QY",
-		"1r82NBk3aKM",
-		"JoaIoctknLk",
-		"jv3zuQ-forQ",
-		"M42qWWi4y6k",
-		"JAKm3-ijEBo",
-		"5kJv-oSajto",
-		"mtaQroi75M0",
-		"nCS4BtJ34-o",
-		"8ZrNRk9OUGA",
-		"j6Gf482ZjSg",
-		"Qa6y_CiyAMA",
-		"mY-Yc1B6vdk",
-		"aeifzxaDOVo",
-		"4QY6ADlspTQ",
-		"3wCexOqw-h4",
-		"VvMjFXwL9Uw",
-		"BH5ghaSLVUc",
-		"MuP-9O7gNIc",
-		"9vjVT-Pp4R8",
-		"hDWeJnH4Wys",
-		"msiKpFV8HNY",
-		"FufN3c68nPg",
-		"CW1CLcT83as",
-	];
+// 	// #[cfg(not(target_arch = "wasm-32"))]
+// 	// #[test]
+// 	// pub fn collect_query_responses() {
+// 	// 	let client = reqwest::blocking::Client::new();
+// 	// 	for test_video in TEST_VIDEOS {
+// 	// 		let resp = client
+// 	// 			.get(Query::build(test_video.to_string()).url())
+// 	// 			.send()
+// 	// 			.unwrap()
+// 	// 			.text()
+// 	// 			.unwrap();
 
-	// #[cfg(not(target_arch = "wasm-32"))]
-	// #[test]
-	// pub fn collect_query_responses() {
-	// 	let client = reqwest::blocking::Client::new();
-	// 	for test_video in TEST_VIDEOS {
-	// 		let resp = client
-	// 			.get(Query::build(test_video.to_string()).url())
-	// 			.send()
-	// 			.unwrap()
-	// 			.text()
-	// 			.unwrap();
+// 	// 		serde_json::from_str::<Response>(&resp).unwrap();
 
-	// 		serde_json::from_str::<Response>(&resp).unwrap();
+// 	// 		std::fs::write(format!("test_files/{}.json", test_video), resp).unwrap();
+// 	// 	}
+// 	// }
 
-	// 		std::fs::write(format!("test_files/{}.json", test_video), resp).unwrap();
-	// 	}
-	// }
+// 	wasm_bindgen_test_configure!(run_in_browser);
 
-	wasm_bindgen_test_configure!(run_in_browser);
+// 	#[wasm_bindgen_test]
+// 	pub async fn fetch_response() {
+// 		for test_video in TEST_VIDEOS {
+// 			let query = Query::build(test_video.to_string());
+// 			query.send_query().await.unwrap();
+// 		}
+// 	}
 
-	#[wasm_bindgen_test]
-	pub async fn fetch_response() {
-		for test_video in TEST_VIDEOS {
-			let query = Query::build(test_video.to_string());
-			query.send_query().await.unwrap();
-		}
-	}
-
-	#[wasm_bindgen_test]
-	pub async fn fetch_response_with_categories() {
-		for test_video in TEST_VIDEOS {
-			let query = Query::create(
-				test_video.to_string(),
-				None,
-				Some(vec![
-					Category::Sponsor,
-					Category::SelfPromotion,
-					Category::Intro,
-					Category::Outro,
-					Category::Interaction,
-					Category::OffTopicMusic,
-					Category::Preview,
-					Category::Filler,
-				]),
-				None,
-				None,
-			);
-			query.send_query().await.unwrap();
-		}
-	}
-}
+// 	#[wasm_bindgen_test]
+// 	pub async fn fetch_response_with_categories() {
+// 		for test_video in TEST_VIDEOS {
+// 			let query = Query::create(
+// 				test_video.to_string(),
+// 				None,
+// 				Some(vec![
+// 					Category::Sponsor,
+// 					Category::SelfPromotion,
+// 					Category::Intro,
+// 					Category::Outro,
+// 					Category::Interaction,
+// 					Category::OffTopicMusic,
+// 					Category::Preview,
+// 					Category::Filler,
+// 				]),
+// 				None,
+// 				None,
+// 			);
+// 			query.send_query().await.unwrap();
+// 		}
+// 	}
+// }

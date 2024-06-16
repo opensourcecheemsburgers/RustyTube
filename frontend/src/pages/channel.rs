@@ -1,23 +1,23 @@
 use invidious::{
-	Channel, ChannelLivestreams, ChannelPlaylists, ChannelShorts, ChannelVideos, CommonPlaylist,
-	CommonVideo,
+	Channel, ChannelLivestreams, ChannelPlaylists, ChannelShorts,
+	ChannelVideos, CommonPlaylist, CommonVideo,
 };
 use leptos::*;
-use leptos_router::create_query_signal;
 use num_format::ToFormattedString;
-use rustytube_error::RustyTubeError;
 
 use crate::{
 	components::{
-		CardGrid, ChannelRoll, FerrisError, GridContainer, PlaceholderCardArray,
-		PlaylistPreviewCard, VideoPreviewCard,
+		CardGrid, ChannelRoll, FerrisError, GridContainer,
+		PlaceholderCardArray, PlaylistPreviewCard, VideoPreviewCard,
 	},
-	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	contexts::RegionConfigCtx,
 	resources::{
-		ChannelLivestreamsAction, ChannelLivestreamsActionArgs, ChannelLivestreamsResource,
-		ChannelPlaylistsAction, ChannelPlaylistsActionArgs, ChannelPlaylistsResource,
-		ChannelResource, ChannelShortsAction, ChannelShortsActionArgs, ChannelShortsResource,
-		ChannelVideosAction, ChannelVideosActionArgs, ChannelVideosResource, SubscriptionsCtx,
+		ChannelLivestreamsAction, ChannelLivestreamsActionArgs,
+		ChannelLivestreamsResource, ChannelPlaylistsAction,
+		ChannelPlaylistsActionArgs, ChannelPlaylistsResource, ChannelResource,
+		ChannelShortsAction, ChannelShortsActionArgs, ChannelShortsResource,
+		ChannelVideosAction, ChannelVideosActionArgs, ChannelVideosResource,
+		SubscriptionsCtx,
 	},
 	utils::i18n,
 };
@@ -73,7 +73,9 @@ fn Header() -> impl IntoView {
 	let locale = expect_context::<RegionConfigCtx>().locale_slice.0;
 	let channel = expect_context::<Channel>();
 
-	let sub_count = move || channel.subscribers.to_formatted_string(&locale.get().to_num_fmt());
+	let sub_count = move || {
+		channel.subscribers.to_formatted_string(&locale.get().to_num_fmt())
+	};
 
 	view! {
 		<div class="flex flex-col space-y-8 self-center">
@@ -85,7 +87,7 @@ fn Header() -> impl IntoView {
 				image_url=channel
 					.thumbnails
 					.first()
-					.map_or(String::default(), |thumb| thumb.url.clone())
+					.map_or(String::new(), |thumb| thumb.url.clone())
 			/>
 		</div>
 	}
@@ -99,12 +101,17 @@ fn ChannelAvatar() -> impl IntoView {
 	let channel = expect_context::<Channel>();
 	let url = channel.thumbnails.first().map(|channel| channel.url.clone());
 	let img_loaded = create_rw_signal(false);
-	let image_classes = move || match img_loaded.get() {
-		true => "h-16 w-16 rounded-full".to_string(),
-		false => "h-16 w-16 animate-pulse rounded-full bg-neutral".to_string(),
+	let image_classes = move || {
+		if img_loaded.get() {
+			"h-16 w-16 rounded-full".to_string()
+		} else {
+			"h-16 w-16 animate-pulse rounded-full bg-neutral".to_string()
+		}
 	};
 
-	view! { <img on:load=move |_| img_loaded.set(true) src=url class=image_classes/> }
+	view! {
+		<img on:load=move |_| img_loaded.set(true) src=url class=image_classes/>
+	}
 }
 
 #[component]
@@ -112,9 +119,13 @@ fn Banner() -> impl IntoView {
 	let channel = expect_context::<Channel>();
 	let url = channel.banners.first().map(|banner| banner.url.clone());
 	let img_loaded = create_rw_signal(false);
-	let image_classes = move || match img_loaded.get() {
-		true => "w-full object-center object-cover bg-neutral rounded-xl".to_string(),
-		false => "w-full h-full rounded-xl bg-neutral".to_string(),
+	let image_classes = move || {
+		if img_loaded.get() {
+			"w-full object-center object-cover bg-neutral rounded-xl"
+				.to_string()
+		} else {
+			"w-full h-full rounded-xl bg-neutral".to_string()
+		}
 	};
 
 	view! {
@@ -144,33 +155,40 @@ fn SubscribeBtn() -> impl IntoView {
 			.get()
 			.channels
 			.into_iter()
-			.find(|sub| sub.id.eq_ignore_ascii_case(&channel_id.get_value()))
-			.is_some()
+			.any(|sub| sub.id.eq_ignore_ascii_case(&channel_id.get_value()))
 	};
 	let is_subscribed = RwSignal::new(check_subscribed());
 
 	let add_sub = create_action(|args: &(String, String, SubscriptionsCtx)| {
 		let name = args.0.clone();
 		let id = args.1.clone();
-		let subscriptions_ctx = args.2.clone();
+		let subscriptions_ctx = args.2;
 		async move { subscriptions_ctx.add_subscription(&id, &name).await }
 	});
 
 	let remove_sub = create_action(|args: &(String, SubscriptionsCtx)| {
 		let id = args.0.clone();
-		let subscriptions_ctx = args.1.clone();
+		let subscriptions_ctx = args.1;
 		async move { subscriptions_ctx.remove_subscription(&id).await }
 	});
 
-	let btn_text = move || match is_subscribed.get() {
-		true => "Subscribed",
-		false => "Subscribe",
+	let btn_text = move || {
+		if is_subscribed.get() {
+			"Subscribed"
+		} else {
+			"Subscribe"
+		}
 	};
 
-	let on_click = move |_| match is_subscribed.get() {
-		true => remove_sub.dispatch((channel_id.get_value(), subscriptions_ctx)),
-		false => {
-			add_sub.dispatch((channel_name.get_value(), channel_id.get_value(), subscriptions_ctx))
+	let on_click = move |_| {
+		if is_subscribed.get() {
+			remove_sub.dispatch((channel_id.get_value(), subscriptions_ctx));
+		} else {
+			add_sub.dispatch((
+				channel_name.get_value(),
+				channel_id.get_value(),
+				subscriptions_ctx,
+			));
 		}
 	};
 
@@ -183,30 +201,30 @@ fn SubscribeBtn() -> impl IntoView {
 
 #[component]
 fn ContentCategoryButtons() -> impl IntoView {
-	let content_category = expect_context::<RwSignal<ContentCategory>>();
+	let category = expect_context::<RwSignal<ContentCategory>>();
 
 	view! {
 		<div class="flex flex-row gap-x-3">
 			<button
-				on:click=move |_| content_category.set(ContentCategory::Videos)
+				on:click=move |_| category.set(ContentCategory::Videos)
 				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
 				{i18n("channel.videos")}
 			</button>
 			<button
-				on:click=move |_| content_category.set(ContentCategory::Shorts)
+				on:click=move |_| category.set(ContentCategory::Shorts)
 				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
 				{i18n("channel.shorts")}
 			</button>
 			<button
-				on:click=move |_| content_category.set(ContentCategory::Livestreams)
+				on:click=move |_| category.set(ContentCategory::Livestreams)
 				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
 				{i18n("channel.livestreams")}
 			</button>
 			<button
-				on:click=move |_| content_category.set(ContentCategory::Playlists)
+				on:click=move |_| category.set(ContentCategory::Playlists)
 				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
 			>
 				{i18n("channel.playlists")}
@@ -257,7 +275,11 @@ fn VideosInner(channel_videos: ChannelVideos) -> impl IntoView {
 
 	view! {
 		<CardGrid>
-			<For each=move || videos_vec.get() key=|video: &CommonVideo| video.id.clone() let:video>
+			<For
+				each=move || videos_vec.get()
+				key=|video: &CommonVideo| video.id.clone()
+				let:video
+			>
 				<VideoPreviewCard video=video/>
 			</For>
 		</CardGrid>
@@ -268,7 +290,9 @@ fn VideosInner(channel_videos: ChannelVideos) -> impl IntoView {
 				on:click=move |_| {
 					channel_videos_action
 						.action
-						.dispatch(ChannelVideosActionArgs::get(videos_vec, continuation))
+						.dispatch(
+							ChannelVideosActionArgs::get(videos_vec, continuation),
+						);
 				}
 			>
 
@@ -308,7 +332,11 @@ fn ShortsInner(channel_shorts: ChannelShorts) -> impl IntoView {
 
 	view! {
 		<CardGrid>
-			<For each=move || shorts_vec.get() key=|video: &CommonVideo| video.id.clone() let:video>
+			<For
+				each=move || shorts_vec.get()
+				key=|video: &CommonVideo| video.id.clone()
+				let:video
+			>
 				<VideoPreviewCard video=video/>
 			</For>
 		</CardGrid>
@@ -319,7 +347,9 @@ fn ShortsInner(channel_shorts: ChannelShorts) -> impl IntoView {
 				on:click=move |_| {
 					channel_shorts_action
 						.action
-						.dispatch(ChannelShortsActionArgs::get(shorts_vec, continuation))
+						.dispatch(
+							ChannelShortsActionArgs::get(shorts_vec, continuation),
+						);
 				}
 			>
 
@@ -343,7 +373,9 @@ fn Livestreams() -> impl IntoView {
 					.get()
 					.map(|livestreams| match livestreams {
 						Ok(livestreams) => {
-							view! { <LivestreamsInner channel_livestreams=livestreams/> }
+							view! {
+								<LivestreamsInner channel_livestreams=livestreams/>
+							}
 						}
 						Err(err) => view! { <FerrisError error=err/> }.into_view(),
 					})
@@ -376,7 +408,12 @@ fn LivestreamsInner(channel_livestreams: ChannelLivestreams) -> impl IntoView {
 				on:click=move |_| {
 					channel_livestreams_action
 						.action
-						.dispatch(ChannelLivestreamsActionArgs::get(livestreams_vec, continuation))
+						.dispatch(
+							ChannelLivestreamsActionArgs::get(
+								livestreams_vec,
+								continuation,
+							),
+						);
 				}
 			>
 
@@ -433,7 +470,9 @@ fn PlaylistsInner(channel_playlists: ChannelPlaylists) -> impl IntoView {
 				on:click=move |_| {
 					channel_playlists_action
 						.action
-						.dispatch(ChannelPlaylistsActionArgs::get(playlists_vec, continuation))
+						.dispatch(
+							ChannelPlaylistsActionArgs::get(playlists_vec, continuation),
+						);
 				}
 			>
 

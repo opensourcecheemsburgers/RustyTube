@@ -2,7 +2,7 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub enum Resolution {
 	#[serde(rename = "144p")]
 	_144p,
@@ -27,15 +27,15 @@ pub enum Resolution {
 impl fmt::Display for Resolution {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
-			Resolution::_144p => write!(f, "144p"),
-			Resolution::_240p => write!(f, "240p"),
-			Resolution::_360p => write!(f, "360p"),
-			Resolution::_480p => write!(f, "480p"),
-			Resolution::_720p => write!(f, "720p"),
-			Resolution::_1080p => write!(f, "1080p"),
-			Resolution::_1440p => write!(f, "1440p"),
-			Resolution::_2160p => write!(f, "2160p"),
-			Resolution::_4320p => write!(f, "4320p"),
+			Self::_144p => write!(f, "144p"),
+			Self::_240p => write!(f, "240p"),
+			Self::_360p => write!(f, "360p"),
+			Self::_480p => write!(f, "480p"),
+			Self::_720p => write!(f, "720p"),
+			Self::_1080p => write!(f, "1080p"),
+			Self::_1440p => write!(f, "1440p"),
+			Self::_2160p => write!(f, "2160p"),
+			Self::_4320p => write!(f, "4320p"),
 		}
 	}
 }

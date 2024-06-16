@@ -1,8 +1,11 @@
 use invidious::Popular;
-use leptos::*;
+use leptos::{component, view, For, IntoView, Props, SignalGet, Suspense};
 
 use crate::{
-	components::{CardGrid, FerrisError, GridContainer, PlaceholderCardArray, PopularPreviewCard},
+	components::{
+		CardGrid, FerrisError, GridContainer, PlaceholderCardArray,
+		PopularPreviewCard,
+	},
 	resources::PopularResource,
 	utils::i18n,
 };

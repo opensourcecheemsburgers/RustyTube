@@ -1,13 +1,10 @@
-use invidious::{Trending, TrendingCategory};
-use leptos::*;
+use leptos::{component, view, For, IntoView, Props, SignalGet, Suspense};
 
 use crate::{
 	components::{
-		CardGrid, FerrisError, GridContainer, LocalPlaylistPreviewCard, PlaceholderCardArray,
-		PlaylistPreviewCard, VideoPreviewCard,
+		CardGrid, GridContainer, LocalPlaylistPreviewCard, PlaceholderCardArray,
 	},
-	contexts::{NetworkConfigCtx, RegionConfigCtx},
-	resources::{PlaylistsCtx, TrendingResource},
+	resources::PlaylistsCtx,
 	utils::i18n,
 };
 
@@ -26,10 +23,10 @@ pub fn PlaylistsSection() -> impl IntoView {
 						<CardGrid>
 							<For
 								each=move || playlists.playlists.get()
-								key=|playlist| playlist.created.clone()
+								key=|playlist| playlist.created
 								let:playlist
 							>
-								<LocalPlaylistPreviewCard playlist=playlist.into()/>
+								<LocalPlaylistPreviewCard playlist=playlist/>
 							</For>
 						</CardGrid>
 					}

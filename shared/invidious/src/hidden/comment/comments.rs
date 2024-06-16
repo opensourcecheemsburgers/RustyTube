@@ -24,12 +24,12 @@ impl Comments {
 		continuation: Option<&str>,
 		lang: &str,
 	) -> Result<Self, RustyTubeError> {
-		let comments_url = match continuation {
-			Some(continuation) => {
+		let comments_url = continuation.map_or_else(
+			|| format!("{server}/api/v1/comments/{id}"),
+			|continuation| {
 				format!("{server}/api/v1/comments/{id}?continuation={continuation}&hl={lang}")
-			}
-			None => format!("{server}/api/v1/comments/{id}"),
-		};
+			},
+		);
 		let comments_json = fetch(&comments_url).await?;
 		let comments: Self = serde_json::from_str(&comments_json)?;
 		Ok(comments)

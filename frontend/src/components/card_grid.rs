@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::{component, view, Children, IntoView};
 
 #[component]
 pub fn CardGrid(children: Children) -> impl IntoView {
@@ -13,6 +13,8 @@ pub fn CardGrid(children: Children) -> impl IntoView {
 pub fn GridContainer(children: Children) -> impl IntoView {
 	view! {
 		<div class="flex flex-col justify-center w-full gap-8 \
-		py-4 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 2xl:px-28">{children()}</div>
+		py-4 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 2xl:px-28">
+			{children()}
+		</div>
 	}
 }

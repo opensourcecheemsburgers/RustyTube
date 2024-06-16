@@ -7,8 +7,8 @@ use crate::{
 	components::FerrisError,
 	contexts::RegionConfigCtx,
 	resources::{
-		CommentsAction, CommentsActionArgs, CommentsResource, CommentsResourceArgs,
-		RepliesResource, RepliesResourceArgs,
+		CommentsAction, CommentsActionArgs, CommentsResource,
+		CommentsResourceArgs, RepliesResource, RepliesResourceArgs,
 	},
 	utils::i18n,
 };
@@ -53,7 +53,7 @@ pub fn CommentsSectionInner(comments: Comments) -> impl IntoView {
 			<div class="flex flex-col space-y-8">
 				<For
 					each=move || comments_vec.get()
-					key=|comment: &Comment| comment.clone()
+					key=|comment: &Comment| comment.id.clone()
 					let:comment
 				>
 					<Comment comment=comment/>
@@ -65,7 +65,9 @@ pub fn CommentsSectionInner(comments: Comments) -> impl IntoView {
 					on:click=move |_| {
 						comments_action
 							.action
-							.dispatch(CommentsActionArgs::get(comments_vec, continuation))
+							.dispatch(
+								CommentsActionArgs::get(comments_vec, continuation),
+							);
 					}
 				>
 
@@ -82,18 +84,22 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 
 	let content = comment.content_html;
 	let author = comment.author;
-	let author_thumb_url = comment.author_thumbnails.first().cloned().map(|thumb| thumb.url);
+	let author_thumb_url =
+		comment.author_thumbnails.first().cloned().map(|thumb| thumb.url);
 	let published = comment.published_text;
-	let likes = move || comment.likes.to_formatted_string(&locale.get().to_num_fmt());
-	let reply_count = comment.replies_info.clone().map_or(0, |replies| replies.replies);
-	let reply_continuation = comment.replies_info.clone().map(|replies| replies.continuation);
+	let likes =
+		move || comment.likes.to_formatted_string(&locale.get().to_num_fmt());
+	let reply_count =
+		comment.replies_info.clone().map_or(0, |replies| replies.replies);
+	let reply_continuation =
+		comment.replies_info.map(|replies| replies.continuation);
 
 	let replies_vec = RwSignal::new(vec![]);
 	let continuation = RwSignal::new(reply_continuation);
 	let args = RepliesResourceArgs::new(replies_vec, continuation);
 	let args_button = args.clone();
 	let args_load_button = args.clone();
-	let replies = RepliesResource::initialise(args.clone());
+	let replies = RepliesResource::initialise(args);
 
 	let replies_visible = RwSignal::new(false);
 
@@ -110,18 +116,24 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 					</div>
 					<div class="mt-1" inner_html=content></div>
 					<div class="mt-3 flex flex-row gap-1 items-center">
-						<ThumbsUp weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+						<ThumbsUp
+							weight=IconWeight::Regular
+							class="h-4 w-4 base-content"
+						/>
 						<p>{likes}</p>
 						<p>{"•"}</p>
 						<div
 							class="flex flex-row gap-1 items-center"
 							on:click=move |_| {
 								replies.fetch_more.dispatch(args_button.clone());
-								replies_visible.set(!replies_visible.get())
+								replies_visible.set(!replies_visible.get());
 							}
 						>
 
-							<Chat weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+							<Chat
+								weight=IconWeight::Regular
+								class="h-4 w-4 base-content"
+							/>
 							<p>{reply_count}</p>
 						</div>
 					</div>
@@ -188,7 +200,8 @@ pub fn CommenterIcon(url: String) -> impl IntoView {
 
 #[component]
 pub fn Reply(reply: Comment) -> impl IntoView {
-	let author_thumb_url = reply.author_thumbnails.first().cloned().map(|thumb| thumb.url);
+	let author_thumb_url =
+		reply.author_thumbnails.first().cloned().map(|thumb| thumb.url);
 	let likes = reply.likes.to_formatted_string(
 		&expect_context::<RegionConfigCtx>().locale_slice.0.get().to_num_fmt(),
 	);
@@ -205,7 +218,10 @@ pub fn Reply(reply: Comment) -> impl IntoView {
 					</div>
 					<div class="mt-1" inner_html=reply.content></div>
 					<div class="mt-3 flex flex-row gap-1 items-center">
-						<ThumbsUp weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+						<ThumbsUp
+							weight=IconWeight::Regular
+							class="h-4 w-4 base-content"
+						/>
 						<p>{likes}</p>
 						<p>{"•"}</p>
 					</div>
@@ -217,7 +233,8 @@ pub fn Reply(reply: Comment) -> impl IntoView {
 
 #[component]
 pub fn CommentsSectionPlaceholder() -> impl IntoView {
-	let comment_placeholders = (0..50).map(|_| view! { <CommentPlaceholder/> }).collect_view();
+	let comment_placeholders =
+		(0..50).map(|_| view! { <CommentPlaceholder/> }).collect_view();
 
 	view! {
 		<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)]">

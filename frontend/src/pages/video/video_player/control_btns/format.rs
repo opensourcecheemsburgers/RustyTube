@@ -1,5 +1,8 @@
 use invidious::{DashFormat, Format, Formats};
-use leptos::*;
+use leptos::{
+	component, expect_context, view, CollectView, IntoView, Props, RwSignal,
+	SignalGet,
+};
 use phosphor_leptos::{GearFine, IconWeight};
 
 use crate::{contexts::PlayerState, pages::video::utils::find_audio_format};
@@ -18,7 +21,10 @@ pub fn FormatDropdown() -> impl IntoView {
 pub fn DropdownBtn() -> impl IntoView {
 	view! {
 		<label tabindex="0" class="btn btn-ghost btn-xs lg:btn-sm">
-			<GearFine weight=IconWeight::Regular class="h-4 w-4 lg:h-5 lg:w-5 base-content"/>
+			<GearFine
+				weight=IconWeight::Regular
+				class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+			/>
 		</label>
 	}
 }
@@ -47,14 +53,17 @@ pub fn FormatList() -> impl IntoView {
 			.audio_formats
 			.into_iter()
 			.map(|format| {
-				let quality_str = format.audio_quality.clone().to_string();
+				let quality_str = format.audio_quality.to_string();
 
 				let change_format = move |_| {
 					let _ = state.change_format(Format::Audio(format.clone()));
 				};
 
 				view! {
-					<button on:click=change_format class="btn btn-xs md:btn-sm lowercase btn-ghost">
+					<button
+						on:click=change_format
+						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+					>
 						{quality_str}
 					</button>
 				}
@@ -71,29 +80,29 @@ pub fn FormatList() -> impl IntoView {
 				let info_str = format.clone().container.map_or(
 					format.quality_label.to_string(),
 					|container| {
-						format!(
-							"{} - ({})",
-							format.quality_label.to_string(),
-							container.to_string()
-						)
+						format!("{} - ({})", format.quality_label, container)
 					},
 				);
 
-				let audio_format = current_format
-					.get()
-					.map_or(find_audio_format(&formats.get()).ok(), |current_format| {
-						current_format.audio_format()
-					});
+				let audio_format = current_format.get().map_or(
+					find_audio_format(&formats.get()).ok(),
+					|current_format| current_format.audio_format(),
+				);
 
 				let change_format = move |_| {
-					let _ = state.change_format(Format::Dash(DashFormat::new(
+					state.change_format(Format::Dash(DashFormat::new(
 						format.clone(),
-						audio_format.clone().unwrap(),
+						audio_format
+							.clone()
+							.expect("Adaptive format must have audio."),
 					)));
 				};
 
 				view! {
-					<button on:click=change_format class="btn btn-xs md:btn-sm lowercase btn-ghost">
+					<button
+						on:click=change_format
+						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+					>
 						{info_str}
 					</button>
 				}
@@ -107,14 +116,17 @@ pub fn FormatList() -> impl IntoView {
 			.legacy_formats
 			.into_iter()
 			.map(|format| {
-				let quality_str = format.quality_label.clone().to_string();
+				let quality_str = format.quality_label.to_string();
 
 				let change_format = move |_| {
 					let _ = state.change_format(Format::Legacy(format.clone()));
 				};
 
 				view! {
-					<button on:click=change_format class="btn btn-xs md:btn-sm lowercase btn-ghost">
+					<button
+						on:click=change_format
+						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+					>
 						{quality_str}
 					</button>
 				}

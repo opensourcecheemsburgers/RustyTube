@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod tests;
+
 mod channel;
 mod common;
 mod dislikes;
@@ -6,7 +9,6 @@ mod formats;
 mod hidden;
 mod instance;
 mod subs;
-mod tests;
 mod universal;
 mod video;
 

@@ -1,4 +1,7 @@
-use leptos::*;
+use leptos::{
+	component, expect_context, view, wasm_bindgen, web_sys, IntoView, Props,
+	RwSignal, SignalSet,
+};
 use wasm_bindgen::JsCast;
 use web_sys::{DragEvent, HtmlProgressElement, MouseEvent};
 
@@ -22,7 +25,8 @@ pub fn ProgressBar() -> impl IntoView {
 
 	let open_tip = move |mouse_event: MouseEvent| {
 		tip_time.set(get_seek_pos_as_time_str(mouse_event.clone()));
-		let styles = format!("bottom: 48px; left: {}px;", mouse_event.offset_x());
+		let styles =
+			format!("bottom: 48px; left: {}px;", mouse_event.offset_x());
 		tip_styles.set(styles);
 		tip_classes.set(
 			"absolute p-2 rounded-lg z-100 bg-primary text-primary-content h-fit w-fit".to_string(),
@@ -62,15 +66,21 @@ fn seek_pos<E>(event: E) -> f64
 where
 	E: AsRef<MouseEvent>,
 {
-	let progress: HtmlProgressElement = event.as_ref().target().unwrap().dyn_into().unwrap();
-	let x = event.as_ref().offset_x() as f64;
-	let offset_width = progress.offset_width() as f64;
-	let max = progress.max();
+	event.as_ref().target().map_or(0f64, |progress_bar| {
+		progress_bar.dyn_into::<HtmlProgressElement>().map_or(
+			0f64,
+			|progress_bar| {
+				let x = f64::from(event.as_ref().offset_x());
+				let offset_width = f64::from(progress_bar.offset_width());
+				let max = progress_bar.max();
 
-	x * max / offset_width
+				x * max / offset_width
+			},
+		)
+	})
 }
 
-const PROGRESS_BAR: &'static str = "\
+const PROGRESS_BAR: &str = "\
     peer/progress z-10 \
     \
     progress progress-primary rounded-none bg-neutral opacity-100 h-3 w-full cursor-pointer \

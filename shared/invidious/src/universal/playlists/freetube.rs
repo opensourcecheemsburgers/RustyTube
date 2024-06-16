@@ -2,7 +2,7 @@ use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use utils::get_current_time;
 
-use crate::universal::{LocalPlaylist, LocalPlaylistItem, LOCAL_PLAYLIST_PREFIX};
+use crate::{LocalPlaylist, LocalPlaylistItem, LOCAL_PLAYLIST_PREFIX};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FreetubePlaylists {
@@ -37,11 +37,11 @@ pub async fn read_freetube_playlists(
 	Ok(local_playlists)
 }
 
-impl Into<Vec<LocalPlaylist>> for FreetubePlaylists {
-	fn into(self) -> Vec<LocalPlaylist> {
-		let mut local_playlists: Vec<LocalPlaylist> = Vec::new();
+impl From<FreetubePlaylists> for Vec<LocalPlaylist> {
+	fn from(val: FreetubePlaylists) -> Self {
+		let mut local_playlists = vec![];
 
-		self.playlists.into_iter().for_each(|playlist| {
+		val.playlists.into_iter().for_each(|playlist| {
 			local_playlists.push(playlist.into());
 		});
 
@@ -49,25 +49,27 @@ impl Into<Vec<LocalPlaylist>> for FreetubePlaylists {
 	}
 }
 
-impl Into<LocalPlaylist> for FreetubePlaylist {
-	fn into(self) -> LocalPlaylist {
-		let title = format!("{}{}", LOCAL_PLAYLIST_PREFIX, &self.playlist_name);
-		let video_count = self.videos.len() as u32;
-		let updated = get_current_time();
+impl From<FreetubePlaylist> for LocalPlaylist {
+	#[allow(clippy::cast_possible_truncation)]
+	#[allow(clippy::cast_sign_loss)]
+	fn from(val: FreetubePlaylist) -> Self {
+		let title = format!("{}{}", LOCAL_PLAYLIST_PREFIX, &val.playlist_name);
+		let video_count = val.videos.len() as u32;
+		let updated = get_current_time().unwrap_or_default() as u64;
 		let created = updated;
 		let mut videos = Vec::new();
 
-		self.videos.into_iter().for_each(|video| {
+		val.videos.into_iter().for_each(|video| {
 			videos.push(video.into());
 		});
 
-		LocalPlaylist { title, video_count, updated, created, videos }
+		Self { title, video_count, updated, created, videos }
 	}
 }
 
-impl Into<LocalPlaylistItem> for FreetubePlaylistItem {
-	fn into(self) -> LocalPlaylistItem {
-		let id = self.id;
-		LocalPlaylistItem { id }
+impl From<FreetubePlaylistItem> for LocalPlaylistItem {
+	fn from(val: FreetubePlaylistItem) -> Self {
+		let id = val.id;
+		Self { id }
 	}
 }

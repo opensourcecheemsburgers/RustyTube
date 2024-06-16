@@ -2,7 +2,7 @@ use csv::{Reader, StringRecord};
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
-use super::subscriptions::*;
+use super::subscriptions::{Subscription, Subscriptions};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct YoutubeSubscriptions {
@@ -31,27 +31,27 @@ impl YoutubeSubscriptions {
 			subscriptions.push(subscription);
 		}
 
-		Ok(YoutubeSubscriptions { subscriptions })
+		Ok(Self { subscriptions })
 	}
 }
 
-impl Into<Subscription> for YoutubeSubscription {
-	fn into(self) -> Subscription {
-		let id = self.channel_id.replace("https://www.youtube.com/channel/", "");
-		let name = self.channel_title.to_string();
-		Subscription { id, name }
+impl From<YoutubeSubscription> for Subscription {
+	fn from(val: YoutubeSubscription) -> Self {
+		let id = val.channel_id.replace("https://www.youtube.com/channel/", "");
+		let name = val.channel_title;
+		Self { id, name }
 	}
 }
 
-impl Into<Subscriptions> for YoutubeSubscriptions {
-	fn into(self) -> Subscriptions {
+impl From<YoutubeSubscriptions> for Subscriptions {
+	fn from(val: YoutubeSubscriptions) -> Self {
 		let mut channels: Vec<Subscription> = Vec::new();
 
-		self.subscriptions.iter().for_each(|youtube_sub| {
+		val.subscriptions.iter().for_each(|youtube_sub| {
 			let sub: Subscription = youtube_sub.clone().into();
-			channels.push(sub)
+			channels.push(sub);
 		});
 
-		Subscriptions { channels }
+		Self { channels }
 	}
 }

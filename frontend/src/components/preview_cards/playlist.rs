@@ -4,7 +4,7 @@ use leptos_router::NavigateOptions;
 use num_format::ToFormattedString;
 use phosphor_leptos::{CheckCircle, IconWeight};
 
-use crate::contexts::RegionConfigCtx;
+use crate::{contexts::RegionConfigCtx, utils::go_to};
 
 #[component]
 pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
@@ -13,7 +13,10 @@ pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col h-auto overflow-hidden">
-			<Thumbnail playlist_id=playlist.author_id.clone() url=thumbnail_url/>
+			<Thumbnail
+				playlist_id=playlist.author_id.clone()
+				url=thumbnail_url
+			/>
 			<Info playlist=playlist/>
 		</div>
 	}
@@ -26,24 +29,25 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 	let name = playlist.title;
 	let author = playlist.author;
 	let author_id = playlist.author_id;
-	let video_count = move || playlist.video_count.to_formatted_string(&locale.get().to_num_fmt());
+	let video_count = move || {
+		playlist.video_count.to_formatted_string(&locale.get().to_num_fmt())
+	};
 	let verified_check = playlist.author_verified.then_some(
 		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
 	);
 
-	let go_to_channel_page = move |_| {
-		let navigate = leptos_router::use_navigate();
-		let author_id = author_id.clone();
-		request_animation_frame(move || {
-			_ = navigate(&format!("/channel?id={}", author_id), Default::default());
-		})
-	};
+	let go_to_channel_page = move |_| go_to(format!("/channel?id={author_id}"));
 
 	view! {
 		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-			<h1 class="font-sans font-semibold text-base line-clamp-2">{name}</h1>
+			<h1 class="font-sans font-semibold text-base line-clamp-2">
+				{name}
+			</h1>
 			<div class="flex flex-row flex-wrap items-center font-normal text-sm gap-1">
-				<h2 on:click=go_to_channel_page class="cursor-pointer text-primary">
+				<h2
+					on:click=go_to_channel_page
+					class="cursor-pointer text-primary"
+				>
 					{author}
 				</h2>
 				{verified_check}
@@ -51,8 +55,8 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 				<p>
 					{move || {
 						t!(
-							"playlist.videos", video_count = video_count(), locale = & locale.get()
-							.id()
+							"playlist.videos", video_count = video_count(), locale = &
+							locale.get().id()
 						)
 					}}
 
@@ -65,21 +69,22 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 #[component]
 pub fn Thumbnail(playlist_id: String, url: String) -> impl IntoView {
 	let img_loaded = create_rw_signal(false);
-	let image_classes = move || match img_loaded.get() {
-		true => "w-full aspect-video object-center object-cover bg-neutral rounded-xl".to_string(),
-		false => "animate-pulse w-full aspect-video bg-neutral rounded-xl".to_string(),
+	let image_classes = move || {
+		if img_loaded.get() {
+			"w-full aspect-video object-center object-cover bg-neutral rounded-xl".to_string()
+		} else {
+			"animate-pulse w-full aspect-video bg-neutral rounded-xl"
+				.to_string()
+		}
 	};
 
-	let open_playlist = move |_| {
-		let navigate = leptos_router::use_navigate();
-		let id = playlist_id.clone();
-		request_animation_frame(move || {
-			_ = navigate(&format!("/playlist?id={}", id), NavigateOptions::default());
-		})
-	};
+	let open_playlist = move |_| go_to(format!("playlist?id={playlist_id}"));
 
 	view! {
-		<div on:click=open_playlist class="w-full max-w-full overflow-hidden rounded-xl">
+		<div
+			on:click=open_playlist
+			class="w-full max-w-full overflow-hidden rounded-xl"
+		>
 			<img
 				decoding="async"
 				on:load=move |_| img_loaded.set(true)

@@ -8,6 +8,29 @@ edition = "2021"
 license = "GPL"
 description = "A cross-platform Youtube frontend. Built with Leptos and Tauri; Designed with DaisyUI and Tailwind."
 
+[workspace.lints.rust]
+unsafe_code = { level = "forbid", priority = 5 }
+unused = { level = "allow", priority = 5 }
+dead_code = { level = "allow", priority = 5 }
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = 5 }
+# cargo = { level = "warn", priority = 5 }
+pedantic = { level = "warn", priority = 5 }
+nursery = { level = "warn", priority = 5 }
+# restriction = { level = "warn", priority = 5 }
+unwrap_used = { level = "forbid", priority = 5 }
+empty_structs_with_brackets = { level = "allow", priority = 5 }
+pub_use = { level = "allow", priority = 5 }
+missing_errors_doc = { level = "allow", priority = 5 }
+multiple_crate_versions = { level = "allow", priority = 5 }
+must_use_candidate = { level = "allow", priority = 5 }
+needless_pass_by_value = { level = "allow", priority = 5 }
+module_name_repetitions = { level = "allow", priority = 5 }
+future_not_send = { level = "allow", priority = 5 }
+redundant_closure_for_method_calls = { level = "allow", priority = 5 }
+unused_async = { level = "allow", priority = 5 } # Only here until IndexedDB refactor
+
 [profile.release]
 panic = "abort"
 codegen-units = 1

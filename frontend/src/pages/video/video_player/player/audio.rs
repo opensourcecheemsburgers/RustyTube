@@ -12,8 +12,9 @@ use crate::{
 pub fn AudioStream() -> impl IntoView {
 	let state = expect_context::<PlayerState>();
 
-	let format: RwSignal<Option<Format>> = expect_context::<RwSignal<Option<Format>>>();
-	let source = move || format.get().map(|format| format.audio_url()).flatten();
+	let format: RwSignal<Option<Format>> =
+		expect_context::<RwSignal<Option<Format>>>();
+	let source = move || format.get().and_then(|format| format.audio_url());
 
 	let captions = CaptionsResource::initialise();
 	provide_context(captions);

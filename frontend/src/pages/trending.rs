@@ -1,9 +1,14 @@
 use invidious::{Trending, TrendingCategory};
-use leptos::*;
+use leptos::{
+	component, view, For, IntoView, Props, RwSignal, SignalGet, SignalSet,
+	Suspense,
+};
 
 use crate::{
-	components::{CardGrid, FerrisError, GridContainer, PlaceholderCardArray, VideoPreviewCard},
-	contexts::{NetworkConfigCtx, RegionConfigCtx},
+	components::{
+		CardGrid, FerrisError, GridContainer, PlaceholderCardArray,
+		VideoPreviewCard,
+	},
 	resources::TrendingResource,
 	utils::i18n,
 };
@@ -50,7 +55,8 @@ pub fn TrendingSection() -> impl IntoView {
 
 #[component]
 pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
-	let header_btn_classes = "btn btn-sm btn-outline font-normal normal-case rounded-lg";
+	let header_btn_classes =
+		"btn btn-sm btn-outline font-normal normal-case rounded-lg";
 
 	view! {
 		<div class="flex flex-row gap-x-3">
@@ -87,7 +93,11 @@ pub fn TrendingVideos(trending: Trending) -> impl IntoView {
 	view! {
 		<div class="h-[calc(100vh-15.75rem)] overflow-y-hidden hover:overflow-y-auto scroll-smooth">
 			<CardGrid>
-				<For each=move || trending.videos.clone() key=|video| video.id.clone() let:video>
+				<For
+					each=move || trending.videos.clone()
+					key=|video| video.id.clone()
+					let:video
+				>
 					<VideoPreviewCard video=video/>
 				</For>
 			</CardGrid>

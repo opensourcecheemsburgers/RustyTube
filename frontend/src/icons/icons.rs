@@ -1,11 +1,6 @@
 use std::ops::Div;
 
-use leptos::*;
-
-use super::svg::Svg;
-
-pub const ICON: &'static str = "h-4 w-4";
-pub const LARGE_ICON: &'static str = "h-6 w-6";
+use leptos::{component, view, IntoView, Props};
 
 #[component]
 pub fn FerrisIcon() -> impl IntoView {

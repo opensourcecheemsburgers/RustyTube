@@ -19,8 +19,8 @@ pub use error::*;
 pub use header::Header;
 pub use page::Page;
 pub use preview_cards::{
-	ChannelPreviewCard, LocalPlaylistPreviewCard, PlaceholderCardArray, PlaylistPreviewCard,
-	PopularPreviewCard, VideoPreviewCard,
+	ChannelPreviewCard, LocalPlaylistPreviewCard, PlaceholderCardArray,
+	PlaylistPreviewCard, PopularPreviewCard, VideoPreviewCard,
 };
 pub use sidebar::*;
 pub use toaster::*;

@@ -1,7 +1,10 @@
 use std::ops::RangeBounds;
 
 use invidious::Format;
-use leptos::{error::Result, *};
+use leptos::{
+	create_rw_signal, error::Result, expect_context, web_sys, RwSignal,
+	SignalGet, SignalSet,
+};
 use rustytube_error::RustyTubeError;
 use utils::get_element_by_id;
 use web_sys::{HtmlAudioElement, HtmlVideoElement};
@@ -14,12 +17,12 @@ use crate::{
 
 use super::{toast, Toast};
 
-pub const VIDEO_CONTAINER_ID: &'static str = "video_container";
-pub const VIDEO_PLAYER_ID: &'static str = "video_player";
-pub const VIDEO_CONTROLS_ID: &'static str = "video_controls";
-pub const AUDIO_PLAYER_ID: &'static str = "audio_player";
+pub const VIDEO_CONTAINER_ID: &str = "video_container";
+pub const VIDEO_PLAYER_ID: &str = "video_player";
+pub const VIDEO_CONTROLS_ID: &str = "video_controls";
+pub const AUDIO_PLAYER_ID: &str = "audio_player";
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum PlaybackState {
 	Playing,
 	Paused,
@@ -46,7 +49,9 @@ impl PlayerState {
 		let playback_state = create_rw_signal(PlaybackState::Initial);
 		let video_ready = create_rw_signal(false);
 		let audio_ready = create_rw_signal(false);
-		let volume = create_rw_signal(expect_context::<PlayerConfigCtx>().volume_slice.0.get());
+		let volume = create_rw_signal(
+			expect_context::<PlayerConfigCtx>().volume_slice.0.get(),
+		);
 		let current_time_str = create_rw_signal(String::from("0:00"));
 		let duration_str = create_rw_signal(String::from("0:00"));
 		let current_time = create_rw_signal(0f64);
@@ -59,8 +64,8 @@ impl PlayerState {
 			audio_ready,
 			volume,
 			current_time,
-			current_time_str,
 			duration,
+			current_time_str,
 			duration_str,
 		}
 	}
@@ -69,28 +74,32 @@ impl PlayerState {
 		let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
 		let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
-		let ready = match is_webkit() {
-			true => {
-				if self.format.get().map_or(false, |format| format.is_audio_only()) {
-					audio.ready_state() >= 3
-				} else if self.format.get().map_or(false, |format| format.is_legacy()) {
-					video.ready_state() >= 3
-				} else {
-					video.ready_state() >= 3 && audio.ready_state() >= 3
-				}
+		let ready = if is_webkit() {
+			if self.format.get().map_or(false, |format| format.is_audio_only())
+			{
+				audio.ready_state() >= 3
+			} else if self
+				.format
+				.get()
+				.map_or(false, |format| format.is_legacy())
+			{
+				video.ready_state() >= 3
+			} else {
+				video.ready_state() >= 3 && audio.ready_state() >= 3
 			}
-			false => {
-				if self.format.get().map_or(false, |format| format.is_audio_only()) {
-					self.audio_ready.get() && audio.ready_state() >= 3
-				} else if self.format.get().map_or(false, |format| format.is_legacy()) {
-					self.video_ready.get() && video.ready_state() >= 3
-				} else {
-					self.video_ready.get()
-						&& self.audio_ready.get()
-						&& video.ready_state() >= 3
-						&& audio.ready_state() >= 3
-				}
-			}
+		} else if self
+			.format
+			.get()
+			.map_or(false, |format| format.is_audio_only())
+		{
+			self.audio_ready.get() && audio.ready_state() >= 3
+		} else if self.format.get().map_or(false, |format| format.is_legacy()) {
+			self.video_ready.get() && video.ready_state() >= 3
+		} else {
+			self.video_ready.get()
+				&& self.audio_ready.get()
+				&& video.ready_state() >= 3
+				&& audio.ready_state() >= 3
 		};
 
 		Ok(ready)
@@ -165,7 +174,8 @@ impl PlayerState {
 
 	pub fn set_video_ready(&self, ready: bool) -> Result<(), RustyTubeError> {
 		self.video_ready.set(ready);
-		if self.ready()? && self.playback_state.get() != PlaybackState::Initial {
+		if self.ready()? && self.playback_state.get() != PlaybackState::Initial
+		{
 			self.resume()?;
 		}
 		Ok(())
@@ -173,7 +183,8 @@ impl PlayerState {
 
 	pub fn set_audio_ready(&self, ready: bool) -> Result<(), RustyTubeError> {
 		self.audio_ready.set(ready);
-		if self.ready()? && self.playback_state.get() != PlaybackState::Initial {
+		if self.ready()? && self.playback_state.get() != PlaybackState::Initial
+		{
 			self.resume()?;
 		}
 		Ok(())
@@ -182,15 +193,17 @@ impl PlayerState {
 	pub fn sync(&self) -> Result<(), RustyTubeError> {
 		if let Some(Some(format)) = self.format.try_get() {
 			if !format.is_audio_only() && !format.is_legacy() {
-				let video = get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
-				let audio = get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
+				let video =
+					get_element_by_id::<HtmlVideoElement>(VIDEO_PLAYER_ID)?;
+				let audio =
+					get_element_by_id::<HtmlAudioElement>(AUDIO_PLAYER_ID)?;
 
 				let video_time = video.current_time();
 				let audio_time = audio.current_time();
 
 				let initial_start = video_time < 3.0 || audio_time < 3.0;
-				let out_of_sync =
-					video_time > audio_time + 0.125 || video_time + 0.125 < audio_time;
+				let out_of_sync = video_time > audio_time + 0.125
+					|| video_time + 0.125 < audio_time;
 				if !initial_start && out_of_sync {
 					video.set_current_time(audio_time);
 				}
@@ -208,19 +221,16 @@ impl PlayerState {
 		self.set_video_ready(false)?;
 		self.playback_state.set(PlaybackState::Loading);
 
-		match is_webkit() {
-			true => {
+		if is_webkit() {
+			video.set_current_time(time);
+			audio.set_current_time(time);
+		} else {
+			self.set_audio_ready(false)?;
+			let fast_seek_video = video.fast_seek(time);
+			let fast_seek_audio = audio.fast_seek(time);
+			if fast_seek_audio.is_err() || fast_seek_video.is_err() {
 				video.set_current_time(time);
 				audio.set_current_time(time);
-			}
-			false => {
-				self.set_audio_ready(false)?;
-				let fast_seek_video = video.fast_seek(time);
-				let fast_seek_audio = audio.fast_seek(time);
-				if fast_seek_audio.is_err() || fast_seek_video.is_err() {
-					video.set_current_time(time);
-					audio.set_current_time(time);
-				}
 			}
 		}
 
@@ -239,7 +249,7 @@ impl PlayerState {
 		self.duration.set(total_time);
 		self.current_time_str.set(utils::unix_to_hours_secs_mins(current_time));
 		self.duration_str.set(utils::unix_to_hours_secs_mins(total_time));
-		self.check_sponsorblock(current_time)?;
+		self.check_sponsorblock(current_time);
 		Ok(())
 	}
 
@@ -273,22 +283,23 @@ impl PlayerState {
 		Ok(())
 	}
 
-	pub fn check_sponsorblock(&self, time: f64) -> Result<(), RustyTubeError> {
-		if let Some(segments) = expect_context::<SponsorBlockResource>().get_segments() {
-			segments.into_iter().for_each(|segment| {
-				let range =
-					(segment.timeframe.0.round() - 1f64)..=(segment.timeframe.0.round() + 1f64);
+	pub fn check_sponsorblock(&self, time: f64) {
+		if let Some(segments) =
+			expect_context::<SponsorBlockResource>().get_segments()
+		{
+			for segment in segments {
+				let range = (segment.timeframe.0.round() - 1f64)
+					..=(segment.timeframe.0.round() + 1f64);
 				if range.contains(&time) {
 					self.seek(segment.timeframe.1);
 					toast(Toast::new(
 						i18n("sponsorblock.skipped")(),
 						Some(super::ToastDuration::Normal),
 						Some(super::ToastType::Info),
-					))
+					));
 				}
-			});
+			}
 		}
-		Ok(())
 	}
 }
 

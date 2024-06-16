@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod caption;
 mod channelitems;
 mod comment;

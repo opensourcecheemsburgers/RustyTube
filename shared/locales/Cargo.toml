@@ -6,8 +6,12 @@ edition.workspace = true
 license.workspace = true
 description.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 num-format = { workspace = true }
 rust-i18n = { workspace = true }
+rustytube-error = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

@@ -20,27 +20,29 @@ pub struct LibretubePlaylist {
 	pub videos: Vec<String>,
 }
 
-impl Into<Vec<LocalPlaylist>> for LibretubePlaylists {
-	fn into(self) -> Vec<LocalPlaylist> {
-		let mut local_playlists: Vec<LocalPlaylist> = Vec::new();
-		self.playlists.into_iter().for_each(|playlist| {
+impl From<LibretubePlaylists> for Vec<LocalPlaylist> {
+	fn from(val: LibretubePlaylists) -> Self {
+		let mut local_playlists = vec![];
+		val.playlists.into_iter().for_each(|playlist| {
 			local_playlists.push(playlist.into());
 		});
 		local_playlists
 	}
 }
 
-impl Into<LocalPlaylist> for LibretubePlaylist {
-	fn into(self) -> LocalPlaylist {
-		let title = format!("{}{}", LOCAL_PLAYLIST_PREFIX, self.name);
-		let video_count = self.videos.len() as u32;
-		let updated = get_current_time();
+impl From<LibretubePlaylist> for LocalPlaylist {
+	#[allow(clippy::cast_possible_truncation)]
+	#[allow(clippy::cast_sign_loss)]
+	fn from(val: LibretubePlaylist) -> Self {
+		let title = format!("{}{}", LOCAL_PLAYLIST_PREFIX, val.name);
+		let video_count = val.videos.len() as u32;
+		let updated = get_current_time().unwrap_or_default() as u64;
 		let created = updated;
 
 		let mut videos: Vec<LocalPlaylistItem> = Vec::new();
-		self.videos.into_iter().for_each(|video| videos.push(LocalPlaylistItem { id: video }));
+		val.videos.into_iter().for_each(|video| videos.push(LocalPlaylistItem { id: video }));
 
-		LocalPlaylist { title, video_count, updated, created, videos }
+		Self { title, video_count, updated, created, videos }
 	}
 }
 

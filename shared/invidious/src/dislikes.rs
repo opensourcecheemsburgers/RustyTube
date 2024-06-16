@@ -17,7 +17,7 @@ pub struct Dislikes {
 
 impl Dislikes {
 	pub async fn fetch_dislikes(id: &str) -> Result<u64, RustyTubeError> {
-		let url = format!("https://returnyoutubedislikeapi.com/votes?videoId={}", id);
+		let url = format!("https://returnyoutubedislikeapi.com/votes?videoId={id}");
 		let dislike_info = serde_json::from_str::<Self>(&fetch(&url).await?)?;
 		Ok(dislike_info.dislikes)
 	}
