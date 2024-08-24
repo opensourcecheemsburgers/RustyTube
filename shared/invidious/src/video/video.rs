@@ -40,7 +40,7 @@ pub struct Video {
 	pub allowed_regions: Vec<CountryCode>,
 	pub genre: String,
 	#[serde(rename = "genreUrl")]
-	pub genre_url: String,
+	pub genre_url: Option<String>,
 
 	pub author: String,
 	#[serde(rename = "authorId")]
@@ -81,7 +81,11 @@ pub struct Video {
 }
 
 impl Video {
-	pub async fn fetch_video(server: &str, id: &str, lang: &str) -> Result<Self, RustyTubeError> {
+	pub async fn fetch_video(
+		server: &str,
+		id: &str,
+		lang: &str,
+	) -> Result<Self, RustyTubeError> {
 		let video_url = format!("{server}/api/v1/videos/{id}?hl={lang}");
 		let video_json = fetch(&video_url).await?;
 		let video = serde_json::from_str(&video_json)?;
