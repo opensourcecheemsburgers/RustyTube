@@ -30,8 +30,8 @@ use crate::{
 #[component]
 pub fn SettingsPage() -> impl IntoView {
 	view! {
-		<div class="flex flex-col w-full h-full items-center">
-			<div class="flex flex-col w-[95vw] md:w-[90vw] sm:w-[95vw] xl:w-[50vw] lg:w-[85vw] my-[3vh] px-6 overscroll-contain overflow-visible overflow-y-auto gap-16">
+		<div class="flex flex-col items-center w-full h-full">
+			<div class="flex overflow-visible overflow-y-auto overscroll-contain flex-col gap-16 px-6 w-[95vw] my-[3vh] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[50vw]">
 				<SubscriptionsSettings/>
 				// <PlaylistsSettings/>
 				<SponsorBlockSettings/>
@@ -61,7 +61,7 @@ fn SettingsSection(children: Children, title: String) -> impl IntoView {
 #[component]
 fn Setting(children: Children, title: String) -> impl IntoView {
 	view! {
-		<div class="form-control w-full">
+		<div class="w-full form-control">
 			<label class="cursor-pointer label">
 				<p class="font-mono text-2xl">{title}</p>
 				<div class="flex flex-row flex-wrap gap-4 justify-end items-center">
@@ -117,7 +117,7 @@ pub fn SponsorBlockSettings() -> impl IntoView {
 				<input
 					on:click=move |_| toggle_skip_sponsors(&ctx)
 					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
+					class="toggle toggle-primary lg:toggle-lg"
 					checked=ctx.skip_sponsors.0
 				/>
 			</Setting>
@@ -125,7 +125,7 @@ pub fn SponsorBlockSettings() -> impl IntoView {
 				<input
 					on:input=move |_| toggle_skip_selfpromos(&ctx)
 					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
+					class="toggle toggle-primary lg:toggle-lg"
 					checked=ctx.skip_selfpromos.0
 				/>
 			</Setting>
@@ -133,7 +133,7 @@ pub fn SponsorBlockSettings() -> impl IntoView {
 				<input
 					on:input=move |_| toggle_skip_intros(&ctx)
 					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
+					class="toggle toggle-primary lg:toggle-lg"
 					checked=ctx.skip_intros.0
 				/>
 			</Setting>
@@ -141,7 +141,7 @@ pub fn SponsorBlockSettings() -> impl IntoView {
 				<input
 					on:input=move |_| toggle_skip_outros(&ctx)
 					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
+					class="toggle toggle-primary lg:toggle-lg"
 					checked=move || ctx.skip_outros.0.get()
 				/>
 			</Setting>
@@ -149,23 +149,15 @@ pub fn SponsorBlockSettings() -> impl IntoView {
 				<input
 					on:input=move |_| toggle_skip_interactions(&ctx)
 					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
+					class="toggle toggle-primary lg:toggle-lg"
 					checked=ctx.skip_interactions.0
 				/>
 			</Setting>
-			<Setting title=i18n(
-				"settings.sponsorblock.preview",
-			)()>
-				on:input=move |_| toggle_skip_previews(&ctx)
-				type= "checkbox" class= "toggle lg:toggle-lg toggle-primary"
-				checked=sponsorblock_ctx.skip_previews.0
-				/>
-			</Setting>
-			<Setting title=i18n("settings.sponsorblock.offtopic_music")()>
+			<Setting title=i18n("settings.sponsorblock.preview")()>
 				<input
-					on:input=move |_| toggle_skip_irrelevant_music(&ctx)
+					on:input=move |_| toggle_skip_previews(&ctx)
 					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
+					class="toggle toggle-primary lg:toggle-lg"
 					checked=ctx.skip_irrelevant_music.0
 				/>
 			</Setting>
@@ -173,7 +165,7 @@ pub fn SponsorBlockSettings() -> impl IntoView {
 				<input
 					on:input=move |_| toggle_skip_filler(&ctx)
 					type="checkbox"
-					class="toggle lg:toggle-lg toggle-primary"
+					class="toggle toggle-primary lg:toggle-lg"
 					checked=ctx.skip_filler.0
 				/>
 			</Setting>
@@ -237,12 +229,12 @@ pub fn LocaleDropdown() -> impl IntoView {
 
 	view! {
 		<div class="dropdown dropdown-end">
-			<div tabindex="0" role="button" class="btn btn-secondary m-1">
+			<div tabindex="0" role="button" class="m-1 btn btn-secondary">
 				{move || locale_slice.0.get().human_name()}
 			</div>
 			<ul
 				tabindex="0"
-				class="overflow-y-scroll dropdown-content p-3 shadow bg-base-300 rounded-xl w-64 max-h-80 h-fit z-10"
+				class="overflow-y-scroll z-10 p-3 w-64 max-h-80 rounded-xl shadow dropdown-content bg-base-300 h-fit"
 			>
 				<For
 					each=move || {
@@ -257,7 +249,7 @@ pub fn LocaleDropdown() -> impl IntoView {
 				>
 					<li>
 						<a
-							class="btn btn-xs md:btn-sm btn-ghost h-fit btn-block justify-start text-left"
+							class="justify-start text-left btn btn-xs btn-ghost h-fit btn-block md:btn-sm"
 							on:click=move |_| locale_slice.1.set(locale)
 						>
 
@@ -282,7 +274,7 @@ pub fn TrendingRegionDropdown() -> impl IntoView {
 			view! {
 				<li>
 					<a
-						class="btn btn-xs md:btn-sm btn-ghost h-fit btn-block justify-start text-left"
+						class="justify-start text-left btn btn-xs btn-ghost h-fit btn-block md:btn-sm"
 						on:click=set_region
 					>
 						<p>{region.name()}</p>
@@ -294,12 +286,12 @@ pub fn TrendingRegionDropdown() -> impl IntoView {
 
 	view! {
 		<div class="dropdown dropdown-end">
-			<div tabindex="0" role="button" class="btn btn-secondary m-1">
+			<div tabindex="0" role="button" class="m-1 btn btn-secondary">
 				{move || trending_region_slice.0.get().name()}
 			</div>
 			<ul
 				tabindex="0"
-				class="overflow-y-scroll dropdown-content p-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
+				class="overflow-y-scroll z-10 p-3 w-64 h-80 rounded-xl shadow dropdown-content bg-base-300"
 			>
 
 				{regions_view}
@@ -326,7 +318,7 @@ pub fn ImportSubsButton() -> impl IntoView {
 	view! {
 		<div>
 			<label
-				class="btn btn-sm md:btn-md lg:btn-lg btn-primary"
+				class="btn btn-sm btn-primary md:btn-md lg:btn-lg"
 				for="subs_upload"
 			>
 				{i18n("settings.import")}
@@ -395,13 +387,13 @@ pub fn DeleteAllSubsButton() -> impl IntoView {
 	view! {
 		<button
 			on:click=open_modal
-			class="btn btn-sm md:btn-md lg:btn-lg btn-error"
+			class="btn btn-sm btn-error md:btn-md lg:btn-lg"
 		>
 			{i18n("settings.delete_all")}
 		</button>
 		<dialog id=modal_id.get_value() class="modal">
 			<div class="modal-box">
-				<h3 class="font-bold text-lg">
+				<h3 class="text-lg font-bold">
 					{i18n("settings.delete_subscriptions")}
 				</h3>
 				<p class="py-4">
@@ -435,7 +427,7 @@ pub fn ExportSubsLibreTubeButton() -> impl IntoView {
 		<a
 			href=href
 			download="libretube_subscriptions.json"
-			class="btn btn-sm md:btn-md lg:btn-lg bg-[#000] border-[#000] hover:bg-[#000] hover:border-[#000]"
+			class="btn btn-sm bg-[#000] border-[#000] md:btn-md lg:btn-lg hover:bg-[#000] hover:border-[#000]"
 		>
 			<div class="flex flex-row">
 				<p class="text-[#FF9698]">Libre</p>
@@ -460,7 +452,7 @@ pub fn ExportSubsFreeTubeButton() -> impl IntoView {
 		<a
 			href=href
 			download="freetube_subscriptions.json"
-			class="btn btn-sm md:btn-md lg:btn-lg  bg-[#E4E4E4] border-[#E4E4E4] hover:bg-[#E4E4E4] hover:border-[#E4E4E4]"
+			class="btn btn-sm bg-[#E4E4E4] border-[#E4E4E4] md:btn-md lg:btn-lg hover:bg-[#E4E4E4] hover:border-[#E4E4E4]"
 		>
 			<div class="flex flex-row">
 				<p class="text-[#F04242]">Free</p>
@@ -485,7 +477,7 @@ pub fn ExportSubsNewPipeButton() -> impl IntoView {
 		<a
 			href=href
 			download="newpipe_subscriptions.json"
-			class="btn btn-sm md:btn-md lg:btn-lg bg-[#CD201F] border-[#CD201F] hover:bg-[#CD201F] hover:border-[#CD201F]"
+			class="btn btn-sm bg-[#CD201F] border-[#CD201F] md:btn-md lg:btn-lg hover:bg-[#CD201F] hover:border-[#CD201F]"
 		>
 			NewPipe
 		</a>
@@ -511,7 +503,7 @@ pub fn ImportPlaylistsButton() -> impl IntoView {
 	view! {
 		<div>
 			<label
-				class="btn btn-sm md:btn-md lg:btn-lg btn-primary"
+				class="btn btn-sm btn-primary md:btn-md lg:btn-lg"
 				for="playlists_upload"
 			>
 				{i18n("settings.import")}
@@ -568,7 +560,7 @@ fn ThemeSettings() -> impl IntoView {
 		<div class="flex flex-col gap-3 w-full">
 			<h1 class="font-sans text-3xl">{i18n("settings.themes")}</h1>
 			<div class="divider"></div>
-			<div class="flex flex-wrap flex-row gap-4">
+			<div class="flex flex-row flex-wrap gap-4">
 				{dark_themes_view} {light_themes_view}
 			</div>
 		</div>
@@ -598,31 +590,31 @@ pub fn ThemeCard(name: String) -> impl IntoView {
 		<div on:click=set_theme class=card_classes>
 			<div
 				data-theme=theme_name.get_value()
-				class="bg-base-100 text-base-content cursor-pointer font-sans"
+				class="font-sans cursor-pointer bg-base-100 text-base-content"
 			>
 				<div class="grid grid-cols-5 grid-rows-3">
-					<div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-					<div class="bg-base-300 col-start-1 row-start-3"></div>
-					<div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
+					<div class="col-start-1 row-span-2 row-start-1 bg-base-200"></div>
+					<div class="col-start-1 row-start-3 bg-base-300"></div>
+					<div class="flex flex-col col-span-4 col-start-2 row-span-3 row-start-1 gap-1 p-2 bg-base-100">
 						<div class="font-bold">{theme_name.get_value()}</div>
 						<div class="flex flex-wrap gap-1">
-							<div class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-primary-content text-sm font-bold">
+							<div class="flex justify-center items-center w-5 rounded lg:w-6 bg-primary aspect-square">
+								<div class="text-sm font-bold text-primary-content">
 									{"A"}
 								</div>
 							</div>
-							<div class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-secondary-content text-sm font-bold">
+							<div class="flex justify-center items-center w-5 rounded lg:w-6 bg-secondary aspect-square">
+								<div class="text-sm font-bold text-secondary-content">
 									{"A"}
 								</div>
 							</div>
-							<div class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-accent-content text-sm font-bold">
+							<div class="flex justify-center items-center w-5 rounded lg:w-6 bg-accent aspect-square">
+								<div class="text-sm font-bold text-accent-content">
 									{"A"}
 								</div>
 							</div>
-							<div class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-								<div class="text-neutral-content text-sm font-bold">
+							<div class="flex justify-center items-center w-5 rounded lg:w-6 bg-neutral aspect-square">
+								<div class="text-sm font-bold text-neutral-content">
 									{"A"}
 								</div>
 							</div>

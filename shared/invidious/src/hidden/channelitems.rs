@@ -10,6 +10,9 @@ pub struct RelatedChannel {
 	pub id: String,
 	#[serde(rename(serialize = "authorUrl", deserialize = "authorUrl"))]
 	pub url: String,
-	#[serde(rename(serialize = "authorThumbnails", deserialize = "authorThumbnails"))]
+	#[serde(rename(
+		serialize = "authorThumbnails",
+		deserialize = "authorThumbnails"
+	))]
 	pub thumbnails: Vec<CommonImage>,
 }

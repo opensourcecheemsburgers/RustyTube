@@ -21,27 +21,27 @@ use crate::{
 #[component]
 pub fn Header() -> impl IntoView {
 	view! {
-		<div class="navbar bg-base-100 w-full justify-between">
-			<div class="flex flex-row items-center justify-start">
+		<div class="justify-between w-full navbar bg-base-100">
+			<div class="flex flex-row justify-start items-center">
 				<label
-					class="landscape:lg:hidden btn btn-xs sm:btn-sm md:btn-md btn-ghost"
+					class="landscape:lg:hidden btn btn-xs btn-ghost sm:btn-sm md:btn-md"
 					for=DRAWER_ID
 				>
 					<List
 						weight=IconWeight::Regular
-						class="h-6 w-6 base-content"
+						class="w-6 h-6 base-content"
 					/>
 				</label>
-				<div class="hidden lg:landscape:!flex flex-row items-center">
+				<div class="hidden flex-row items-center lg:landscape:!flex">
 					<BackBtn/>
 					<ForwardBtn/>
 					<ReloadBtn/>
 				</div>
 			</div>
-			<div class="flex justify-center flex-row items-center">
+			<div class="flex flex-row justify-center items-center">
 				<Search/>
 			</div>
-			<div class="flex justify-end flex-row items-center">
+			<div class="flex flex-row justify-end items-center">
 				<InstanceSelectDropdown/>
 				<ThemeSelectDropdown/>
 			</div>
@@ -59,7 +59,7 @@ pub fn BackBtn() -> impl IntoView {
 			<button on:click=|_| back() class="btn btn-ghost rounded-btn">
 				<ArrowLeft
 					weight=IconWeight::Regular
-					class="h-6 w-6 base-content"
+					class="w-6 h-6 base-content"
 				/>
 			</button>
 		</div>
@@ -84,7 +84,7 @@ pub fn ForwardBtn() -> impl IntoView {
 			<button on:click=|_| forward() class="btn btn-ghost rounded-btn">
 				<ArrowRight
 					weight=IconWeight::Regular
-					class="h-6 w-6 base-content"
+					class="w-6 h-6 base-content"
 				/>
 			</button>
 		</div>
@@ -109,7 +109,7 @@ pub fn ReloadBtn() -> impl IntoView {
 			<button on:click=|_| reload() class="btn btn-ghost rounded-btn">
 				<ArrowClockwise
 					weight=IconWeight::Regular
-					class="h-6 w-6 base-content"
+					class="w-6 h-6 base-content"
 				/>
 			</button>
 		</div>
@@ -160,10 +160,10 @@ pub fn Search() -> impl IntoView {
 						id="search"
 						type="text"
 						placeholder=i18n("header.search_placeholder")
-						class="input input-sm md:input-md input-bordered input-primary sm:join-item w-48 md:w-60 lg:w-72 xl:w-84 2xl:w-96"
+						class="w-48 md:w-60 lg:w-72 2xl:w-96 input input-sm input-bordered input-primary sm:join-item md:input-md xl:w-84"
 					/>
 					<button
-						class="hidden sm:!flex btn btn-xs sm:btn-sm md:btn-md btn-primary join-item"
+						class="hidden btn btn-xs btn-primary join-item sm:!flex sm:btn-sm md:btn-md"
 						on:click=search
 					>
 						{i18n("header.search")}
@@ -171,7 +171,7 @@ pub fn Search() -> impl IntoView {
 				</div>
 				<ul
 					tabindex="0"
-					class="w-full p-2 rounded-b-lg dropdown-content menu bg-base-200 shadow-dropdown"
+					class="p-2 w-full rounded-b-lg dropdown-content menu bg-base-200 shadow-dropdown"
 				>
 					{move || {
 						suggestions
@@ -218,7 +218,7 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 	move || {
 		instances.get().map(|instances| {
 			view! {
-				<div class="dropdown dropdown-end z-50">
+				<div class="z-50 dropdown dropdown-end">
 					<div
 						class="flex flex-row items-center lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
 						data-tip=i18n("header.instances")
@@ -226,20 +226,20 @@ pub fn InstanceSelectDropdown() -> impl IntoView {
 
 						<label
 							tabindex="0"
-							class="btn btn-xs sm:btn-sm md:btn-md btn-ghost rounded-btn"
+							class="btn btn-xs btn-ghost rounded-btn sm:btn-sm md:btn-md"
 						>
 							<HardDrives
 								weight=IconWeight::Regular
-								class="h-6 w-6 base-content"
+								class="w-6 h-6 base-content"
 							/>
 
 						</label>
 					</div>
 					<ul
 						tabindex="0"
-						class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
+						class="z-10 py-3 px-1.5 w-64 h-80 rounded-xl shadow menu dropdown-content bg-base-300"
 					>
-						<div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
+						<div class="flex overflow-y-scroll flex-col px-3 space-y-2 h-full">
 
 							{instances
 								.map(|instances| {
@@ -282,7 +282,7 @@ pub fn InstanceDropdownListItem(instance: Instance) -> impl IntoView {
 		if server.0.get().eq_ignore_ascii_case(&uri) {
 			view! {
 				<div
-					class="p-3 border-2 rounded-lg bg-base-100 border-primary"
+					class="p-3 rounded-lg border-2 bg-base-100 border-primary"
 					on:click=move |_| server.1.set(uri.clone())
 				>
 					<a class="font-sans text-base-content">
@@ -314,11 +314,11 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
 			view! {
 				<div
 					data-theme=name
-					class="p-3 border-2 rounded-lg bg-base-100 border-primary"
+					class="p-3 rounded-lg border-2 bg-base-100 border-primary"
 					on:click=move |_| theme_ctx.1.set(name.to_string())
 				>
 					<a class="font-sans capitalize text-base-content">
-						<div class="flex flex-row items-center justify-between w-full rounded-lg">
+						<div class="flex flex-row justify-between items-center w-full rounded-lg">
 							{name} <div class="flex flex-row gap-1">
 								<div
 									data-theme=name
@@ -349,7 +349,7 @@ pub fn ThemeDropdownListItem(name: &'static str) -> impl IntoView {
 					on:click=move |_| theme_ctx.1.set(name.to_string())
 				>
 					<a class="font-sans capitalize text-base-content">
-						<div class="flex flex-row items-center justify-between w-full rounded-lg">
+						<div class="flex flex-row justify-between items-center w-full rounded-lg">
 							{name} <div class="flex flex-row gap-1">
 								<div
 									data-theme=name
@@ -389,7 +389,7 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 		.collect_view();
 
 	view! {
-		<div class="dropdown dropdown-end z-50">
+		<div class="z-50 dropdown dropdown-end">
 			<div
 				class="flex flex-row items-center lg:landscape:tooltip lg:landscape:tooltip-bottom lg:landscape:tooltip-info"
 				data-tip=i18n("header.themes")
@@ -397,19 +397,19 @@ pub fn ThemeSelectDropdown() -> impl IntoView {
 
 				<label
 					tabindex="0"
-					class="btn btn-xs sm:btn-sm md:btn-md btn-ghost rounded-btn"
+					class="btn btn-xs btn-ghost rounded-btn sm:btn-sm md:btn-md"
 				>
 					<Palette
 						weight=IconWeight::Regular
-						class="h-6 w-6 base-content"
+						class="w-6 h-6 base-content"
 					/>
 				</label>
 			</div>
 			<ul
 				tabindex="0"
-				class="menu dropdown-content px-1.5 py-3 shadow bg-base-300 rounded-xl w-64 h-80 z-10"
+				class="z-10 py-3 px-1.5 w-64 h-80 rounded-xl shadow menu dropdown-content bg-base-300"
 			>
-				<div class="flex flex-col h-full px-3 space-y-2 overflow-y-scroll">
+				<div class="flex overflow-y-scroll flex-col px-3 space-y-2 h-full">
 					<h1>{i18n("header.dark_themes")}</h1>
 					{dark_themes_view}
 					<h1>{i18n("header.light_themes")}</h1>

@@ -11,7 +11,9 @@ impl Display for CountryCode {
 	}
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[derive(
+	Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default,
+)]
 pub enum CountryCode {
 	AD,
 	AE,

@@ -2,7 +2,9 @@ use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 use utils::get_current_time;
 
-use crate::universal::{LocalPlaylist, LocalPlaylistItem, LOCAL_PLAYLIST_PREFIX};
+use crate::universal::{
+	LocalPlaylist, LocalPlaylistItem, LOCAL_PLAYLIST_PREFIX,
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct LibretubePlaylists {
@@ -40,7 +42,9 @@ impl From<LibretubePlaylist> for LocalPlaylist {
 		let created = updated;
 
 		let mut videos: Vec<LocalPlaylistItem> = Vec::new();
-		val.videos.into_iter().for_each(|video| videos.push(LocalPlaylistItem { id: video }));
+		val.videos
+			.into_iter()
+			.for_each(|video| videos.push(LocalPlaylistItem { id: video }));
 
 		Self { title, video_count, updated, created, videos }
 	}

@@ -20,7 +20,7 @@ pub fn PauseBtn() -> impl IntoView {
 					view! {
 						<Pause
 							weight=IconWeight::Regular
-							class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+							class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 						/>
 					}
 				}
@@ -28,7 +28,7 @@ pub fn PauseBtn() -> impl IntoView {
 					view! {
 						<Play
 							weight=IconWeight::Regular
-							class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+							class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 						/>
 					}
 				}

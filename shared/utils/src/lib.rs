@@ -31,7 +31,10 @@ mod utils {
 	/// # Errors
 	///
 	/// - `LocalStorage` save failure.
-	pub fn save_to_browser_storage(key: &str, value: &str) -> Result<(), RustyTubeError> {
+	pub fn save_to_browser_storage(
+		key: &str,
+		value: &str,
+	) -> Result<(), RustyTubeError> {
 		LocalStorage::set(key, value)?;
 		Ok(())
 	}
@@ -39,7 +42,8 @@ mod utils {
 	/// # Errors
 	///
 	/// - `LocalStorage` load failure.
-	pub fn load_all_from_browser_storage() -> Result<HashMap<String, Value>, RustyTubeError> {
+	pub fn load_all_from_browser_storage(
+	) -> Result<HashMap<String, Value>, RustyTubeError> {
 		let storage = LocalStorage::get_all()?;
 		Ok(storage)
 	}
@@ -63,7 +67,8 @@ mod utils {
 	/// - No `Performance`.
 	pub fn get_current_time_ms() -> Result<f64, RustyTubeError> {
 		let window = web_sys::window().ok_or(RustyTubeError::NoWindow)?;
-		let performance = window.performance().ok_or(RustyTubeError::NoPerformance)?;
+		let performance =
+			window.performance().ok_or(RustyTubeError::NoPerformance)?;
 		let current_time = performance.now();
 		Ok(current_time)
 	}

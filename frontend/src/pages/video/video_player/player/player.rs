@@ -121,8 +121,8 @@ pub fn VideoPlayer(video: Video) -> impl IntoView {
 #[component]
 pub fn VideoPlaceholder() -> impl IntoView {
 	view! {
-		<div class="w-full flex flex-col justify-center items-center bg-base-300 rounded">
-			<div class="w-full aspect-video bg-base-300 rounded animate-pulse"></div>
+		<div class="flex flex-col justify-center items-center w-full rounded bg-base-300">
+			<div class="w-full rounded animate-pulse aspect-video bg-base-300"></div>
 		</div>
 	}
 }
@@ -149,7 +149,7 @@ pub fn LoadingCircle() -> impl IntoView {
 
 	view! {
 		<div role="status" class=classes>
-			<SpinnerGap weight=IconWeight::Regular class="h-16 w-16"/>
+			<SpinnerGap weight=IconWeight::Regular class="w-16 h-16"/>
 		</div>
 	}
 }

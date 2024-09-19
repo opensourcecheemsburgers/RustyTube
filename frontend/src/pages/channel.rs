@@ -78,7 +78,7 @@ fn Header() -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-col space-y-8 self-center">
+		<div class="flex flex-col self-center space-y-8">
 			<Banner/>
 			<ChannelRoll
 				channel=channel.name
@@ -207,25 +207,25 @@ fn ContentCategoryButtons() -> impl IntoView {
 		<div class="flex flex-row gap-x-3">
 			<button
 				on:click=move |_| category.set(ContentCategory::Videos)
-				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
+				class="font-normal normal-case rounded-lg btn btn-outline btn-xs sm:btn-sm"
 			>
 				{i18n("channel.videos")}
 			</button>
 			<button
 				on:click=move |_| category.set(ContentCategory::Shorts)
-				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
+				class="font-normal normal-case rounded-lg btn btn-outline btn-xs sm:btn-sm"
 			>
 				{i18n("channel.shorts")}
 			</button>
 			<button
 				on:click=move |_| category.set(ContentCategory::Livestreams)
-				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
+				class="font-normal normal-case rounded-lg btn btn-outline btn-xs sm:btn-sm"
 			>
 				{i18n("channel.livestreams")}
 			</button>
 			<button
 				on:click=move |_| category.set(ContentCategory::Playlists)
-				class="btn btn-outline btn-xs sm:btn-sm rounded-lg font-normal normal-case"
+				class="font-normal normal-case rounded-lg btn btn-outline btn-xs sm:btn-sm"
 			>
 				{i18n("channel.playlists")}
 			</button>
@@ -485,28 +485,28 @@ fn PlaylistsInner(channel_playlists: ChannelPlaylists) -> impl IntoView {
 #[component]
 fn ChannelSectionPlaceholder() -> impl IntoView {
 	view! {
-		<div class="flex flex-col space-y-8 self-center">
-			<div class="h-36 w-full rounded-xl bg-neutral"></div>
+		<div class="flex flex-col self-center space-y-8">
+			<div class="w-full h-36 rounded-xl bg-neutral"></div>
 
 			<div class="flex flex-row justify-between">
-				<div class="flex flex-row items-center gap-x-2">
-					<div class="h-16 w-16 rounded-full bg-neutral"></div>
-					<div class="flex h-16 flex-col justify-around">
-						<div class="h-4 w-32 rounded bg-neutral"></div>
-						<div class="h-4 w-32 rounded bg-neutral"></div>
+				<div class="flex flex-row gap-x-2 items-center">
+					<div class="w-16 h-16 rounded-full bg-neutral"></div>
+					<div class="flex flex-col justify-around h-16">
+						<div class="w-32 h-4 rounded bg-neutral"></div>
+						<div class="w-32 h-4 rounded bg-neutral"></div>
 					</div>
 				</div>
 
 				<div class="flex flex-row gap-x-3">
-					<div class="h-16 w-16 rounded-full border-2 border-neutral"></div>
+					<div class="w-16 h-16 rounded-full border-2 border-neutral"></div>
 				</div>
 			</div>
 
 			<div class="flex flex-row gap-x-3">
-				<div class="h-8 w-20 rounded-lg bg-neutral"></div>
-				<div class="h-8 w-20 rounded-lg bg-neutral"></div>
-				<div class="h-8 w-32 rounded-lg bg-neutral"></div>
-				<div class="h-8 w-24 rounded-lg bg-neutral"></div>
+				<div class="w-20 h-8 rounded-lg bg-neutral"></div>
+				<div class="w-20 h-8 rounded-lg bg-neutral"></div>
+				<div class="w-32 h-8 rounded-lg bg-neutral"></div>
+				<div class="w-24 h-8 rounded-lg bg-neutral"></div>
 			</div>
 		</div>
 	}

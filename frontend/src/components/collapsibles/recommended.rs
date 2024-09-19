@@ -20,11 +20,11 @@ pub fn RecommendedSection() -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-col h-auto rounded-lg bg-base-200 p-4 space-y-4">
-			<h1 class="font-semibold text-xl">
+		<div class="flex flex-col p-4 space-y-4 h-auto rounded-lg bg-base-200">
+			<h1 class="text-xl font-semibold">
 				{i18n("video.info.recommended")}
 			</h1>
-			<div class="flex flex-col space-y-4 ltr:pr-4 rtl:pl-4 rounded-lg bg-base-200">
+			<div class="flex flex-col space-y-4 rounded-lg ltr:pr-4 rtl:pl-4 bg-base-200">
 				<Suspense fallback=move || {
 					view! { <RecommendedSectionPlaceholder/> }
 				}>{recommended_view}</Suspense>
@@ -50,25 +50,25 @@ pub fn RecommendedSectionCollapsible() -> impl IntoView {
 
 	view! {
 		<div>
-			<div class="hidden lg:!flex flex-col h-auto rounded-lg bg-base-200 p-4 space-y-4">
-				<h1 class="font-semibold text-xl">
+			<div class="hidden flex-col p-4 space-y-4 h-auto rounded-lg bg-base-200 lg:!flex">
+				<h1 class="text-xl font-semibold">
 					{i18n("video.info.recommended")}
 				</h1>
-				<div class="flex flex-col space-y-4 ltr:pr-4 rtl:pl-4 rounded-lg bg-base-200">
+				<div class="flex flex-col space-y-4 rounded-lg ltr:pr-4 rtl:pl-4 bg-base-200">
 					<Suspense fallback=move || {
 						view! { <RecommendedSectionPlaceholder/> }
 					}>{recommended_view}</Suspense>
 				</div>
 			</div>
 
-			<div class="lg:hidden collapse collapse-arrow rounded-lg bg-base-200">
+			<div class="rounded-lg lg:hidden collapse collapse-arrow bg-base-200">
 				<input type="checkbox"/>
-				<div class="collapse-title text-xl font-medium">
+				<div class="text-xl font-medium collapse-title">
 					<span>{i18n("video.info.recommended")}</span>
 
 				</div>
 				<div class="collapse-content">
-					<div class="flex flex-col space-y-4 ltr:pr-4 rtl:pl-4 rounded-lg bg-base-200">
+					<div class="flex flex-col space-y-4 rounded-lg ltr:pr-4 rtl:pl-4 bg-base-200">
 						<Suspense fallback=move || {
 							view! { <RecommendedSectionPlaceholder/> }
 						}>{recommended_view}</Suspense>
@@ -111,7 +111,7 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 			/>
 			<div class="flex flex-col w-[70%]">
 				<p class="text-sm">{video.title}</p>
-				<div class="flex flex-row flex-wrap mt-2 gap-x-1 text-sm">
+				<div class="flex flex-row flex-wrap gap-x-1 mt-2 text-sm">
 					<p>{video.author}</p>
 					<p>{"•"}</p>
 					<p>{video.views_text}</p>
@@ -124,21 +124,21 @@ pub fn RecommendedVideo(video: VideoShort) -> impl IntoView {
 #[component]
 pub fn RecommendedVideoPlaceholder() -> impl IntoView {
 	view! {
-		<div class="bg-base-200 flex flex-col rounded-lg p-4">
-			<div class="flex flex-col space-y-4 rounded-lg pr-4">
+		<div class="flex flex-col p-4 rounded-lg bg-base-200">
+			<div class="flex flex-col pr-4 space-y-4 rounded-lg">
 				<div class="flex flex-row gap-x-6">
-					<div class="bg-neutral aspect-video w-[45%] animate-pulse rounded-xl object-cover object-center"></div>
-					<div class="flex w-[55%] flex-col space-y-4">
+					<div class="object-cover object-center rounded-xl animate-pulse bg-neutral aspect-video w-[45%]"></div>
+					<div class="flex flex-col space-y-4 w-[55%]">
 						<div class="flex flex-col space-y-2">
-							<div class="bg-neutral h-3 w-full animate-pulse rounded-xl"></div>
-							<div class="bg-neutral h-3 w-[60%] animate-pulse rounded-xl"></div>
+							<div class="w-full h-3 rounded-xl animate-pulse bg-neutral"></div>
+							<div class="h-3 rounded-xl animate-pulse bg-neutral w-[60%]"></div>
 						</div>
-						<div class="flex flex-row items-center gap-x-2">
-							<div class="bg-neutral h-2 w-[40%] animate-pulse rounded-xl"></div>
-							<div class="bg-neutral h-1 w-1 animate-pulse rounded-full"></div>
-							<div class="bg-neutral h-2 w-[25%] animate-pulse rounded-xl"></div>
-							<div class="bg-neutral h-1 w-1 animate-pulse rounded-full"></div>
-							<div class="bg-neutral h-2 w-[20%] animate-pulse rounded-xl"></div>
+						<div class="flex flex-row gap-x-2 items-center">
+							<div class="h-2 rounded-xl animate-pulse bg-neutral w-[40%]"></div>
+							<div class="w-1 h-1 rounded-full animate-pulse bg-neutral"></div>
+							<div class="h-2 rounded-xl animate-pulse bg-neutral w-[25%]"></div>
+							<div class="w-1 h-1 rounded-full animate-pulse bg-neutral"></div>
+							<div class="h-2 rounded-xl animate-pulse bg-neutral w-[20%]"></div>
 						</div>
 					</div>
 				</div>

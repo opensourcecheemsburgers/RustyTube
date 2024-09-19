@@ -15,7 +15,10 @@ pub struct ChannelComments {
 }
 
 impl ChannelComments {
-	async fn fetch_comments(server: &str, id: &str) -> Result<Self, RustyTubeError> {
+	async fn fetch_comments(
+		server: &str,
+		id: &str,
+	) -> Result<Self, RustyTubeError> {
 		let comments_url = format!("{server}/api/v1/channels/{id}/community?");
 		let comments_json = fetch(&comments_url).await?;
 		let comments = serde_json::from_str::<Self>(&comments_json)?;

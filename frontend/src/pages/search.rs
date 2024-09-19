@@ -23,7 +23,7 @@ pub fn SearchSection() -> impl IntoView {
 
 	view! {
 		<GridContainer>
-			<h1 class="pl-4 font-semibold text-2xl">
+			<h1 class="pl-4 text-2xl font-semibold">
 				{move || search_args.get().query}
 			</h1>
 			<Suspense fallback=move || {

@@ -79,14 +79,26 @@ impl Query {
 	}
 
 	pub const fn build(video_id: String) -> Self {
-		Self { video_id, required_segments: None, categories: None, actions: None, service: None }
+		Self {
+			video_id,
+			required_segments: None,
+			categories: None,
+			actions: None,
+			service: None,
+		}
 	}
 
-	pub fn set_required_segments(&mut self, required_segments: Option<Vec<String>>) -> Self {
+	pub fn set_required_segments(
+		&mut self,
+		required_segments: Option<Vec<String>>,
+	) -> Self {
 		self.required_segments = required_segments;
 		self.clone()
 	}
-	pub fn set_categories(&mut self, categories: Option<Vec<Category>>) -> Self {
+	pub fn set_categories(
+		&mut self,
+		categories: Option<Vec<Category>>,
+	) -> Self {
 		self.categories = categories;
 		self.clone()
 	}
@@ -101,9 +113,13 @@ impl Query {
 
 	#[must_use]
 	pub fn url(&self) -> String {
-		let required_segments = self.required_segments.as_ref().map(|required_segments| {
-			format!("&requiredSegments=[{}]", required_segments.join("\",\""))
-		});
+		let required_segments =
+			self.required_segments.as_ref().map(|required_segments| {
+				format!(
+					"&requiredSegments=[{}]",
+					required_segments.join("\",\"")
+				)
+			});
 
 		let categories = self.categories.as_ref().map(|categories| {
 			format!(
@@ -127,7 +143,8 @@ impl Query {
 			)
 		});
 
-		let service = self.service.as_ref().map(|service| format!("&service={service}"));
+		let service =
+			self.service.as_ref().map(|service| format!("&service={service}"));
 
 		format!(
 			"{}/skipSegments?videoID={}{}{}{}{}",
@@ -145,7 +162,8 @@ impl Query {
 	/// - Network errors
 	/// - Serde errors
 	pub async fn send_query(&self) -> Result<Option<Response>, Box<dyn Error>> {
-		let response = gloo::net::http::Request::get(&self.url()).send().await?;
+		let response =
+			gloo::net::http::Request::get(&self.url()).send().await?;
 
 		if response.status() == 404 {
 			Ok(None)

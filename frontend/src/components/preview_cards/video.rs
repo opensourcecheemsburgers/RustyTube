@@ -9,7 +9,7 @@ use crate::{contexts::RegionConfigCtx, utils::go_to};
 #[component]
 pub fn VideoPreviewCard(video: CommonVideo) -> impl IntoView {
 	view! {
-		<div class="flex flex-col overflow-hidden">
+		<div class="flex overflow-hidden flex-col">
 			<Thumbnail
 				video_id=video.id.clone()
 				url=video.thumbnails.get(3).map(|thumb| thumb.url.clone())
@@ -33,7 +33,7 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 	let published = video.published_text;
 
 	let verified_check = video.author_verified.then_some(
-		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
+		view! { <CheckCircle weight=IconWeight::Regular class="w-4 h-4 base-content"/> },
 	);
 
 	let go_to_channel_page = move |_| {
@@ -42,11 +42,11 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-			<h1 class=" font-sans font-semibold text-base line-clamp-2">
+		<div class="flex flex-col px-2 mt-3 space-y-3 w-full cursor-text">
+			<h1 class="font-sans text-base font-semibold line-clamp-2">
 				{title}
 			</h1>
-			<div class="flex flex-row flex-wrap items-center font-normal text-sm gap-1">
+			<div class="flex flex-row flex-wrap gap-1 items-center text-sm font-normal">
 				<h2
 					on:click=go_to_channel_page
 					class="cursor-pointer text-primary"
@@ -55,7 +55,7 @@ pub fn Info(video: CommonVideo) -> impl IntoView {
 				</h2>
 				{verified_check}
 				<p>{"•"}</p>
-				<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+				<Eye weight=IconWeight::Regular class="w-4 h-4 base-content"/>
 				<p>{views}</p>
 				<p>{"•"}</p>
 				<p>{published}</p>
@@ -85,7 +85,7 @@ pub fn Thumbnail(video_id: String, url: Option<String>) -> impl IntoView {
 	view! {
 		<div
 			on:click=open_video
-			class="w-full max-w-full overflow-hidden rounded-xl"
+			class="overflow-hidden w-full max-w-full rounded-xl"
 		>
 			<img
 				decoding="sync"

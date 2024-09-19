@@ -7,7 +7,7 @@ pub fn TimeInfo() -> impl IntoView {
 	let state = expect_context::<PlayerState>();
 
 	view! {
-		<div class="flex flex-row items-center gap-x-0.5 md:gap-x-1 lg:gap-x-2 ml-2 text-xs md:text-sm lg:text-base font-mono">
+		<div class="flex flex-row gap-x-0.5 items-center ml-2 font-mono text-xs md:gap-x-1 md:text-sm lg:gap-x-2 lg:text-base">
 			<p>{state.current_time_str}</p>
 			<p>/</p>
 			<p>{state.duration_str}</p>

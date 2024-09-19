@@ -49,7 +49,9 @@ pub async fn read_playlist_csv(
 	title: &str,
 	playlist_csv_bytes: &[u8],
 ) -> Result<LocalPlaylist, RustyTubeError> {
-	let mut playlist_csv = csv::ReaderBuilder::new().flexible(true).from_reader(playlist_csv_bytes);
+	let mut playlist_csv = csv::ReaderBuilder::new()
+		.flexible(true)
+		.from_reader(playlist_csv_bytes);
 	let mut playlist_items: Vec<CsvPlaylistItem> = Vec::new();
 
 	let _playlist_header = StringRecord::from(vec![
@@ -60,7 +62,8 @@ pub async fn read_playlist_csv(
 		"Description",
 		"Visibility",
 	]);
-	let playlist_videos_header = StringRecord::from(vec!["Video ID", "Time Added"]);
+	let playlist_videos_header =
+		StringRecord::from(vec!["Video ID", "Time Added"]);
 
 	let mut index = 0;
 	for (mut index, record) in playlist_csv.records().enumerate() {

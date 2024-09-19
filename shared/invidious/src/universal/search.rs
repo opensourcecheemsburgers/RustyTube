@@ -80,8 +80,13 @@ impl SearchResults {
 		page_number: u32,
 		lang: &str,
 	) -> Result<Self, RustyTubeError> {
-		let url =
-			format!("{}/api/v1/search{}&page={}&hl={}", server, args.to_url(), page_number, lang);
+		let url = format!(
+			"{}/api/v1/search{}&page={}&hl={}",
+			server,
+			args.to_url(),
+			page_number,
+			lang
+		);
 		let search_json = fetch(&url).await?;
 		let items: Vec<SearchResult> = serde_json::from_str(&search_json)?;
 		Ok(Self { items })
@@ -187,7 +192,9 @@ impl FromStr for Duration {
 	}
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(
+	Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Default,
+)]
 pub enum ResponseType {
 	Video,
 	Playlist,

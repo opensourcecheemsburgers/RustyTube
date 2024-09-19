@@ -20,14 +20,21 @@ pub struct YoutubeSubscription {
 }
 
 impl YoutubeSubscriptions {
-	pub fn read_subs_from_csv(subs_csv_bytes: &[u8]) -> Result<Self, RustyTubeError> {
+	pub fn read_subs_from_csv(
+		subs_csv_bytes: &[u8],
+	) -> Result<Self, RustyTubeError> {
 		let mut subs_csv = Reader::from_reader(subs_csv_bytes);
 		let mut subscriptions: Vec<YoutubeSubscription> = vec![];
 
-		let header = StringRecord::from(vec!["Channel ID", "Channel URL", "Channel title"]);
+		let header = StringRecord::from(vec![
+			"Channel ID",
+			"Channel URL",
+			"Channel title",
+		]);
 
 		for result in subs_csv.records() {
-			let subscription: YoutubeSubscription = result?.deserialize(Some(&header))?;
+			let subscription: YoutubeSubscription =
+				result?.deserialize(Some(&header))?;
 			subscriptions.push(subscription);
 		}
 

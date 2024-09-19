@@ -14,7 +14,7 @@ pub fn PlaylistsSection() -> impl IntoView {
 
 	view! {
 		<GridContainer>
-			<h1 class="font-semibold text-2xl">{i18n("trending.trending")}</h1>
+			<h1 class="text-2xl font-semibold">{i18n("trending.trending")}</h1>
 			<Suspense fallback=move || {
 				view! { <PlaceholderCardArray/> }
 			}>

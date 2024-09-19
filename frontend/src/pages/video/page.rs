@@ -31,12 +31,12 @@ pub fn VideoPage() -> impl IntoView {
 
 	view! {
 		<div class="flex flex-row gap-x-4 mb-48 md:px-4">
-			<div class="flex flex-col basis-full lg:basis-4/6 item-start">
+			<div class="flex flex-col basis-full item-start lg:basis-4/6">
 				<VideoContainer/>
 				<div class="mt-5">
 					<VideoInfo/>
 				</div>
-				<div class="lg:hidden mt-5">
+				<div class="mt-5 lg:hidden">
 					// {move || match playlist_query_signal.get().is_some() {
 					// true => ().into_view(),
 					// false => view! { <RecommendedSectionCollapsible/> },
@@ -47,7 +47,7 @@ pub fn VideoPage() -> impl IntoView {
 					<CommentsSection/>
 				</div>
 			</div>
-			<div class="hidden lg:!flex flex-col basis-2/6">
+			<div class="hidden flex-col basis-2/6 lg:!flex">
 				<RecommendedSectionCollapsible/>
 			</div>
 		</div>

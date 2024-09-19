@@ -14,12 +14,12 @@ pub fn PlaceholderCardArray() -> impl IntoView {
 #[component]
 pub fn PlaceholderCard() -> impl IntoView {
 	view! {
-		<div class="animate-pulse flex flex-col h-auto overflow-hidden">
-			<div class="w-full aspect-video bg-neutral rounded-xl"></div>
-			<div class="flex flex-col w-full mt-3 space-y-3 px-2">
+		<div class="flex overflow-hidden flex-col h-auto animate-pulse">
+			<div class="w-full rounded-xl aspect-video bg-neutral"></div>
+			<div class="flex flex-col px-2 mt-3 space-y-3 w-full">
 				<div class="w-full h-2 rounded-xl bg-neutral"></div>
 				<div class="w-full h-2 rounded-xl bg-neutral"></div>
-				<div class="w-[35%] h-2 rounded-xl bg-neutral"></div>
+				<div class="h-2 rounded-xl w-[35%] bg-neutral"></div>
 			</div>
 		</div>
 	}

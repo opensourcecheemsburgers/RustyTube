@@ -46,34 +46,34 @@ pub fn VolumeKnob() -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-row group items-center peer cursor-pointer">
+		<div class="flex flex-row items-center cursor-pointer group peer">
 			<button
 				on:click=toggle_knob
-				class="btn btn-ghost btn-xs lg:btn-sm peer"
+				class="btn btn-ghost btn-xs peer lg:btn-sm"
 				id="vol_btn"
 			>
 				<Show when=move || volume_readable.get() == u8::MIN>
 					<SpeakerSimpleX
 						weight=IconWeight::Regular
-						class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+						class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 					/>
 				</Show>
 				<Show when=move || (1..=20).contains(&volume_readable.get())>
 					<SpeakerSimpleNone
 						weight=IconWeight::Regular
-						class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+						class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 					/>
 				</Show>
 				<Show when=move || (21..=50).contains(&volume_readable.get())>
 					<SpeakerSimpleLow
 						weight=IconWeight::Regular
-						class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+						class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 					/>
 				</Show>
 				<Show when=move || (51..=100).contains(&volume_readable.get())>
 					<SpeakerSimpleHigh
 						weight=IconWeight::Regular
-						class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+						class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 					/>
 				</Show>
 			</button>

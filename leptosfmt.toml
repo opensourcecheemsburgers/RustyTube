@@ -3,3 +3,8 @@ tab_spaces = 4
 indentation_style = "Tabs"
 newline_style = "Unix"
 attr_value_brace_style = "WhenRequired"
+macro_names = ["leptos::view", "view"]
+closing_tag_style = "Preserve"
+
+[attr_values]
+class = "Tailwind"

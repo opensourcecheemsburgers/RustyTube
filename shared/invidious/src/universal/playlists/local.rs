@@ -6,12 +6,18 @@ use gloo::file::{
 
 use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
-use utils::{get_current_time_rfc, load_all_from_browser_storage, save_to_browser_storage};
+use utils::{
+	get_current_time_rfc, load_all_from_browser_storage,
+	save_to_browser_storage,
+};
 
 use crate::{
 	fetch,
 	universal::{
-		playlists::{freetube::read_freetube_playlists, libretube::read_libretube_playlists},
+		playlists::{
+			freetube::read_freetube_playlists,
+			libretube::read_libretube_playlists,
+		},
 		read_playlist_csv,
 	},
 	CommonThumbnail, Video,
@@ -84,7 +90,8 @@ impl LocalPlaylist {
 		let storage_map = load_all_from_browser_storage()?;
 		for item in &storage_map {
 			if item.0.starts_with(LOCAL_PLAYLIST_PREFIX) {
-				if let Ok(playlist) = serde_json::from_value(item.1.to_owned()) {
+				if let Ok(playlist) = serde_json::from_value(item.1.to_owned())
+				{
 					playlists_vec.push(playlist);
 				}
 			};
@@ -100,22 +107,33 @@ impl LocalPlaylist {
 		Ok(())
 	}
 
-	pub async fn fetch_first_playlist_video(&self, server: &str) -> Result<Video, RustyTubeError> {
+	pub async fn fetch_first_playlist_video(
+		&self,
+		server: &str,
+	) -> Result<Video, RustyTubeError> {
 		let video_url = format!(
 			"{}/api/v1/videos/{}/",
 			server,
-			self.videos.first().cloned().expect("Playlist should not be empty.").id
+			self.videos
+				.first()
+				.cloned()
+				.expect("Playlist should not be empty.")
+				.id
 		);
 		let video_json = fetch(&video_url).await?;
 		Ok(serde_json::from_str::<Video>(&video_json)?)
 	}
 
-	pub async fn fetch_playlist_videos(&self, server: &str) -> Vec<Result<Video, RustyTubeError>> {
+	pub async fn fetch_playlist_videos(
+		&self,
+		server: &str,
+	) -> Vec<Result<Video, RustyTubeError>> {
 		let mut videos = vec![];
 
 		for video in self.videos.clone() {
 			let future = async move {
-				let video_url = format!("{}/api/v1/videos/{}/", server, video.id);
+				let video_url =
+					format!("{}/api/v1/videos/{}/", server, video.id);
 				let video_json = fetch(&video_url).await?;
 				Ok(serde_json::from_str::<Video>(&video_json)?)
 			};
@@ -128,7 +146,9 @@ impl LocalPlaylist {
 	/// # Errors
 	///
 	/// - Playlist parse error.
-	pub async fn read_playlists(file: Blob) -> Result<Vec<Self>, RustyTubeError> {
+	pub async fn read_playlists(
+		file: Blob,
+	) -> Result<Vec<Self>, RustyTubeError> {
 		let mime = file.raw_mime_type();
 
 		let mut local_playlists: Vec<Self> = Vec::new();
@@ -190,7 +210,9 @@ async fn read_csv(file: &Blob) -> Result<LocalPlaylist, RustyTubeError> {
 	Ok(playlist)
 }
 
-async fn read_libretube(file: &Blob) -> Result<Vec<LocalPlaylist>, RustyTubeError> {
+async fn read_libretube(
+	file: &Blob,
+) -> Result<Vec<LocalPlaylist>, RustyTubeError> {
 	let mut local_playlists: Vec<LocalPlaylist> = Vec::new();
 	let json_string = read_as_text(file).await?;
 	let mut playlists = read_libretube_playlists(&json_string).await?;
@@ -198,7 +220,9 @@ async fn read_libretube(file: &Blob) -> Result<Vec<LocalPlaylist>, RustyTubeErro
 	Ok(local_playlists)
 }
 
-async fn read_freetube(file: &Blob) -> Result<Vec<LocalPlaylist>, RustyTubeError> {
+async fn read_freetube(
+	file: &Blob,
+) -> Result<Vec<LocalPlaylist>, RustyTubeError> {
 	let mut local_playlists: Vec<LocalPlaylist> = Vec::new();
 	let json_string = read_as_text(file).await?;
 	let mut playlists = read_freetube_playlists(&json_string).await?;

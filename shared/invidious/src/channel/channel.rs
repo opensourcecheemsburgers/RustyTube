@@ -50,7 +50,11 @@ impl Channel {
 	///
 	/// - Network errors.
 	/// - Serde errors.
-	pub async fn fetch_channel(server: &str, id: &str, lang: &str) -> Result<Self, RustyTubeError> {
+	pub async fn fetch_channel(
+		server: &str,
+		id: &str,
+		lang: &str,
+	) -> Result<Self, RustyTubeError> {
 		let channel_url = format!("{server}/api/v1/channels/{id}?hl={lang}");
 		let channel_json: String = fetch(&channel_url).await?;
 		let channel: Self = serde_json::from_str(&channel_json)?;
@@ -65,7 +69,8 @@ impl Channel {
 		server: &str,
 		id: &str,
 	) -> Result<Vec<CommonImage>, RustyTubeError> {
-		let thumbnails_url = format!("{server}/api/v1/channels/{id}?fields=authorThumbnails");
+		let thumbnails_url =
+			format!("{server}/api/v1/channels/{id}?fields=authorThumbnails");
 		let thumbnails_json = fetch(&thumbnails_url).await?;
 		let thumbnails = serde_json::from_str(&thumbnails_json)?;
 		Ok(thumbnails)

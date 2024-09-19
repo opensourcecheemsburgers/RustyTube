@@ -136,7 +136,7 @@ pub fn ImportSubscriptions() -> impl IntoView {
 		<div class="min-h-full hero">
 			<div class="flex flex-col space-y-8">
 				<FerrisWaveIcon width=96/>
-				<div class="flex flex-row justify-center gap-x-4">
+				<div class="flex flex-row gap-x-4 justify-center">
 					<ImportSubscriptionsTutorial/>
 					<ImportSubsButton/>
 				</div>
@@ -150,7 +150,7 @@ pub fn ImportSubscriptionsTutorial() -> impl IntoView {
 	view! {
 		<a
 			target="_blank"
-			class="btn lg:btn-lg btn-outline btn-info"
+			class="btn btn-outline btn-info lg:btn-lg"
 			href="https://docs.invidious.io/export-youtube-subscriptions/"
 		>
 			{i18n("subscriptions.tutorial")}
@@ -185,7 +185,7 @@ pub fn ImportSubsButton() -> impl IntoView {
 
 	view! {
 		<div>
-			<label class="btn btn-md lg:btn-lg btn-primary" for="subs_upload">
+			<label class="btn btn-md btn-primary lg:btn-lg" for="subs_upload">
 				{i18n("settings.import")}
 			</label>
 			<input

@@ -19,10 +19,10 @@ pub fn Drawer(children: Children) -> impl IntoView {
 	view! {
 		<div class="drawer">
 			<input id=DRAWER_ID type="checkbox" class="drawer-toggle"/>
-			<div class="drawer-content flex flex-row items-center justify-center">
+			<div class="flex flex-row justify-center items-center drawer-content">
 				{children()}
 			</div>
-			<div class="drawer-side z-50">
+			<div class="z-50 drawer-side">
 				<label
 					for=DRAWER_ID
 					aria-label="close sidebar"
@@ -52,10 +52,10 @@ pub fn DrawerHeader() -> impl IntoView {
 	view! {
 		<label
 			for=DRAWER_ID
-			class="btn btn-ghost flex flex-row flex-nowrap rtl:gap-x-2"
+			class="flex flex-row flex-nowrap btn btn-ghost rtl:gap-x-2"
 		>
 			<FerrisIcon/>
-			<p class="normal-case font-display font-medium text-xl">
+			<p class="text-xl font-medium normal-case font-display">
 				{"RustyTube"}
 			</p>
 		</label>

@@ -8,7 +8,7 @@ use crate::{contexts::RegionConfigCtx, utils::go_to};
 #[component]
 pub fn PopularPreviewCard(video: PopularItem) -> impl IntoView {
 	view! {
-		<div class="flex flex-col h-auto overflow-hidden">
+		<div class="flex overflow-hidden flex-col h-auto">
 			<Thumbnail
 				video_id=video.clone().id
 				url=video.thumbnails.get(3).map(|thumb| thumb.url.clone())
@@ -36,11 +36,11 @@ pub fn Info(video: PopularItem) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-			<h1 class="font-sans font-semibold text-base line-clamp-2">
+		<div class="flex flex-col px-2 mt-3 space-y-3 w-full cursor-text">
+			<h1 class="font-sans text-base font-semibold line-clamp-2">
 				{title}
 			</h1>
-			<div class="flex flex-row flex-wrap items-center font-normal text-sm gap-1">
+			<div class="flex flex-row flex-wrap gap-1 items-center text-sm font-normal">
 				<h2
 					on:click=go_to_channel_page
 					class="cursor-pointer text-primary"
@@ -48,7 +48,7 @@ pub fn Info(video: PopularItem) -> impl IntoView {
 					{author}
 				</h2>
 				<p>{"•"}</p>
-				<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+				<Eye weight=IconWeight::Regular class="w-4 h-4 base-content"/>
 				<p>{view_count}</p>
 				<p>{"•"}</p>
 				<p>{published}</p>
@@ -78,7 +78,7 @@ pub fn Thumbnail(video_id: String, url: Option<String>) -> impl IntoView {
 	view! {
 		<div
 			on:click=open_video
-			class="w-full max-w-full overflow-hidden rounded-xl"
+			class="overflow-hidden w-full max-w-full rounded-xl"
 		>
 			<img
 				decoding="sync"

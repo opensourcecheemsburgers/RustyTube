@@ -127,8 +127,10 @@ impl From<Entry> for CommonVideo {
 		let views_text = String::new();
 		let author_verified = false;
 		let length = 0;
-		let published = utils::get_published_time_ms(&val.published).unwrap_or_default();
-		let published_text = utils::get_published_time(&val.published).unwrap_or_default();
+		let published =
+			utils::get_published_time_ms(&val.published).unwrap_or_default();
+		let published_text =
+			utils::get_published_time(&val.published).unwrap_or_default();
 		let premiere_timestamp = 0;
 		let live = false;
 		let premium = false;

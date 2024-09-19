@@ -72,10 +72,10 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 	let dislikes_view = move || {
 		dislikes.get().map(|dislikes| {
 			view! {
-				<div class="flex flex-row items-center gap-1">
+				<div class="flex flex-row gap-1 items-center">
 					<ThumbsDown
 						weight=IconWeight::Regular
-						class="h-4 w-4 base-content"
+						class="w-4 h-4 base-content"
 					/>
 					<p>
 						{dislikes
@@ -89,44 +89,44 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex h-max w-full flex-row justify-between rounded-lg bg-base-200 p-4">
-			<div class="flex w-full flex-col">
-				<h1 class="text-lg md:text-xl font-semibold">
+		<div class="flex flex-row justify-between p-4 w-full rounded-lg h-max bg-base-200">
+			<div class="flex flex-col w-full">
+				<h1 class="text-lg font-semibold md:text-xl">
 					{title.clone()}
 				</h1>
 
-				<div class="p-0 m-0 collapse collapse-arrow w-fit h-fit text-xs md:text-sm">
+				<div class="p-0 m-0 text-xs md:text-sm collapse collapse-arrow w-fit h-fit">
 					<input type="checkbox"/>
-					<div class="collapse-title pl-0 flex flex-row flex-wrap items-center gap-2 w-fit">
-						<div class="flex flex-row items-center gap-1">
+					<div class="flex flex-row flex-wrap gap-2 items-center pl-0 collapse-title w-fit">
+						<div class="flex flex-row gap-1 items-center">
 							<Eye
 								weight=IconWeight::Regular
-								class="h-4 w-4 base-content"
+								class="w-4 h-4 base-content"
 							/>
 							<p>{views}</p>
 						</div>
 						<p>{"•"}</p>
-						<div class="flex flex-row items-center gap-2">
-							<div class="flex flex-row items-center gap-1">
+						<div class="flex flex-row gap-2 items-center">
+							<div class="flex flex-row gap-1 items-center">
 								<ThumbsUp
 									weight=IconWeight::Regular
-									class="h-4 w-4 base-content"
+									class="w-4 h-4 base-content"
 								/>
 								<p>{likes}</p>
 							</div>
 							{dislikes_view}
 						</div>
 						<p>{"•"}</p>
-						<div class="flex flex-row items-center gap-1">
+						<div class="flex flex-row gap-1 items-center">
 							<CalendarBlank
 								weight=IconWeight::Regular
-								class="h-4 w-4 base-content"
+								class="w-4 h-4 base-content"
 							/>
 							<p>{published}</p>
 						</div>
 					</div>
 
-					<div class="collapse-content pl-0">
+					<div class="pl-0 collapse-content">
 						<div
 							class="flex flex-col gap-y-4 [&_a]:link [&_a]:link-info [&_a]:no-underline"
 							inner_html=description
@@ -134,14 +134,14 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 					</div>
 				</div>
 
-				<div class="mt-2 flex w-full flex-row flex-wrap sm:flex-nowrap items-center justify-between gap-y-4">
+				<div class="flex flex-row flex-wrap gap-y-4 justify-between items-center mt-2 w-full sm:flex-nowrap">
 					<ChannelRoll
 						channel=author
 						channel_id=author_id
 						sub_count=sub_count_text
 						image_url=author_thumb_url.unwrap_or_default()
 					/>
-					<div class="flex flex-row items-end justify-center gap-x-2">
+					<div class="flex flex-row gap-x-2 justify-center items-end">
 						<DownloadsDropdown formats=formats title=title/>
 						<ShareDropdown/>
 					</div>
@@ -154,7 +154,7 @@ pub fn VideoInfoContent(video: Video) -> impl IntoView {
 #[component]
 pub fn DownloadsDropdown(formats: Formats, title: String) -> impl IntoView {
 	view! {
-		<div class="dropdown dropdown-bottom sm:dropdown-end z-20">
+		<div class="z-20 dropdown dropdown-bottom sm:dropdown-end">
 			<div
 				tabindex="0"
 				role="button"
@@ -162,12 +162,12 @@ pub fn DownloadsDropdown(formats: Formats, title: String) -> impl IntoView {
 			>
 				<DownloadSimple
 					weight=IconWeight::Regular
-					class="h-6 w-6 base-content"
+					class="w-6 h-6 base-content"
 				/>
 			</div>
 			<ul
 				tabindex="0"
-				class="menu dropdown-content mt-2 px-1.5 py-3 shadow-dropdown bg-base-200 rounded-xl w-max h-max"
+				class="py-3 px-1.5 mt-2 w-max rounded-xl menu dropdown-content shadow-dropdown bg-base-200 h-max"
 			>
 				<DownloadsDropdownList formats=formats title=title/>
 			</ul>
@@ -189,7 +189,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 					<a
 						href=format.url
 						target="_blank"
-						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+						class="lowercase btn btn-xs btn-ghost md:btn-sm"
 						download=title
 					>
 						{quality_str}
@@ -216,7 +216,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 					<a
 						href=format.url
 						target="_blank"
-						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+						class="lowercase btn btn-xs btn-ghost md:btn-sm"
 						download=title
 					>
 						{info_str}
@@ -238,7 +238,7 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 					<a
 						href=format.url
 						target="_blank"
-						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+						class="lowercase btn btn-xs btn-ghost md:btn-sm"
 						download=title
 					>
 						{quality_str}
@@ -249,24 +249,24 @@ pub fn DownloadsDropdownList(formats: Formats, title: String) -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex h-max w-max flex-row gap-x-4 rounded-lg bg-base-200 p-2">
+		<div class="flex flex-row gap-x-4 p-2 w-max rounded-lg h-max bg-base-200">
 			<div class="flex flex-col items-center">
 				<h1>Audio</h1>
-				<div class="my-4 flex flex-col h-64 overflow-y-scroll">
+				<div class="flex overflow-y-scroll flex-col my-4 h-64">
 					{audio_formats_view}
 				</div>
 			</div>
 
 			<div class="flex flex-col items-center">
 				<h1>Legacy</h1>
-				<div class="my-4 flex flex-col h-64 overflow-y-scroll">
+				<div class="flex overflow-y-scroll flex-col my-4 h-64">
 					{legacy_formats_view}
 				</div>
 			</div>
 
 			<div class="flex flex-col items-center">
 				<h1>Dash</h1>
-				<div class="my-4 flex flex-col h-64 overflow-y-scroll">
+				<div class="flex overflow-y-scroll flex-col my-4 h-64">
 					{adaptive_formats_view}
 				</div>
 			</div>
@@ -323,7 +323,7 @@ pub fn ShareDropdown() -> impl IntoView {
 	};
 
 	view! {
-		<div class="dropdown dropdown-bottom sm:dropdown-end z-20">
+		<div class="z-20 dropdown dropdown-bottom sm:dropdown-end">
 			<div
 				tabindex="0"
 				role="button"
@@ -331,13 +331,13 @@ pub fn ShareDropdown() -> impl IntoView {
 			>
 				<ShareNetwork
 					weight=IconWeight::Regular
-					class="h-6 w-6 base-content"
+					class="w-6 h-6 base-content"
 				/>
 			</div>
 
 			<div
 				tabindex="0"
-				class="dropdown-content h-max w-max mt-2 space-y-4 rounded-lg bg-base-200 p-4 shadow-dropdown"
+				class="p-4 mt-2 space-y-4 w-max rounded-lg dropdown-content h-max bg-base-200 shadow-dropdown"
 			>
 				<div tabindex="0" class="flex flex-row gap-2">
 					<button
@@ -356,15 +356,15 @@ pub fn ShareDropdown() -> impl IntoView {
 
 				<div
 					tabindex="0"
-					class="flex h-max w-full flex-row items-center gap-x-1 rounded-lg btn-accent px-3 py-1 bg-accent"
+					class="flex flex-row gap-x-1 items-center py-1 px-3 w-full rounded-lg h-max btn-accent bg-accent"
 				>
-					<p class="font-mono text-[8px] md:text-xs text-accent-content">
+					<p class="font-mono md:text-xs text-[8px] text-accent-content">
 						{link_text}
 					</p>
 				</div>
 
 				<div tabindex="0" class="form-control">
-					<label class="label cursor-pointer">
+					<label class="cursor-pointer label">
 						<span class="label-text">Include Timestamp</span>
 						<input
 							on:change=toggle_timestamp
@@ -444,8 +444,8 @@ pub fn SubscribeBtn(
 	};
 
 	view! {
-		<button on:click=on_click class="btn btn-primary btn-xs w-32">
-			<div class="flex flex-row justify-between gap-3">
+		<button on:click=on_click class="w-32 btn btn-primary btn-xs">
+			<div class="flex flex-row gap-3 justify-between">
 				<p>{btn_text}</p>
 				<p>{sub_count_text}</p>
 			</div>
@@ -456,7 +456,7 @@ pub fn SubscribeBtn(
 #[component]
 pub fn VideoInfoPlaceholder() -> impl IntoView {
 	view! {
-		<div class="flex flex-col space-y-4 w-full bg-base-200 rounded-lg">
+		<div class="flex flex-col space-y-4 w-full rounded-lg bg-base-200">
 			<h1>{}</h1>
 		</div>
 	}

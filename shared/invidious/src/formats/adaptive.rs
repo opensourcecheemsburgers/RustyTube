@@ -33,10 +33,15 @@ impl TryFrom<AdaptiveFormat> for AudioFormat {
 	type Error = RustyTubeError;
 
 	fn try_from(adaptive_format: AdaptiveFormat) -> Result<Self, Self::Error> {
-		let audio_quality = adaptive_format.audio_quality.ok_or(RustyTubeError::NoAudioFormat)?;
-		let audio_sample_rate =
-			adaptive_format.audio_sample_rate.ok_or(RustyTubeError::NoAudioFormat)?;
-		let audio_channels = adaptive_format.audio_channels.ok_or(RustyTubeError::NoAudioFormat)?;
+		let audio_quality = adaptive_format
+			.audio_quality
+			.ok_or(RustyTubeError::NoAudioFormat)?;
+		let audio_sample_rate = adaptive_format
+			.audio_sample_rate
+			.ok_or(RustyTubeError::NoAudioFormat)?;
+		let audio_channels = adaptive_format
+			.audio_channels
+			.ok_or(RustyTubeError::NoAudioFormat)?;
 
 		Ok(Self {
 			init: adaptive_format.init,
@@ -61,10 +66,14 @@ impl TryFrom<AdaptiveFormat> for VideoFormat {
 	type Error = RustyTubeError;
 
 	fn try_from(adaptive_format: AdaptiveFormat) -> Result<Self, Self::Error> {
-		let resolution = adaptive_format.resolution.ok_or(RustyTubeError::NoAdaptiveFormat)?;
-		let quality_label =
-			adaptive_format.quality_label.ok_or(RustyTubeError::NoAdaptiveFormat)?;
-		let fps = adaptive_format.fps.ok_or(RustyTubeError::NoAdaptiveFormat)?;
+		let resolution = adaptive_format
+			.resolution
+			.ok_or(RustyTubeError::NoAdaptiveFormat)?;
+		let quality_label = adaptive_format
+			.quality_label
+			.ok_or(RustyTubeError::NoAdaptiveFormat)?;
+		let fps =
+			adaptive_format.fps.ok_or(RustyTubeError::NoAdaptiveFormat)?;
 
 		Ok(Self {
 			init: adaptive_format.init,

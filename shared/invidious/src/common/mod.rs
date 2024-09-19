@@ -206,7 +206,11 @@ impl From<Playlist> for CommonPlaylist {
 			author: value.author,
 			author_id: value.author_id,
 			video_count: value.video_count,
-			videos: value.videos.into_iter().map(CommonPlaylistVideo::from).collect(),
+			videos: value
+				.videos
+				.into_iter()
+				.map(CommonPlaylistVideo::from)
+				.collect(),
 			author_verified: false,
 		}
 	}

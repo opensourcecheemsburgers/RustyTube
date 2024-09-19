@@ -25,10 +25,10 @@ pub fn VideoPlayerControls() -> impl IntoView {
 			<div
 				id=VIDEO_CONTROLS_ID
 				on:mouseover=show_controls
-				class="absolute bottom-0 left-0 flex flex-col w-full group/controls"
+				class="flex absolute bottom-0 left-0 flex-col w-full group/controls"
 			>
 				<ProgressBar/>
-				<div class="w-full bg-base-300 flex flex-row items-center justify-between rounded-b bg-opacity-50">
+				<div class="flex flex-row justify-between items-center w-full bg-opacity-50 rounded-b bg-base-300">
 					<div class="flex flex-row">
 						<PauseBtn/>
 						<VolumeKnob/>

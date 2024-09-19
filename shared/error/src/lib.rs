@@ -59,15 +59,25 @@ impl std::fmt::Display for RustyTubeError {
 			}
 			Self::LangCode => write!(f, "Unknown lang code."),
 			Self::Network(error) => write!(f, "Network Error: {error}"),
-			Self::NoAdaptiveFormat => write!(f, "Error: No adaptive formats available."),
-			Self::NoAudioFormat => write!(f, "Error: No audio formats available."),
+			Self::NoAdaptiveFormat => {
+				write!(f, "Error: No adaptive formats available.")
+			}
+			Self::NoAudioFormat => {
+				write!(f, "Error: No audio formats available.")
+			}
 			Self::NoFileSelected => write!(f, "No file selected."),
 			Self::NoLegacyFormat => write!(f, "No legacy format available."),
 			Self::NoThumbnails => write!(f, "Error: No thumbnails available."),
-			Self::NoVideoFormat => write!(f, "Error: No video formats available."),
-			Self::NoVideoQuality => write!(f, "Error: No video qualities available."),
+			Self::NoVideoFormat => {
+				write!(f, "Error: No video formats available.")
+			}
+			Self::NoVideoQuality => {
+				write!(f, "Error: No video qualities available.")
+			}
 			Self::NoVideoUrl => write!(f, "Error: No video urls available."),
-			Self::NoPerformance => write!(f, "Error: Perfomance not available."),
+			Self::NoPerformance => {
+				write!(f, "Error: Perfomance not available.")
+			}
 			Self::NoWindow => write!(f, "Error: Window not available."),
 			Self::PlaylistParse => write!(f, "Error: Playlist parse failed."),
 			Self::Ron(error) => write!(f, "Ron Error: {error}"),

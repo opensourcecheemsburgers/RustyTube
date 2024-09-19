@@ -23,7 +23,7 @@ pub fn LocalPlaylistPreviewCard(playlist: LocalPlaylist) -> impl IntoView {
 	);
 
 	view! {
-		<div class="flex flex-col h-auto overflow-hidden">
+		<div class="flex overflow-hidden flex-col h-auto">
 			<Suspense fallback=move || {
 				().into_view()
 			}>
@@ -85,11 +85,11 @@ pub fn Info(
 	};
 
 	view! {
-		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-			<h1 class="font-sans font-semibold text-base line-clamp-2">
+		<div class="flex flex-col px-2 mt-3 space-y-3 w-full cursor-text">
+			<h1 class="font-sans text-base font-semibold line-clamp-2">
 				{playlist.get_value().title}
 			</h1>
-			<div class="flex flex-row flex-wrap items-center font-normal text-sm gap-1">
+			<div class="flex flex-row flex-wrap gap-1 items-center text-sm font-normal">
 				<h2
 					on:click=go_to_local_playlist_page
 					class="cursor-pointer text-primary"
@@ -144,7 +144,7 @@ pub fn Thumbnail(
 	view! {
 		<div
 			on:click=go_to_local_playlist_page
-			class="w-full max-w-full overflow-hidden rounded-xl"
+			class="overflow-hidden w-full max-w-full rounded-xl"
 		>
 			<img
 				decoding="async"

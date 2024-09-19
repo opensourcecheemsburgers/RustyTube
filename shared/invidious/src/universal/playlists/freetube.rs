@@ -33,7 +33,9 @@ pub async fn read_freetube_playlists(
 	// Ok(playlists.into()
 	let playlists: Vec<FreetubePlaylist> = serde_json::from_str(playlist_json)?;
 	let mut local_playlists = Vec::new();
-	playlists.into_iter().for_each(|playlist| local_playlists.push(playlist.into()));
+	playlists
+		.into_iter()
+		.for_each(|playlist| local_playlists.push(playlist.into()));
 	Ok(local_playlists)
 }
 

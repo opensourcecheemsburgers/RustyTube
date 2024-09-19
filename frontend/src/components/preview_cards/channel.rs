@@ -17,7 +17,7 @@ pub fn ChannelPreviewCard(channel: CommonChannel) -> impl IntoView {
 	view! {
 		<div
 			on:click=open_channel
-			class="flex flex-col h-auto px-4 overflow-hidden"
+			class="flex overflow-hidden flex-col px-4 h-auto"
 		>
 			<Thumbnail url=thumbnail_url/>
 			<Info channel=channel/>
@@ -33,21 +33,21 @@ pub fn Info(channel: CommonChannel) -> impl IntoView {
 	let subscriber_count =
 		channel.subscribers.to_formatted_string(&locale.get().to_num_fmt());
 	let verified_check = channel.verified.then_some(
-		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
+		view! { <CheckCircle weight=IconWeight::Regular class="w-4 h-4 base-content"/> },
 	);
 
 	view! {
-		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-			<div class="flex flex-row items-center gap-1">
-				<h1 class="cursor-pointer text-primary font-sans font-semibold text-base line-clamp-2">
+		<div class="flex flex-col px-2 mt-3 space-y-3 w-full cursor-text">
+			<div class="flex flex-row gap-1 items-center">
+				<h1 class="font-sans text-base font-semibold cursor-pointer text-primary line-clamp-2">
 					{name}
 				</h1>
 				{verified_check}
 			</div>
-			<div class="flex flex-row items-center gap-1">
+			<div class="flex flex-row gap-1 items-center">
 				<UsersThree
 					weight=IconWeight::Regular
-					class="h-4 w-4 base-content"
+					class="w-4 h-4 base-content"
 				/>
 				<h2>{subscriber_count}</h2>
 			</div>
@@ -68,7 +68,7 @@ pub fn Thumbnail(url: Option<String>) -> impl IntoView {
 	};
 
 	view! {
-		<div class="w-full max-w-full overflow-hidden rounded-xl">
+		<div class="overflow-hidden w-full max-w-full rounded-xl">
 			<img
 				decoding="async"
 				on:load=move |_| img_loaded.set(true)

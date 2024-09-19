@@ -10,7 +10,7 @@ use crate::{contexts::PlayerState, pages::video::utils::find_audio_format};
 #[component]
 pub fn FormatDropdown() -> impl IntoView {
 	view! {
-		<div class="dropdown dropdown-top dropdown-end z-20">
+		<div class="z-20 dropdown dropdown-top dropdown-end">
 			<DropdownBtn/>
 			<DropdownContent/>
 		</div>
@@ -23,7 +23,7 @@ pub fn DropdownBtn() -> impl IntoView {
 		<label tabindex="0" class="btn btn-ghost btn-xs lg:btn-sm">
 			<GearFine
 				weight=IconWeight::Regular
-				class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+				class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 			/>
 		</label>
 	}
@@ -34,7 +34,7 @@ pub fn DropdownContent() -> impl IntoView {
 	view! {
 		<ul
 			tabindex="0"
-			class="menu dropdown-content mb-4 px-1.5 py-3 shadow bg-base-200 rounded-xl w-max h-max"
+			class="py-3 px-1.5 mb-4 w-max rounded-xl shadow menu dropdown-content bg-base-200 h-max"
 		>
 			<FormatList/>
 		</ul>
@@ -62,7 +62,7 @@ pub fn FormatList() -> impl IntoView {
 				view! {
 					<button
 						on:click=change_format
-						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+						class="lowercase btn btn-xs btn-ghost md:btn-sm"
 					>
 						{quality_str}
 					</button>
@@ -101,7 +101,7 @@ pub fn FormatList() -> impl IntoView {
 				view! {
 					<button
 						on:click=change_format
-						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+						class="lowercase btn btn-xs btn-ghost md:btn-sm"
 					>
 						{info_str}
 					</button>
@@ -125,7 +125,7 @@ pub fn FormatList() -> impl IntoView {
 				view! {
 					<button
 						on:click=change_format
-						class="btn btn-xs md:btn-sm lowercase btn-ghost"
+						class="lowercase btn btn-xs btn-ghost md:btn-sm"
 					>
 						{quality_str}
 					</button>
@@ -135,24 +135,24 @@ pub fn FormatList() -> impl IntoView {
 	};
 
 	view! {
-		<div class="flex h-max w-max flex-row gap-x-4 rounded-lg bg-base-200 p-2">
+		<div class="flex flex-row gap-x-4 p-2 w-max rounded-lg h-max bg-base-200">
 			<div class="flex flex-col items-center">
 				<h1>Audio</h1>
-				<div class="my-4 flex flex-col h-48 lg:h-64 overflow-y-scroll">
+				<div class="flex overflow-y-scroll flex-col my-4 h-48 lg:h-64">
 					{audio_formats_view}
 				</div>
 			</div>
 
 			<div class="flex flex-col items-center">
 				<h1>Legacy</h1>
-				<div class="my-4 flex flex-col h-48 lg:h-64 overflow-y-scroll">
+				<div class="flex overflow-y-scroll flex-col my-4 h-48 lg:h-64">
 					{legacy_formats_view}
 				</div>
 			</div>
 
 			<div class="flex flex-col items-center">
 				<h1>Dash</h1>
-				<div class="my-4 flex flex-col h-48 lg:h-64 overflow-y-scroll">
+				<div class="flex overflow-y-scroll flex-col my-4 h-48 lg:h-64">
 					{adaptive_formats_view}
 				</div>
 			</div>

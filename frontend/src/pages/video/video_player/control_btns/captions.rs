@@ -28,7 +28,7 @@ pub fn CaptionsDropdown() -> impl IntoView {
 					.map(|captions| match captions {
 						Ok(captions) => {
 							view! {
-								<div class="dropdown dropdown-top dropdown-end z-20">
+								<div class="z-20 dropdown dropdown-top dropdown-end">
 									<CaptionsDropdownBtn/>
 									<CaptionsDropdownContent captions=captions/>
 								</div>
@@ -47,7 +47,7 @@ pub fn CaptionsDropdown() -> impl IntoView {
 pub fn CaptionsDropdownBtn() -> impl IntoView {
 	view! {
 		<label tabindex="0" class="btn btn-ghost btn-xs">
-			<Subtitles weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+			<Subtitles weight=IconWeight::Regular class="w-4 h-4 base-content"/>
 		</label>
 	}
 }
@@ -57,9 +57,9 @@ pub fn CaptionsDropdownContent(captions: Captions) -> impl IntoView {
 	view! {
 		<ul
 			tabindex="0"
-			class="menu dropdown-content py-3 mb-4 mr-2 shadow bg-base-300 rounded-xl w-max h-auto max-h-48"
+			class="py-3 mr-2 mb-4 w-max h-auto max-h-48 rounded-xl shadow menu dropdown-content bg-base-300"
 		>
-			<div class="flex flex-col h-full overflow-y-scroll space-y-2 px-3">
+			<div class="flex overflow-y-scroll flex-col px-3 space-y-2 h-full">
 				{captions
 					.captions
 					.into_iter()

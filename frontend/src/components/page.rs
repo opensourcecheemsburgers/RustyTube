@@ -33,17 +33,16 @@ pub fn Page() -> impl IntoView {
 		<div
 			dir=dir_signal
 			data-theme=theme
-			class="flex h-svh min-h-svh w-svw lg:h-screen lg:min-h-screen lg:w-screen"
+			class="flex lg:w-screen lg:h-screen lg:min-h-screen h-svh min-h-svh w-svw"
 		>
 			<Drawer>
 				<Sidebar/>
 				<div
 					data-expanded=expanded
-					class="data-[expanded=false]:w-[calc(100vw-16px)] data-[expanded=true]:w-[calc(100vw-64px)]
-					"
+					class="data-[expanded=false]:w-[calc(100vw-16px)] data-[expanded=true]:w-[calc(100vw-64px)]"
 				>
 					<Header/>
-					<div class="bg-base-100 h-[calc(100svh-64px)] min-h-[calc(100svh-64px)] w-full overflow-x-hidden overflow-y-visible scroll-smooth">
+					<div class="overflow-x-hidden overflow-y-visible w-full bg-base-100 h-[calc(100svh-64px)] min-h-[calc(100svh-64px)] scroll-smooth">
 						<Outlet/>
 						<RustyTubeToaster/>
 					</div>

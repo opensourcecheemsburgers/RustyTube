@@ -44,8 +44,8 @@ pub fn ChannelRoll(
 			.any(|sub| sub.id.eq_ignore_ascii_case(&channel_id.get_value()))
 		{
 			view! {
-				<div class="mt-2 flex w-full flex-row items-center justify-between gap-x-4">
-					<div class="flex flex-row items-center gap-x-4">
+				<div class="flex flex-row gap-x-4 justify-between items-center mt-2 w-full">
+					<div class="flex flex-row gap-x-4 items-center">
 						<img
 							on:click=move |_| go_to(
 								format!("/channel?id={}", channel_id.get_value()),
@@ -56,7 +56,7 @@ pub fn ChannelRoll(
 							class=image_classes
 						/>
 						<div class="flex flex-col space-y-2">
-							<p class="text-lg md:text-xl font-semibold">
+							<p class="text-lg font-semibold md:text-xl">
 								{channel.get_value()}
 							</p>
 							<button
@@ -64,9 +64,9 @@ pub fn ChannelRoll(
 									remove_sub.dispatch((channel_id.get_value(), subs_ctx));
 								}
 
-								class="btn btn-primary btn-xs w-32"
+								class="w-32 btn btn-primary btn-xs"
 							>
-								<div class="flex flex-row justify-between gap-3">
+								<div class="flex flex-row gap-3 justify-between">
 									<p>{i18n("channel.subscribed")}</p>
 									<p>{sub_count.get_value()}</p>
 								</div>
@@ -88,7 +88,7 @@ pub fn ChannelRoll(
 						class=image_classes
 					/>
 					<div class="flex flex-col space-y-2">
-						<p class="text-lg md:text-xl font-semibold">
+						<p class="text-lg font-semibold md:text-xl">
 							{channel.get_value()}
 						</p>
 						<button
@@ -101,9 +101,9 @@ pub fn ChannelRoll(
 									));
 							}
 
-							class="btn btn-primary btn-xs w-32"
+							class="w-32 btn btn-primary btn-xs"
 						>
-							<div class="flex flex-row justify-between gap-3">
+							<div class="flex flex-row gap-3 justify-between">
 								<p>{i18n("channel.subscribe")}</p>
 								<p>{sub_count.get_value()}</p>
 							</div>

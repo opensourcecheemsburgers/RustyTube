@@ -2,8 +2,8 @@ use leptos::*;
 
 use crate::{
 	components::{
-		donate_modal::DonateModal, DonateButton, ExpandedCtx, PopularButton, SettingsButton, Subs,
-		SubscriptionsButton, TrendingButton,
+		donate_modal::DonateModal, DonateButton, ExpandedCtx, PopularButton,
+		SettingsButton, Subs, SubscriptionsButton, TrendingButton,
 	},
 	icons::FerrisIcon,
 };
@@ -19,12 +19,16 @@ pub fn LocaleDropdown(btn_classes: String) -> impl IntoView {
 			</div>
 			<ul
 				tabindex="0"
-				class="overflow-y-scroll dropdown-content p-3 shadow bg-base-300 rounded-xl w-64 max-h-80 h-fit z-10"
+				class="overflow-y-scroll z-10 p-3 w-64 max-h-80 rounded-xl shadow dropdown-content bg-base-300 h-fit"
 			>
-				<For each=move || rust_i18n::available_locales!() key=|locale| locale let:locale>
+				<For
+					each=move || rust_i18n::available_locales!()
+					key=|locale| locale
+					let:locale
+				>
 					<li>
 						<a
-							class="btn btn-xs md:btn-sm btn-ghost h-fit btn-block justify-start text-left"
+							class="justify-start text-left btn btn-xs btn-ghost h-fit btn-block md:btn-sm"
 							on:click=set_locale
 						>
 							<p>{locale.human_name()}</p>

@@ -26,7 +26,7 @@ pub fn FullScreenBtn() -> impl IntoView {
 		<button on:click=fullscreen class="btn btn-ghost btn-xs lg:btn-sm">
 			<FrameCorners
 				weight=IconWeight::Regular
-				class="h-4 w-4 lg:h-5 lg:w-5 base-content"
+				class="w-4 h-4 lg:w-5 lg:h-5 base-content"
 			/>
 		</button>
 	}

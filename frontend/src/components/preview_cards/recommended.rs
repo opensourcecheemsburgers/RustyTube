@@ -44,10 +44,10 @@ pub fn Thumbnail(url: Option<String>) -> impl IntoView {
 #[component]
 pub fn Info(video: VideoShort) -> impl IntoView {
 	view! {
-		<div class="flex flex-col w-[70%] overflow-hidden">
+		<div class="flex overflow-hidden flex-col w-[70%]">
 			<p class="text-sm">{video.title}</p>
-			<div class="flex flex-row flex-wrap items-center mt-2 gap-x-1 text-sm">
-				<Eye weight=IconWeight::Regular class="h-4 w-4 base-content"/>
+			<div class="flex flex-row flex-wrap gap-x-1 items-center mt-2 text-sm">
+				<Eye weight=IconWeight::Regular class="w-4 h-4 base-content"/>
 				<p>{video.views_text}</p>
 			</div>
 		</div>

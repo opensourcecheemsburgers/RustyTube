@@ -16,7 +16,7 @@ pub fn PopularSection() -> impl IntoView {
 
 	view! {
 		<GridContainer>
-			<h1 class="font-semibold text-2xl">{i18n("sidebar.popular")}</h1>
+			<h1 class="text-2xl font-semibold">{i18n("sidebar.popular")}</h1>
 			<Suspense fallback=move || {
 				view! { <PlaceholderCardArray/> }
 			}>

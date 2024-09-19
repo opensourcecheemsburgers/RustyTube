@@ -12,7 +12,7 @@ pub fn PlaylistPreviewCard(playlist: CommonPlaylist) -> impl IntoView {
 	let thumbnail_url = playlist_clone.thumbnail;
 
 	view! {
-		<div class="flex flex-col h-auto overflow-hidden">
+		<div class="flex overflow-hidden flex-col h-auto">
 			<Thumbnail
 				playlist_id=playlist.author_id.clone()
 				url=thumbnail_url
@@ -33,17 +33,17 @@ pub fn Info(playlist: CommonPlaylist) -> impl IntoView {
 		playlist.video_count.to_formatted_string(&locale.get().to_num_fmt())
 	};
 	let verified_check = playlist.author_verified.then_some(
-		view! { <CheckCircle weight=IconWeight::Regular class="h-4 w-4 base-content"/> },
+		view! { <CheckCircle weight=IconWeight::Regular class="w-4 h-4 base-content"/> },
 	);
 
 	let go_to_channel_page = move |_| go_to(format!("/channel?id={author_id}"));
 
 	view! {
-		<div class="flex flex-col w-full mt-3 space-y-3 px-2 cursor-text">
-			<h1 class="font-sans font-semibold text-base line-clamp-2">
+		<div class="flex flex-col px-2 mt-3 space-y-3 w-full cursor-text">
+			<h1 class="font-sans text-base font-semibold line-clamp-2">
 				{name}
 			</h1>
-			<div class="flex flex-row flex-wrap items-center font-normal text-sm gap-1">
+			<div class="flex flex-row flex-wrap gap-1 items-center text-sm font-normal">
 				<h2
 					on:click=go_to_channel_page
 					class="cursor-pointer text-primary"
@@ -83,7 +83,7 @@ pub fn Thumbnail(playlist_id: String, url: String) -> impl IntoView {
 	view! {
 		<div
 			on:click=open_playlist
-			class="w-full max-w-full overflow-hidden rounded-xl"
+			class="overflow-hidden w-full max-w-full rounded-xl"
 		>
 			<img
 				decoding="async"

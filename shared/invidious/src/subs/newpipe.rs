@@ -5,7 +5,8 @@ use super::subscriptions::{Subscription, Subscriptions};
 
 impl From<NewpipeSubscription> for Subscription {
 	fn from(val: NewpipeSubscription) -> Self {
-		let index = val.url.rfind("UC").expect("Channel id should have UC at start");
+		let index =
+			val.url.rfind("UC").expect("Channel id should have UC at start");
 		let mut id = val.url.clone();
 		id.replace_range(0..index, "");
 		let name = val.name;
@@ -42,7 +43,9 @@ pub struct NewpipeSubscriptions {
 }
 
 impl NewpipeSubscriptions {
-	pub fn read_subs_from_file(subs_json: &str) -> Result<Self, RustyTubeError> {
+	pub fn read_subs_from_file(
+		subs_json: &str,
+	) -> Result<Self, RustyTubeError> {
 		let subbed_channels: Self = serde_json::from_str(subs_json)?;
 		Ok(subbed_channels)
 	}

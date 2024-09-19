@@ -49,7 +49,7 @@ pub fn CommentsSectionInner(comments: Comments) -> impl IntoView {
 	let comments_action = CommentsAction::new();
 
 	view! {
-		<div class="flex flex-col w-full h-[calc(100vh-64px-5rem-128px)] space-y-8">
+		<div class="flex flex-col space-y-8 w-full h-[calc(100vh-64px-5rem-128px)]">
 			<div class="flex flex-col space-y-8">
 				<For
 					each=move || comments_vec.get()
@@ -105,7 +105,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col space-y-4 h-max">
-			<div class="flex flex-row w-full items-start gap-x-4">
+			<div class="flex flex-row gap-x-4 items-start w-full">
 				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
 
 				<div class="flex flex-col text-sm">
@@ -115,10 +115,10 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 						<p>{published}</p>
 					</div>
 					<div class="mt-1" inner_html=content></div>
-					<div class="mt-3 flex flex-row gap-1 items-center">
+					<div class="flex flex-row gap-1 items-center mt-3">
 						<ThumbsUp
 							weight=IconWeight::Regular
-							class="h-4 w-4 base-content"
+							class="w-4 h-4 base-content"
 						/>
 						<p>{likes}</p>
 						<p>{"•"}</p>
@@ -132,7 +132,7 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 
 							<Chat
 								weight=IconWeight::Regular
-								class="h-4 w-4 base-content"
+								class="w-4 h-4 base-content"
 							/>
 							<p>{reply_count}</p>
 						</div>
@@ -140,9 +140,9 @@ pub fn Comment(comment: Comment) -> impl IntoView {
 				</div>
 			</div>
 			<Show when=move || { reply_count != 0 && replies_visible.get() }>
-				<div class="pl-2 flex flex-row h-max gap-x-3">
-					<div class="w-0.5 h-full bg-primary rounded-xl"></div>
-					<div class="flex flex-col w-full h-max space-y-4">
+				<div class="flex flex-row gap-x-3 pl-2 h-max">
+					<div class="w-0.5 h-full rounded-xl bg-primary"></div>
+					<div class="flex flex-col space-y-4 w-full h-max">
 						{move || {
 							replies
 								.resource
@@ -187,13 +187,13 @@ pub fn CommenterIcon(url: String) -> impl IntoView {
 	view! {
 		<div
 			data-loaded=loaded
-			class="hidden md:data-[loaded=false]:!flex bg-neutral animate-pulse w-6 h-6 rounded-full"
+			class="hidden w-6 h-6 rounded-full animate-pulse bg-neutral md:data-[loaded=false]:!flex"
 		></div>
 		<img
 			on:load=show_image
 			data-loaded=loaded
 			src=url
-			class="hidden md:data-[loaded=true]:flex w-12 h-12 rounded-full mt-1"
+			class="hidden mt-1 w-12 h-12 rounded-full md:data-[loaded=true]:flex"
 		/>
 	}
 }
@@ -208,7 +208,7 @@ pub fn Reply(reply: Comment) -> impl IntoView {
 
 	view! {
 		<div class="flex flex-col space-y-4 h-max">
-			<div class="flex flex-row w-full items-start gap-x-4">
+			<div class="flex flex-row gap-x-4 items-start w-full">
 				<CommenterIcon url=author_thumb_url.unwrap_or_default()/>
 				<div class="flex flex-col text-sm">
 					<div class="flex flex-row gap-1">
@@ -217,10 +217,10 @@ pub fn Reply(reply: Comment) -> impl IntoView {
 						<p>{reply.published}</p>
 					</div>
 					<div class="mt-1" inner_html=reply.content></div>
-					<div class="mt-3 flex flex-row gap-1 items-center">
+					<div class="flex flex-row gap-1 items-center mt-3">
 						<ThumbsUp
 							weight=IconWeight::Regular
-							class="h-4 w-4 base-content"
+							class="w-4 h-4 base-content"
 						/>
 						<p>{likes}</p>
 						<p>{"•"}</p>
@@ -246,22 +246,22 @@ pub fn CommentsSectionPlaceholder() -> impl IntoView {
 #[component]
 pub fn CommentPlaceholder() -> impl IntoView {
 	view! {
-		<div class="flex flex-row w-full gap-x-4">
-			<div class="bg-neutral animate-pulse h-12 w-12 rounded-full"></div>
-			<div class="flex flex-col w-full space-y-4">
+		<div class="flex flex-row gap-x-4 w-full">
+			<div class="w-12 h-12 rounded-full animate-pulse bg-neutral"></div>
+			<div class="flex flex-col space-y-4 w-full">
 				<div class="flex flex-row gap-x-2 items-center">
-					<p class="bg-neutral w-32 h-3 animate-pulse rounded-xl"></p>
-					<p class="bg-neutral h-1 w-1 animate-pulse rounded-full"></p>
-					<p class="bg-neutral w-20 h-3 animate-pulse rounded-xl"></p>
+					<p class="w-32 h-3 rounded-xl animate-pulse bg-neutral"></p>
+					<p class="w-1 h-1 rounded-full animate-pulse bg-neutral"></p>
+					<p class="w-20 h-3 rounded-xl animate-pulse bg-neutral"></p>
 				</div>
 				<div class="flex flex-col space-y-2">
-					<p class="bg-neutral w-full h-2 animate-pulse rounded-xl"></p>
-					<p class="bg-neutral w-full h-2 animate-pulse rounded-xl"></p>
+					<p class="w-full h-2 rounded-xl animate-pulse bg-neutral"></p>
+					<p class="w-full h-2 rounded-xl animate-pulse bg-neutral"></p>
 				</div>
 				<div class="flex flex-row gap-x-2 items-center">
-					<p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"></p>
-					<p class="bg-neutral h-1 w-1 animate-pulse rounded-full"></p>
-					<p class="bg-neutral w-8 h-3 animate-pulse rounded-xl"></p>
+					<p class="w-8 h-3 rounded-xl animate-pulse bg-neutral"></p>
+					<p class="w-1 h-1 rounded-full animate-pulse bg-neutral"></p>
+					<p class="w-8 h-3 rounded-xl animate-pulse bg-neutral"></p>
 				</div>
 			</div>
 		</div>

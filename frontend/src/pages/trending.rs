@@ -20,7 +20,7 @@ pub fn TrendingSection() -> impl IntoView {
 
 	view! {
 		<GridContainer>
-			<h1 class="font-semibold text-2xl">{i18n("trending.trending")}</h1>
+			<h1 class="text-2xl font-semibold">{i18n("trending.trending")}</h1>
 			<TrendingHeader category=category/>
 			<Suspense fallback=move || {
 				view! { <PlaceholderCardArray/> }
@@ -91,7 +91,7 @@ pub fn TrendingHeader(category: RwSignal<TrendingCategory>) -> impl IntoView {
 #[component]
 pub fn TrendingVideos(trending: Trending) -> impl IntoView {
 	view! {
-		<div class="h-[calc(100vh-15.75rem)] overflow-y-hidden hover:overflow-y-auto scroll-smooth">
+		<div class="overflow-y-hidden hover:overflow-y-auto h-[calc(100vh-15.75rem)] scroll-smooth">
 			<CardGrid>
 				<For
 					each=move || trending.videos.clone()

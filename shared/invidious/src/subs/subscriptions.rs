@@ -7,8 +7,8 @@ use rustytube_error::RustyTubeError;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-	Channel, ChannelThumb, ChannelVideos, Feed, NewpipeSubscription, NewpipeSubscriptions,
-	YoutubeSubscription, YoutubeSubscriptions,
+	Channel, ChannelThumb, ChannelVideos, Feed, NewpipeSubscription,
+	NewpipeSubscriptions, YoutubeSubscription, YoutubeSubscriptions,
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Default)]
@@ -30,9 +30,12 @@ impl Subscription {
 
 pub const SUBS_KEY: &str = "subscriptions";
 
-pub type SubsVideosResult = Result<Vec<Result<ChannelVideos, RustyTubeError>>, RustyTubeError>;
-pub type SubsThumbsResult = Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError>;
-pub type SubsChannelsResult = Result<Vec<Result<Channel, RustyTubeError>>, RustyTubeError>;
+pub type SubsVideosResult =
+	Result<Vec<Result<ChannelVideos, RustyTubeError>>, RustyTubeError>;
+pub type SubsThumbsResult =
+	Result<Vec<Result<ChannelThumb, RustyTubeError>>, RustyTubeError>;
+pub type SubsChannelsResult =
+	Result<Vec<Result<Channel, RustyTubeError>>, RustyTubeError>;
 
 impl Subscriptions {
 	pub async fn read_subs(blob: Blob) -> Result<Self, RustyTubeError> {
@@ -55,7 +58,12 @@ impl Subscriptions {
 		}
 	}
 
-	pub async fn fetch_videos(&self, server: &str, rss: bool, lang: &str) -> SubsVideosResult {
+	pub async fn fetch_videos(
+		&self,
+		server: &str,
+		rss: bool,
+		lang: &str,
+	) -> SubsVideosResult {
 		let mut futures = Vec::new();
 
 		for channel in self.channels.clone() {
@@ -74,12 +82,17 @@ impl Subscriptions {
 		Ok(subs_videos)
 	}
 
-	pub async fn fetch_channels(&self, server: &str, lang: &str) -> SubsChannelsResult {
+	pub async fn fetch_channels(
+		&self,
+		server: &str,
+		lang: &str,
+	) -> SubsChannelsResult {
 		let mut futures = Vec::new();
 
 		for channel in self.channels.clone() {
 			let id = channel.id.clone();
-			let future = async move { Channel::fetch_channel(server, &id, lang).await };
+			let future =
+				async move { Channel::fetch_channel(server, &id, lang).await };
 			futures.push(future);
 		}
 		let channels = join_all(futures).await;
@@ -91,7 +104,8 @@ impl Subscriptions {
 
 		for channel in self.channels.clone() {
 			let id = channel.id.clone();
-			let future = async move { Channel::fetch_channel_thumb(server, &id).await };
+			let future =
+				async move { Channel::fetch_channel_thumb(server, &id).await };
 			futures.push(future);
 		}
 		let thumbs = join_all(futures).await;
@@ -120,7 +134,11 @@ impl From<Subscriptions> for NewpipeSubscriptions {
 			.map(std::convert::Into::into)
 			.collect::<Vec<NewpipeSubscription>>();
 
-		Self { app_version: "0.0.0".to_string(), app_version_int: 0, subscriptions }
+		Self {
+			app_version: "0.0.0".to_string(),
+			app_version_int: 0,
+			subscriptions,
+		}
 	}
 }
 

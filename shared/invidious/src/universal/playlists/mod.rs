@@ -42,7 +42,10 @@ pub struct Playlist {
 }
 
 impl Playlist {
-	pub async fn fetch_playlist(server: &str, id: &str) -> Result<Self, RustyTubeError> {
+	pub async fn fetch_playlist(
+		server: &str,
+		id: &str,
+	) -> Result<Self, RustyTubeError> {
 		let url = format!("{server}/api/v1/playlists/{id}");
 		let playlist_json = fetch(&url).await?;
 		let playlist: Self = serde_json::from_str(&playlist_json)?;

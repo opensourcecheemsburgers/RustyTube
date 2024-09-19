@@ -17,7 +17,12 @@ pub struct Trending {
 }
 
 impl Trending {
-	fn url(server: &str, category: &TrendingCategory, region: &str, lang: &str) -> String {
+	fn url(
+		server: &str,
+		category: &TrendingCategory,
+		region: &str,
+		lang: &str,
+	) -> String {
 		match category {
 			TrendingCategory::Default => {
 				format!("{server}/api/v1/trending/?region={region}&hl={lang}")
@@ -28,7 +33,9 @@ impl Trending {
 			TrendingCategory::Gaming => {
 				format!("{server}/api/v1/trending?type=gaming&region={region}&hl={lang}")
 			}
-			TrendingCategory::Movies => format!("{server}/api/v1/trending?type=movies&hl={lang}"),
+			TrendingCategory::Movies => {
+				format!("{server}/api/v1/trending?type=movies&hl={lang}")
+			}
 		}
 	}
 
